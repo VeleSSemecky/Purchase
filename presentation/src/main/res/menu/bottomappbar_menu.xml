@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/fragmentHistory"
+        android:icon="@drawable/ic_baseline_access_time_24"
+        android:title="@string/history"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/fragmentSkuList"
+        android:icon="@drawable/ic_baseline_payment_24"
+        android:title="@string/history_pays"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/fragmentPiP"
+        android:icon="@drawable/ic_baseline_camera_alt_24"
+        android:title="@string/pip"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/fragmentSetting"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/setting"
+        app:showAsAction="ifRoom" />
+
+</menu>

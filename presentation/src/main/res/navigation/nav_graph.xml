@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragmentNavigation">
+
+    <fragment
+        android:id="@+id/fragmentNavigation"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.navigation.NavigationFragment">
+
+        <action
+            android:id="@+id/fragmentPurchase"
+            app:destination="@id/fragmentPurchase" />
+
+        <action
+            android:id="@+id/fragmentEditCollection"
+            app:destination="@id/fragmentEditCollection" />
+
+        <action
+            android:id="@+id/fragmentLogin"
+            app:destination="@id/fragmentLogin"
+            app:popUpTo="@id/fragmentNavigation"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/fragmentHistory"
+            app:destination="@id/fragmentHistory" />
+
+        <action
+            android:id="@+id/fragmentSkuList"
+            app:destination="@id/fragmentSkuList" />
+
+        <action
+            android:id="@+id/fragmentSettingPurchaseCompose"
+            app:destination="@id/fragmentSettingPurchaseCompose" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentPurchase"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseComposeFragment">
+
+        <action
+            android:id="@+id/fragmentSort"
+            app:destination="@id/fragmentSort" />
+
+        <action
+            android:id="@+id/fragmentLogin"
+            app:destination="@id/fragmentLogin" />
+
+        <action
+            android:id="@+id/fragmentNavigation"
+            app:destination="@id/fragmentNavigation" />
+
+        <action
+            android:id="@+id/fragmentHistory"
+            app:destination="@id/fragmentHistory" />
+
+        <action
+            android:id="@+id/fragmentEditCollection"
+            app:destination="@id/fragmentEditCollection" />
+
+        <action
+            android:id="@+id/fragmentAddPurchase"
+            app:destination="@id/fragmentAddPurchase" />
+
+        <argument
+            android:name="purchaseCollectionId"
+            android:defaultValue=""
+            app:argType="string" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/fragmentSort"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.sort.SortPurchaseFragment" />
+
+    <fragment
+        android:id="@+id/fragmentAddPurchase"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.edit.EditPurchaseFragment">
+
+        <action
+            android:id="@+id/fragmentPhotoPurchaseCompose"
+            app:destination="@id/fragmentPhotoPurchaseCompose" />
+
+        <argument
+            android:name="modelCollectionPurchase"
+            android:defaultValue="@null"
+            app:argType="com.veles.purchase.presentation.model.purchase.PurchaseCollectionModelUI"
+            app:nullable="true" />
+
+        <argument
+            android:name="purchaseModel"
+            android:defaultValue="@null"
+            app:argType="com.veles.purchase.presentation.model.purchase.PurchaseModelUI"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentPhotoPurchaseCompose"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.photo.PhotoPurchaseComposeFragment">
+
+        <argument
+            android:name="modelPurchasePhoto"
+            android:defaultValue="@null"
+            app:argType="com.veles.purchase.presentation.model.purchase.PurchasePhotoModelUI"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentHistory"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.history.HistoryComposeFragment" />
+
+    <fragment
+        android:id="@+id/fragmentSkuEdit"
+        android:name="com.veles.purchase.presentation.presentation.compose.shopping.edit.SkuEditFragment">
+
+        <action
+            android:id="@+id/fragmentCurrencyChoose"
+            app:destination="@id/fragmentCurrencyChoose">
+
+        </action>
+
+        <action
+            android:id="@+id/fragmentPhotoListFragment"
+            app:destination="@id/fragmentPhotoListFragment" />
+
+        <argument
+            android:name="skuId"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentOutlayGraph"
+        android:name="com.veles.purchase.presentation.presentation.compose.shopping.graph.OutlayGraphFragment">
+
+        <action
+            android:id="@+id/fragmentYearChoose"
+            app:destination="@id/fragmentYearChoose" />
+
+        <action
+            android:id="@+id/fragmentMonthChoose"
+            app:destination="@id/fragmentMonthChoose" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/fragmentYearChoose"
+        android:name="com.veles.purchase.presentation.presentation.compose.shopping.dialog.date.year.YearChooseFragment">
+
+        <argument
+            android:name="year"
+            android:defaultValue="0"
+            app:argType="string" />
+
+    </dialog>
+
+    <dialog
+        android:id="@+id/fragmentCurrencyChoose"
+        android:name="com.veles.purchase.presentation.presentation.compose.shopping.dialog.currency.choose.CurrencyChooseFragment">
+
+        <action
+            android:id="@+id/fragmentCurrencySearch"
+            app:destination="@id/fragmentCurrencySearch" />
+
+        <argument
+            android:name="currencyCode"
+            android:defaultValue=""
+            app:argType="string" />
+
+    </dialog>
+
+    <fragment
+        android:id="@+id/fragmentCurrencySearch"
+        android:name="com.veles.purchase.presentation.presentation.compose.shopping.dialog.currency.search.CurrencySearchFragment">
+
+        <action
+            android:id="@+id/fragmentCurrencyChoose"
+            app:destination="@id/fragmentCurrencyChoose" />
+
+        <argument
+            android:name="currencyCode"
+            android:defaultValue=""
+            app:argType="string" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/fragmentMonthChoose"
+        android:name="com.veles.purchase.presentation.presentation.compose.shopping.dialog.date.month.MonthChooseFragment">
+
+        <argument
+            android:name="month"
+            android:defaultValue="0"
+            app:argType="string" />
+
+    </dialog>
+
+    <fragment
+        android:id="@+id/fragmentSkuList"
+        android:name="com.veles.purchase.presentation.presentation.compose.shopping.list.SkuListFragment">
+
+        <action
+            android:id="@+id/fragmentSkuEdit"
+            app:destination="@id/fragmentSkuEdit" />
+
+        <action
+            android:id="@+id/fragmentOutlayGraph"
+            app:destination="@id/fragmentOutlayGraph" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentLogin"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.login.LoginFragment">
+
+        <action
+            android:id="@+id/fragmentNavigation"
+            app:destination="@id/fragmentNavigation"
+            app:popUpTo="@id/fragmentLogin"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentEditCollection"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.EditCollectionComposeFragment">
+
+        <argument
+            android:name="modelCollectionPurchase"
+            android:defaultValue="@null"
+            app:argType="com.veles.purchase.presentation.model.purchase.PurchaseCollectionModelUI"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentPhotoListFragment"
+        android:name="com.veles.purchase.presentation.presentation.compose.shopping.photo.PhotoListFragment">
+
+        <argument
+            android:name="skuPhotoEntity"
+            android:defaultValue="@null"
+            app:argType="com.veles.purchase.data.room.table.SkuPhotoEntity"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentSettingPurchaseCompose"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.setting.SettingPurchaseComposeFragment" />
+
+    <fragment
+        android:id="@+id/fragmentBiometricCompose"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.biometric.BiometricComposeFragment" />
+
+</navigation>

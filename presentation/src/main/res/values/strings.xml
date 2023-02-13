@@ -1,0 +1,40 @@
+<resources>
+        <string name="app_name">PurchaseApp</string>
+
+    //errors
+    <string name="error_internet">Похоже, что у Вас отсутствует интернет соединение</string>
+    <string name="error_server">Ошибка сервера</string>
+    <string name="you_did_not_grant_access">You didn`t grant access</string>
+    <string name="new_purchase">New purchase</string>
+    <string name="type">Type:</string>
+    <string name="check">Check</string>
+    <string name="history">History</string>
+    <string name="history_pays">History Pays</string>
+    <string name="pip">PiP</string>
+    <string name="setting">Setting</string>
+
+    <string name="added">Added</string>
+    <string name="changed">Changed</string>
+    <string name="checked">Checked</string>
+    <string name="deleted">Deleted</string>
+    <string name="unknown">Unknown</string>
+    <string name="unchecked">Unchecked</string>
+
+    <string name="sorting_a_z">Sorting A-Z</string>
+    <string name="sorting_z_a">Sorting Z-A</string>
+    <string name="sorting_data_new">Sorting Data New</string>
+    <string name="sorting_data_old">Sorting Data Old</string>
+    <string name="sorting_check">Sorting Check</string>
+    <string name="sorting_uncheck">Sorting UnCheck</string>
+
+    <string name="are_you_sure">Are You Sure?</string>
+    <string name="delete_plus_param">Delete %1$s</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="name_purchase">Name Purchase</string>
+
+    <string name="prompt_info_title">Sample App Authentication</string>
+    <string name="prompt_info_subtitle">Please login to get access</string>
+    <string name="prompt_info_description">Sample App is using Android biometric authentication</string>
+    <string name="prompt_info_use_app_password">Use app password</string>
+</resources>

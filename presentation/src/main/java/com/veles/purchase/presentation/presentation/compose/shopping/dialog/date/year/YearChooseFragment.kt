@@ -1,0 +1,134 @@
+package com.veles.purchase.presentation.presentation.compose.shopping.dialog.date.year
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.NumberPicker
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.veles.purchase.presentation.R
+import com.veles.purchase.presentation.base.mvvm.fragment.BaseBottomSheetDialogFragment
+import com.veles.purchase.presentation.presentation.compose.Colors
+
+class YearChooseFragment : BaseBottomSheetDialogFragment() {
+
+    private val viewModel: YearChooseViewModel by viewModels { viewModelFactory }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(
+            R.layout.compose_view,
+            container,
+            false
+        ).apply {
+            findViewById<ComposeView>(R.id.composeView).setContent {
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.background(Color.Black)
+                ) {
+                    Content()
+                    Save()
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun Content() {
+        val localDataYear by viewModel.flowLocalDataYear.collectAsState()
+        AndroidView(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
+            factory = { context ->
+                NumberPicker(context).apply {
+                    setOnValueChangedListener { _, _, newVal -> viewModel.setLocalDataYear(newVal) }
+                    minValue = 1000
+                    maxValue = Int.MAX_VALUE
+                    value = localDataYear
+                }
+            }
+        )
+    }
+
+    @Composable
+    fun Save() {
+        Row(
+            Modifier
+                .fillMaxWidth()
+        ) {
+            Button(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(
+                        start = 20.dp,
+                        end = 10.dp,
+                        bottom = 16.dp,
+                        top = 16.dp
+                    ),
+                onClick = {
+                    viewModel.save()
+                    findNavController().popBackStack()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Colors.colorPrimaryDark
+                )
+            ) {
+                Text(
+                    text = "Save",
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            Button(
+                modifier = Modifier
+                    .padding(
+                        start = 10.dp,
+                        end = 20.dp,
+                        bottom = 16.dp,
+                        top = 16.dp
+                    ),
+                onClick = {
+                    viewModel.all()
+                    findNavController().popBackStack()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Colors.colorPrimaryDark
+                )
+            ) {
+                Text(
+                    text = "All",
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+    }
+}

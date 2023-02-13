@@ -1,0 +1,3 @@
+package com.veles.purchase.presentation.data.notification.fcm
+
+interface NotificationFirebaseMessagingService

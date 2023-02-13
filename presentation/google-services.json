@@ -1,0 +1,247 @@
+{
+  "project_info": {
+    "project_number": "76128650518",
+    "firebase_url": "https://kotlinmvvm-864e3.firebaseio.com",
+    "project_id": "kotlinmvvm-864e3",
+    "storage_bucket": "kotlinmvvm-864e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76128650518:android:bd18ef54d8939738223c37",
+        "android_client_info": {
+          "package_name": "com.veles.kotlinmvvm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "76128650518-cv7vrf4gvlmpama24qhq19hmk0splf0q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm",
+            "certificate_hash": "f813228ecd291d42a4c2f6807127d0fd108289c9"
+          }
+        },
+        {
+          "client_id": "76128650518-g0fgimr7njopcv0kg4c7f9qpgubsbcr3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm",
+            "certificate_hash": "b1cf1f5c50e7f89d7795044a4a145cf2f87c46fe"
+          }
+        },
+        {
+          "client_id": "76128650518-gargal9thcu7urenach1km9sa5hee1u2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm",
+            "certificate_hash": "435b54142c92eed16365f1d12986be121dc66d1e"
+          }
+        },
+        {
+          "client_id": "76128650518-khu2h2g46026tbjg1r8rls94ad80fe9g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm",
+            "certificate_hash": "09436a4ab280d5cb9d27ec3e14961583c133b73a"
+          }
+        },
+        {
+          "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtI9H-QKNbd3qcm8LmBctCBRlOwbsZYDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76128650518:android:ad5c2f9b0b6605b7223c37",
+        "android_client_info": {
+          "package_name": "com.veles.kotlinmvvm.configProduction"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "76128650518-342oo79jiebfomn124jur071cs3h3l8j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configProduction",
+            "certificate_hash": "435b54142c92eed16365f1d12986be121dc66d1e"
+          }
+        },
+        {
+          "client_id": "76128650518-41rpuv40dpn8lhf9v5umu3v11hi5k6kd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configProduction",
+            "certificate_hash": "b1cf1f5c50e7f89d7795044a4a145cf2f87c46fe"
+          }
+        },
+        {
+          "client_id": "76128650518-hbufd1dtqpd460qiqbjl4u7rj1l3efc8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configProduction",
+            "certificate_hash": "09436a4ab280d5cb9d27ec3e14961583c133b73a"
+          }
+        },
+        {
+          "client_id": "76128650518-j74im7v92tkbd59mi5u11l0smau97guj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configProduction",
+            "certificate_hash": "f813228ecd291d42a4c2f6807127d0fd108289c9"
+          }
+        },
+        {
+          "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtI9H-QKNbd3qcm8LmBctCBRlOwbsZYDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76128650518:android:f5413c2e0165ed77223c37",
+        "android_client_info": {
+          "package_name": "com.veles.kotlinmvvm.configTest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "76128650518-2a6mk36p1llr6s3lvukr9crb9vlr5erl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configTest",
+            "certificate_hash": "3cb317a29f6c8997ca61b04ff7eb062a6121ed6a"
+          }
+        },
+        {
+          "client_id": "76128650518-fmunkl7oikoopprmoipocae9f4qb7oj1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configTest",
+            "certificate_hash": "b1cf1f5c50e7f89d7795044a4a145cf2f87c46fe"
+          }
+        },
+        {
+          "client_id": "76128650518-gi8nvfk5okrb3htlum4o295q2dlb6ok0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configTest",
+            "certificate_hash": "09436a4ab280d5cb9d27ec3e14961583c133b73a"
+          }
+        },
+        {
+          "client_id": "76128650518-keaks42fokaudjjq9tnp0akt8s24uvvn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configTest",
+            "certificate_hash": "435b54142c92eed16365f1d12986be121dc66d1e"
+          }
+        },
+        {
+          "client_id": "76128650518-u3eep54urfrb3ig23kv3vq5qcakqdua9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configTest",
+            "certificate_hash": "f813228ecd291d42a4c2f6807127d0fd108289c9"
+          }
+        },
+        {
+          "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtI9H-QKNbd3qcm8LmBctCBRlOwbsZYDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76128650518:android:8cae526f88bd8b6b223c37",
+        "android_client_info": {
+          "package_name": "com.veles.kotlinmvvm.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "76128650518-cdu41hh0u3p3j0ufuflacit4m6n7rd3q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.debug",
+            "certificate_hash": "09436a4ab280d5cb9d27ec3e14961583c133b73a"
+          }
+        },
+        {
+          "client_id": "76128650518-u7ckeifkb8rbnuqrdbpese6p9nsineb4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.debug",
+            "certificate_hash": "f813228ecd291d42a4c2f6807127d0fd108289c9"
+          }
+        },
+        {
+          "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtI9H-QKNbd3qcm8LmBctCBRlOwbsZYDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
