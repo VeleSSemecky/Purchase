@@ -58,4 +58,6 @@ dependencies {
     implementation("com.firebaseui:firebase-ui-storage:8.0.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

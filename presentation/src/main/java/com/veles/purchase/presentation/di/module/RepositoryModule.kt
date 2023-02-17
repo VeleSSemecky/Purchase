@@ -6,8 +6,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -23,6 +21,7 @@ import com.veles.purchase.data.repository.firebase.storage.FirebaseStorageReposi
 import com.veles.purchase.data.repository.history.HistoryRepositoryImpl
 import com.veles.purchase.data.repository.message.NotificationMessageRepositoryImpl
 import com.veles.purchase.data.repository.purchase.PurchaseRepositoryImpl
+import com.veles.purchase.data.repository.setting.SettingRepositoryImpl
 import com.veles.purchase.data.repository.sku.SkuPhotoRepositoryImpl
 import com.veles.purchase.data.repository.sku.SkuRepositoryImpl
 import com.veles.purchase.data.repository.storage.DeleteFirebaseStorageRepositoryImpl
@@ -41,6 +40,7 @@ import com.veles.purchase.domain.repository.firebase.storage.FirebaseStorageRepo
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.message.NotificationMessageRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
+import com.veles.purchase.domain.repository.setting.SettingRepository
 import com.veles.purchase.domain.repository.sku.SkuPhotoRepository
 import com.veles.purchase.domain.repository.sku.SkuRepository
 import com.veles.purchase.domain.repository.storage.DeleteFirebaseStorageRepository
@@ -134,12 +134,11 @@ interface RepositoryModule {
     @Binds
     fun providePurchaseRepository(repository: PurchaseRepositoryImpl): PurchaseRepository
 
+    @Singleton
+    @Binds
+    fun provideSettingRepository(repository: SettingRepositoryImpl): SettingRepository
+
     companion object {
-        @Singleton
-        @Provides
-        fun provideFirebaseDatabase(): FirebaseDatabase {
-            return Firebase.database
-        }
 
         @Singleton
         @Provides

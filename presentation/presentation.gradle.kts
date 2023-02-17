@@ -114,9 +114,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0-alpha01")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    kaptTest("com.google.dagger:dagger-compiler:2.42")
-    kaptAndroidTest("com.google.dagger:dagger-compiler:2.42")
-
     // Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0-alpha04")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0-alpha04")
@@ -124,9 +121,7 @@ dependencies {
     // JetPack
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha05")
     implementation("androidx.fragment:fragment-ktx:1.5.5")
     implementation("androidx.activity:activity-ktx:1.6.1")
 
@@ -144,13 +139,9 @@ dependencies {
     implementation("androidx.biometric:biometric-ktx:1.2.0-alpha05")
 
     // Internet
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.2")
-
-    // RecyclerView
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("androidx.core:core-ktx:1.9.0")
@@ -158,22 +149,17 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:29.2.1"))
-    implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
-//    implementation 'com.google.firebase:firebase-core-ktx'
-    implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
 
     implementation("com.google.android.gms:play-services-auth:20.4.1")
-    implementation("com.firebaseui:firebase-ui-auth:8.0.1")
     implementation("com.firebaseui:firebase-ui-storage:8.0.1")
 
     // Glide
@@ -189,15 +175,12 @@ dependencies {
     // Compose
     implementation("androidx.compose.runtime:runtime:1.4.0-alpha05")
     implementation("androidx.compose.ui:ui:1.4.0-alpha05")
-//    implementation 'androidx.compose.foundation:foundation-layout:1.2.0-alpha05'
     implementation("androidx.compose.material:material:1.4.0-alpha05")
     implementation("androidx.compose.foundation:foundation:1.4.0-alpha05")
     implementation("androidx.compose.animation:animation:1.4.0-alpha05")
     implementation("androidx.compose.ui:ui-tooling:1.4.0-alpha05")
     implementation("androidx.compose.ui:ui-tooling-preview:1.4.0-alpha05")
     implementation("androidx.compose.ui:ui-viewbinding:1.4.0-alpha05")
-//    implementation("androidx.compose.compiler:compiler:1.3.0-beta02")
-//    implementation "androidx.compose.runtime:runtime-livedata:1.1.1"?
     implementation("androidx.activity:activity-compose:1.7.0-alpha04")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0-alpha05")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
@@ -216,4 +199,6 @@ dependencies {
     implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
 
     implementation("com.google.android.play:app-update-ktx:2.0.1")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

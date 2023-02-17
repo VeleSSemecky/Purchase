@@ -31,7 +31,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnLayout
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenCreated
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -47,6 +46,8 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.UUID
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class PIP : BaseActivity() {
 
@@ -66,14 +67,14 @@ class PIP : BaseActivity() {
         binding.flPip.doOnLayout {
             updatePictureInPictureParams()
         }
-        viewModel.flowBroadcastReceiverRemoteAction.asLiveData().observe(this) {
+        viewModel.flowBroadcastReceiverRemoteAction.onEach {
             when (it?.getStringExtra(Keys.Video.REMOTE_ACTION)) {
                 Keys.Video.PLAY -> remoteActionPlay()
                 Keys.Video.PAUSE -> remoteActionPause()
                 Keys.Video.STOP -> remoteActionStop()
                 Keys.Video.SWITCH -> remoteActionSwitch()
             }
-        }
+        }.launchIn(lifecycleScope)
 
         lifecycleScope.launch(Dispatchers.Main) {
             if (enumerationDeferred != null) {

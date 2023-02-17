@@ -16,9 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
@@ -31,8 +31,8 @@ import androidx.compose.material.SliderDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,9 +47,13 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.domain.model.setting.PurchaseSetting
+import com.veles.purchase.domain.model.setting.ShapeType
+import com.veles.purchase.domain.model.setting.SizeType
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.IconSquare
+import com.veles.purchase.presentation.model.setting.toShape
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textStyle1
@@ -139,9 +143,7 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                     IconSquare(
                         id = R.drawable.ic_done_black_24dp,
                         onClick = {
-//                            viewModel.save {
-//                                findNavController().popBackStack()
-//                            }
+                            viewModel.onSaveSettingsPurchaseChanged()
                         },
                         modifier = Modifier
                             .constrainAs(IconSave) {
@@ -160,171 +162,169 @@ class SettingPurchaseComposeFragment : BaseFragment() {
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun ComponentShape() {
-        Column {
-            val (sliderPosition, onSliderPosition) = rememberSaveable { mutableStateOf(0f) }
-            val radioOptions = listOf(TypeShape.CUT, TypeShape.ROUNDED)
-            val (selectedOption, onOptionSelected) = rememberSaveable {
-                mutableStateOf(radioOptions[0])
-            }
-            val radioOptionsSizeType = listOf(SizeType.DP, SizeType.PERCENT)
-            val (selectedOptionSizeType, onOptionSelectedSizeType) = rememberSaveable {
-                mutableStateOf(radioOptionsSizeType[0])
-            }
-            val (sliderPositionTopStart, onSliderPositionTopStart) = rememberSaveable {
-                mutableStateOf(0f)
-            }
-            val (sliderPositionTopEnd, onSliderPositionTopEnd) = rememberSaveable {
-                mutableStateOf(0f)
-            }
-            val (sliderPositionBottomStart, onSliderPositionBottomStart) = rememberSaveable {
-                mutableStateOf(0f)
-            }
-            val (sliderPositionBottomEnd, onSliderPositionBottomEnd) = rememberSaveable {
-                mutableStateOf(0f)
-            }
-            val (checkedIsMaintain, onOptionCheckedIsMaintain) = rememberSaveable {
-                mutableStateOf(
-                    false
-                )
-            }
-            val (checkedIsImage, onOptionCheckedIsImage) = rememberSaveable { mutableStateOf(true) }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            val settingsPurchase by viewModel.flowPurchaseSetting.collectAsState()
+
             Spacer(modifier = Modifier.padding(16.dp))
-            ItemPurchase(
-                settingsPurchase = SettingsPurchase(
-                    sizeType = selectedOptionSizeType,
-                    typeShape = selectedOption,
-                    corners = when (checkedIsMaintain) {
-                        false -> Corners.AllCorner(sliderPosition)
-                        true -> Corners.SideCorner(
-                            topStart = sliderPositionTopStart,
-                            topEnd = sliderPositionTopEnd,
-                            bottomEnd = sliderPositionBottomEnd,
-                            bottomStart = sliderPositionBottomStart
-                        )
-                    },
-                    isShowImage = checkedIsImage
+            ItemPurchase(purchaseSetting = settingsPurchase)
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            ShapeType.values().forEach {
+                TypeShape(it, settingsPurchase)
+            }
+
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            Corner(settingsPurchase)
+
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            SizeType.values().forEach {
+                SizeType(it, settingsPurchase)
+            }
+
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            IsMaintainSymmetry(settingsPurchase)
+            IsShowImage(settingsPurchase)
+
+            Spacer(modifier = Modifier.padding(24.dp))
+        }
+    }
+
+    @Composable
+    fun Corner(purchaseSetting: PurchaseSetting) {
+        when (purchaseSetting.isSymmetry) {
+            true -> AllCorner()
+            false -> SideCorner()
+        }
+    }
+
+    @Composable
+    fun IsMaintainSymmetry(purchaseSetting: PurchaseSetting) {
+        Row(
+            modifier = Modifier.selectable(
+                selected = purchaseSetting.isSymmetry,
+                onClick = {
+                    viewModel.onIsSymmetryChanged(purchaseSetting.isSymmetry.not())
+                }
+            )
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = purchaseSetting.isSymmetry,
+                onCheckedChange = {
+                    viewModel.onIsSymmetryChanged(it)
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Colors.gr,
+                    uncheckedColor = Colors.gr,
+                    checkmarkColor = Color.Black
                 )
             )
-            Spacer(modifier = Modifier.padding(16.dp))
-            LazyColumn {
-                items(radioOptions) { item ->
-                    Row(
-                        modifier = Modifier
-                            .selectable(
-                                selected = (item == selectedOption),
-                                onClick = {
-                                    onOptionSelected(item)
-                                }
-                            )
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        RadioButton(
-                            selected = (item == selectedOption),
-                            onClick = { onOptionSelected(item) },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = Colors.gr,
-                                unselectedColor = Colors.gr,
-                                disabledColor = Color.Black
-                            )
-                        )
-                        Text(
-                            textAlign = TextAlign.Center,
-                            text = item.toString(),
-                            fontSize = 18.sp,
-                            style = textStyle1()
-                        )
-                    }
+            Text(
+                text = "Symmetry",
+                fontSize = 18.sp,
+                style = textStyle1()
+            )
+        }
+    }
+
+    @Composable
+    fun IsShowImage(purchaseSetting: PurchaseSetting) {
+        Row(
+            modifier = Modifier.selectable(
+                selected = purchaseSetting.isImage,
+                onClick = {
+                    viewModel.onIsShowImageChanged(purchaseSetting.isImage.not())
                 }
+            )
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = purchaseSetting.isImage,
+                onCheckedChange = {
+                    viewModel.onIsShowImageChanged(it)
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Colors.gr,
+                    uncheckedColor = Colors.gr,
+                    checkmarkColor = Color.Black
+                )
+            )
+            Text(
+                text = "Show image",
+                fontSize = 18.sp,
+                style = textStyle1()
+            )
+        }
+    }
+
+    @Composable
+    fun SideCorner() {
+        val sideCorner by viewModel.flowSideCorner.collectAsState()
+        Column {
+            SliderText(value = sideCorner.topStart) {
+                viewModel.onSideCornerChanged(topStart = it)
             }
-            Spacer(modifier = Modifier.padding(16.dp))
-            if (checkedIsMaintain) {
-                Column {
-                    SliderText(value = sliderPositionTopStart) { onSliderPositionTopStart(it) }
-                    SliderText(value = sliderPositionTopEnd) { onSliderPositionTopEnd(it) }
-                    SliderText(value = sliderPositionBottomStart) {
-                        onSliderPositionBottomStart(it)
+            SliderText(value = sideCorner.topEnd) {
+                viewModel.onSideCornerChanged(topEnd = it)
+            }
+            SliderText(value = sideCorner.bottomStart) {
+                viewModel.onSideCornerChanged(bottomStart = it)
+            }
+            SliderText(value = sideCorner.bottomEnd) {
+                viewModel.onSideCornerChanged(bottomEnd = it)
+            }
+        }
+    }
+
+    @Composable
+    fun AllCorner() {
+        val allCorner by viewModel.flowAllCorner.collectAsState()
+        SliderText(value = allCorner.size) {
+            viewModel.onAllCornerChanged(size = it)
+        }
+    }
+
+    @Composable
+    fun SizeType(item: SizeType, purchaseSetting: PurchaseSetting) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .selectable(
+                    selected = item == purchaseSetting.sizeType,
+                    onClick = {
+                        viewModel.onSizeTypeChanged(item)
                     }
-                    SliderText(value = sliderPositionBottomEnd) { onSliderPositionBottomEnd(it) }
-                }
-            } else {
-                SliderText(value = sliderPosition) { onSliderPosition(it) }
-            }
-            Spacer(modifier = Modifier.padding(16.dp))
-            LazyColumn {
-                items(radioOptionsSizeType) { item ->
-                    Row(
-                        modifier = Modifier
-                            .selectable(
-                                selected = (item == selectedOptionSizeType),
-                                onClick = {
-                                    onOptionSelectedSizeType(item)
-                                }
-                            )
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = (item == selectedOptionSizeType),
-                            onClick = { onOptionSelectedSizeType(item) },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = Colors.gr,
-                                unselectedColor = Colors.gr,
-                                disabledColor = Color.Black
-                            )
-                        )
-                        Text(
-                            text = item.toString(),
-                            fontSize = 18.sp,
-                            style = textStyle1()
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.padding(16.dp))
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = checkedIsMaintain,
-                    onCheckedChange = {
-                        onOptionCheckedIsMaintain(it)
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Colors.gr,
-                        uncheckedColor = Colors.gr,
-                        checkmarkColor = Color.Black
-                    )
                 )
-                Text(
-                    text = "Maintain symmetry",
-                    fontSize = 18.sp,
-                    style = textStyle1()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = item == purchaseSetting.sizeType,
+                onClick = {
+                    viewModel.onSizeTypeChanged(item)
+                },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = Colors.gr,
+                    unselectedColor = Colors.gr,
+                    disabledColor = Color.Black
                 )
-            }
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = checkedIsImage,
-                    onCheckedChange = {
-                        onOptionCheckedIsImage(it)
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Colors.gr,
-                        uncheckedColor = Colors.gr,
-                        checkmarkColor = Color.Black
-                    )
-                )
-                Text(
-                    text = "Show image",
-                    fontSize = 18.sp,
-                    style = textStyle1()
-                )
-            }
+            )
+            Text(
+                text = item.toString(),
+                fontSize = 18.sp,
+                style = textStyle1()
+            )
         }
     }
 
@@ -363,13 +363,47 @@ class SettingPurchaseComposeFragment : BaseFragment() {
     }
 
     @Composable
+    fun TypeShape(item: ShapeType, purchaseSetting: PurchaseSetting) {
+        Row(
+            modifier = Modifier
+                .selectable(
+                    selected = item == purchaseSetting.shapeType,
+                    onClick = {
+                        viewModel.onTypeShapeChanged(item)
+                    }
+                )
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            RadioButton(
+                selected = item == purchaseSetting.shapeType,
+                onClick = {
+                    viewModel.onTypeShapeChanged(item)
+                },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = Colors.gr,
+                    unselectedColor = Colors.gr,
+                    disabledColor = Color.Black
+                )
+            )
+            Text(
+                textAlign = TextAlign.Center,
+                text = item.toString(),
+                fontSize = 18.sp,
+                style = textStyle1()
+            )
+        }
+    }
+
+    @Composable
     fun ItemPurchase(
-        settingsPurchase: SettingsPurchase = SettingsPurchase(),
+        purchaseSetting: PurchaseSetting,
         item: PurchaseModel = PurchaseModel.TEST
     ) {
         Card(
             backgroundColor = Colors.colorAccent,
-            shape = settingsPurchase.toShape(),
+            shape = purchaseSetting.toShape(),
             elevation = 4.dp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -395,7 +429,7 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                             bottom.linkTo(parent.bottom)
                         }
                 ) {
-                    if (settingsPurchase.isShowImage) {
+                    if (purchaseSetting.isImage) {
                         Icon(
                             modifier = Modifier
                                 .size(24.dp)
@@ -412,7 +446,6 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                         )
                     }
                 }
-
                 Text(
                     text = item.text,
                     fontSize = 18.sp,

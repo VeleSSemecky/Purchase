@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
@@ -36,14 +36,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -61,7 +59,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.fragment.app.viewModels
 import com.veles.purchase.domain.model.purchase.PurchaseModel
-import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.DismissDirection
@@ -73,6 +70,7 @@ import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.search.SearchTopAppBar
 import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.model.progress.Progress
+import com.veles.purchase.presentation.model.setting.toShape
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.textStyle1
@@ -289,14 +287,13 @@ class ListPurchaseComposeFragment : BaseFragment() {
 
     @Composable
     fun CreatePurchase() {
-        val createTextState: MutableState<String> =
-            remember { mutableStateOf(value = emptyString()) }
+        val createTextState by viewModel.flowNewNamePurchase.collectAsState()
         TextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = createTextState.value,
+            value = createTextState,
             onValueChange = {
-                createTextState.value = it
+                viewModel.onNewNamePurchaseChanged(it)
             },
             placeholder = {
                 Text(
@@ -311,21 +308,37 @@ class ListPurchaseComposeFragment : BaseFragment() {
             ),
             singleLine = true,
             trailingIcon = {
-                IconButton(
-                    onClick = {
-                        if (createTextState.value.isEmpty()) return@IconButton
-                        viewModel.insertAdd(createTextState.value)
-                        createTextState.value = emptyString()
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Close Icon",
-                        tint = Color.White,
-                        modifier = Modifier.alpha(
-                            if (createTextState.value.isEmpty()) 0.toFloat() else 1.toFloat()
+                Row {
+                    IconButton(
+                        onClick = {
+                            if (createTextState.isEmpty()) return@IconButton
+                            viewModel.onNewNamePurchaseChanged()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close Icon",
+                            tint = Color.White,
+                            modifier = Modifier.alpha(
+                                if (createTextState.isEmpty()) 0.toFloat() else 1.toFloat()
+                            )
                         )
-                    )
+                    }
+                    IconButton(
+                        onClick = {
+                            if (createTextState.isEmpty()) return@IconButton
+                            viewModel.insertAdd(createTextState)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Done Icon",
+                            tint = Color.White,
+                            modifier = Modifier.alpha(
+                                if (createTextState.isEmpty()) 0.toFloat() else 1.toFloat()
+                            )
+                        )
+                    }
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -333,9 +346,8 @@ class ListPurchaseComposeFragment : BaseFragment() {
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if (createTextState.value.isEmpty()) return@KeyboardActions
-                    viewModel.insertAdd(createTextState.value)
-                    createTextState.value = emptyString()
+                    if (createTextState.isEmpty()) return@KeyboardActions
+                    viewModel.insertAdd(createTextState)
                 }
             ),
             colors = TextFieldDefaults.textFieldColors(
@@ -364,11 +376,10 @@ class ListPurchaseComposeFragment : BaseFragment() {
         elevation: Dp = 4.dp,
         item: PurchaseModel = PurchaseModel.TEST
     ) {
+        val purchaseSetting by viewModel.flowPurchaseSetting.collectAsState()
         Card(
             backgroundColor = Colors.colorAccent,
-            shape = CutCornerShape(
-                topStartPercent = 30
-            ),
+            shape = purchaseSetting.toShape(),
             elevation = elevation,
             modifier = Modifier
                 .fillMaxWidth()
@@ -398,20 +409,22 @@ class ListPurchaseComposeFragment : BaseFragment() {
                             bottom.linkTo(parent.bottom)
                         }
                 ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.Center),
-                        painter = painterResource(
-                            if (item.listImage.isNotEmpty()) {
-                                R.drawable.image
-                            } else {
-                                R.drawable.no_image
-                            }
-                        ),
-                        contentDescription = "Is Image",
-                        tint = Colors.gr
-                    )
+                    if (purchaseSetting.isImage) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .align(Alignment.Center),
+                            painter = painterResource(
+                                if (item.listImage.isNotEmpty()) {
+                                    R.drawable.image
+                                } else {
+                                    R.drawable.no_image
+                                }
+                            ),
+                            contentDescription = "Is Image",
+                            tint = Colors.gr
+                        )
+                    }
                 }
                 Text(
                     text = item.text,

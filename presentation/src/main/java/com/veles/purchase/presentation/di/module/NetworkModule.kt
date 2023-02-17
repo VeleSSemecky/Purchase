@@ -18,7 +18,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 @Module
 object NetworkModule {
@@ -66,7 +65,6 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl(EnvironmentConfig.MESSAGE_API)
             .client(httpClient)
-            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(ErrorsCallAdapterFactory(exceptionFactory, gson))
             .build()

@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
 import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.domain.model.setting.PurchaseSetting
 import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.AddLazyPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.CheckPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.DeletePurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.GetPurchaseUseCase
+import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
@@ -25,6 +27,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -36,6 +39,7 @@ class ListPurchaseComposeViewModel @Inject constructor(
     private val addLazyPurchaseUseCase: AddLazyPurchaseUseCase,
     private val checkPurchaseUseCase: CheckPurchaseUseCase,
     private val getCollectionPurchaseUseCase: GetCollectionPurchaseUseCase,
+    private val getSettingUseCase: GetSettingUseCase,
     private val router: Router
 ) : ViewModel() {
 
@@ -62,10 +66,20 @@ class ListPurchaseComposeViewModel @Inject constructor(
     val flowCollectionPurchase: StateFlow<PurchaseCollectionModel>
         get() = _flowCollectionPurchase.asStateFlow()
 
+    private val _flowNewNamePurchase: MutableStateFlow<String> =
+        MutableStateFlow(emptyString())
+    val flowNewNamePurchase: StateFlow<String>
+        get() = _flowNewNamePurchase.asStateFlow()
+
+    private val _flowPurchaseSetting = MutableStateFlow(PurchaseSetting())
+    val flowPurchaseSetting: StateFlow<PurchaseSetting>
+        get() = _flowPurchaseSetting.asStateFlow()
+
     init {
         getCollectionPurchase()
         getPurchase(emptyString())
         getSortPurchase()
+        getSettingsPurchase()
     }
 
     fun onSettingsClicked() = router().navigate(
@@ -73,6 +87,11 @@ class ListPurchaseComposeViewModel @Inject constructor(
             flowCollectionPurchase.value.toPurchaseCollectionModelUI()
         )
     )
+
+    fun onNewNamePurchaseChanged(text: String = emptyString()) = viewModelScope.launchOnError {
+        _flowNewNamePurchase.emit(text)
+        getPurchase(text)
+    }
 
     fun onItemClicked(item: PurchaseModel) = router().navigate(
         ListPurchaseComposeFragmentDirections.fragmentAddPurchase(
@@ -102,6 +121,8 @@ class ListPurchaseComposeViewModel @Inject constructor(
     ) = viewModelScope.launchOnError {
         _flowProgress.emit(Progress.Start)
 
+        _flowNewNamePurchase.emit(emptyString())
+
         val purchaseModel = PurchaseModelUI(
             text = purchaseName
         )
@@ -110,6 +131,8 @@ class ListPurchaseComposeViewModel @Inject constructor(
             purchaseModel.toPurchaseModel(),
             args.purchaseCollectionId
         )
+
+        getPurchase(emptyString())
 
         _flowProgress.emit(Progress.End)
     }
@@ -130,6 +153,7 @@ class ListPurchaseComposeViewModel @Inject constructor(
     fun onBackClicked() {
         router().popBackStack()
     }
+
     fun onSortClicked() =
         router().navigate(ListPurchaseComposeFragmentDirections.fragmentSort())
 
@@ -152,4 +176,8 @@ class ListPurchaseComposeViewModel @Inject constructor(
             flowListPurchaseModels.value.sortedWith(it.sortPurchase.toPurchaseComparator())
         )
     }.launchIn(viewModelScope)
+
+    private fun getSettingsPurchase() = viewModelScope.launchOnError {
+        _flowPurchaseSetting.emitAll(getSettingUseCase())
+    }
 }

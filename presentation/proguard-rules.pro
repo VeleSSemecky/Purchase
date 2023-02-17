@@ -75,3 +75,10 @@
 # kept. Suspend functions are wrapped in continuations where the type argument
 # is used.
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+#####################
+### Safe args arguments
+#####################
+-keep public class com.veles.purchase.presentation.model.** {*;}
+-keep public class com.veles.purchase.domain.model.** {*;}
+-keep public class com.veles.purchase.data.model.** {*;}
+-keep enum * { *; }
