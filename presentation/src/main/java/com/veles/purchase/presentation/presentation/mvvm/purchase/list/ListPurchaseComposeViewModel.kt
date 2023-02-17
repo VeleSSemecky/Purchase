@@ -2,7 +2,6 @@ package com.veles.purchase.presentation.presentation.mvvm.purchase.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseUseCase
@@ -11,6 +10,7 @@ import com.veles.purchase.domain.usecase.purchase.CheckPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.DeletePurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.GetPurchaseUseCase
 import com.veles.purchase.domain.utill.emptyString
+import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.extensions.launchOnError
 import com.veles.purchase.presentation.model.event.SortPurchaseEvent
@@ -36,7 +36,7 @@ class ListPurchaseComposeViewModel @Inject constructor(
     private val addLazyPurchaseUseCase: AddLazyPurchaseUseCase,
     private val checkPurchaseUseCase: CheckPurchaseUseCase,
     private val getCollectionPurchaseUseCase: GetCollectionPurchaseUseCase,
-    private val naviController: NavController
+    private val router: Router
 ) : ViewModel() {
 
     private val _flowProgress: MutableStateFlow<Progress> = MutableStateFlow(Progress.End)
@@ -68,13 +68,13 @@ class ListPurchaseComposeViewModel @Inject constructor(
         getSortPurchase()
     }
 
-    fun onSettingsClicked() = naviController.navigate(
+    fun onSettingsClicked() = router().navigate(
         ListPurchaseComposeFragmentDirections.fragmentEditCollection(
             flowCollectionPurchase.value.toPurchaseCollectionModelUI()
         )
     )
 
-    fun onItemClicked(item: PurchaseModel) = naviController.navigate(
+    fun onItemClicked(item: PurchaseModel) = router().navigate(
         ListPurchaseComposeFragmentDirections.fragmentAddPurchase(
             flowCollectionPurchase.value.toPurchaseCollectionModelUI(),
             item.toPurchaseModelUI()
@@ -126,6 +126,12 @@ class ListPurchaseComposeViewModel @Inject constructor(
 
         _flowProgress.emit(Progress.End)
     }
+
+    fun onBackClicked() {
+        router().popBackStack()
+    }
+    fun onSortClicked() =
+        router().navigate(ListPurchaseComposeFragmentDirections.fragmentSort())
 
     private fun getPurchase(
         search: String = emptyString()

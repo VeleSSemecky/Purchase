@@ -30,7 +30,7 @@ import com.veles.purchase.data.repository.storage.DeleteLocalStorageRepositoryIm
 import com.veles.purchase.data.repository.user.get.FirebaseGetUserRepositoryImpl
 import com.veles.purchase.data.repository.user.logout.UserLogoutRepositoryImpl
 import com.veles.purchase.data.repository.user.set.FirebaseSetUserRepositoryImpl
-import com.veles.purchase.data.repository.user.token.FirebaseSetFcmTokenUserRepositoryImpl
+import com.veles.purchase.data.repository.user.token.FirebaseMessageTokenRepositoryImpl
 import com.veles.purchase.domain.repository.auth.AuthWithGoogleRepository
 import com.veles.purchase.domain.repository.auth.BiometricRepository
 import com.veles.purchase.domain.repository.collection.get.FirebaseCollectionPurchaseRepository
@@ -48,7 +48,7 @@ import com.veles.purchase.domain.repository.storage.DeleteLocalStorageRepository
 import com.veles.purchase.domain.repository.user.get.FirebaseGetUserRepository
 import com.veles.purchase.domain.repository.user.logout.UserLogoutRepository
 import com.veles.purchase.domain.repository.user.set.FirebaseSetUserRepository
-import com.veles.purchase.domain.repository.user.token.FirebaseSetFcmTokenUserRepository
+import com.veles.purchase.domain.repository.user.token.FirebaseMessageTokenRepository
 import com.veles.purchase.presentation.R
 import dagger.Binds
 import dagger.Module
@@ -100,7 +100,7 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun provideFirebaseSetFcmTokenUserRepository(repository: FirebaseSetFcmTokenUserRepositoryImpl): FirebaseSetFcmTokenUserRepository
+    fun provideFirebaseSetFcmTokenUserRepository(repository: FirebaseMessageTokenRepositoryImpl): FirebaseMessageTokenRepository
 
     @Singleton
     @Binds

@@ -8,16 +8,42 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.FabPosition
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -34,20 +60,20 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
-import com.veles.purchase.presentation.compose.*
 import com.veles.purchase.presentation.compose.DismissDirection
 import com.veles.purchase.presentation.compose.DismissValue
 import com.veles.purchase.presentation.compose.FractionalThreshold
+import com.veles.purchase.presentation.compose.IconSquare
+import com.veles.purchase.presentation.compose.SwipeToDismiss
 import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.search.SearchTopAppBar
 import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.model.progress.Progress
-import com.veles.purchase.presentation.model.sort.SortPurchase.*
+import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 
@@ -138,7 +164,7 @@ class ListPurchaseComposeFragment : BaseFragment() {
                                 bottom.linkTo(parent.bottom)
                             },
                         onClick = {
-                            findNavController().popBackStack()
+                            viewModel.onBackClicked()
                         },
                         contentDescription = "Search Icon",
                         tint = Color.White
@@ -243,20 +269,18 @@ class ListPurchaseComposeFragment : BaseFragment() {
         Text(
             text = getString(
                 when (state.value) {
-                    SORTING_A_Z -> R.string.sorting_a_z
-                    SORTING_Z_A -> R.string.sorting_z_a
-                    SORTING_DATA_NEW -> R.string.sorting_data_new
-                    SORTING_DATA_OLD -> R.string.sorting_data_old
-                    SORTING_CHECK -> R.string.sorting_check
-                    SORTING_UNCHECK -> R.string.sorting_uncheck
+                    SortPurchase.SORTING_A_Z -> R.string.sorting_a_z
+                    SortPurchase.SORTING_Z_A -> R.string.sorting_z_a
+                    SortPurchase.SORTING_DATA_NEW -> R.string.sorting_data_new
+                    SortPurchase.SORTING_DATA_OLD -> R.string.sorting_data_old
+                    SortPurchase.SORTING_CHECK -> R.string.sorting_check
+                    SortPurchase.SORTING_UNCHECK -> R.string.sorting_uncheck
                 }
             ),
             color = Colors.gr,
             modifier = Modifier
                 .clickable {
-                    findNavController().navigate(
-                        ListPurchaseComposeFragmentDirections.fragmentSort()
-                    )
+                    viewModel.onSortClicked()
                 }
                 .fillMaxWidth()
                 .padding(16.dp)

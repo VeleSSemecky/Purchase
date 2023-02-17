@@ -1,17 +1,20 @@
 package com.veles.purchase.presentation.di.module
 
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import com.veles.purchase.presentation.R
-import com.veles.purchase.presentation.presentation.activity.MainActivity
+import com.veles.purchase.presentation.base.mvvm.navigation.DaggerNavHostFragment
+import com.veles.purchase.presentation.base.mvvm.navigation.Router
+import com.veles.purchase.presentation.base.mvvm.navigation.RouterImpl
+import com.veles.purchase.presentation.di.annotation.scope.FragmentScope
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import dagger.android.ContributesAndroidInjector
 
 @Module
-object NavControllerModule {
+interface NavControllerModule {
 
-    @Provides
-    fun provideNavController(activity: MainActivity): NavController {
-        return activity.findNavController(R.id.fragment_container)
-    }
+    @FragmentScope
+    @ContributesAndroidInjector
+    fun provideDaggerNavHostFragment(): DaggerNavHostFragment
+
+    @Binds
+    fun bindRouter(logger: RouterImpl): Router
 }

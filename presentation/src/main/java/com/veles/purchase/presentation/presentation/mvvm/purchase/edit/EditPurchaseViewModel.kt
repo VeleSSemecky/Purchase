@@ -3,13 +3,13 @@ package com.veles.purchase.presentation.presentation.mvvm.purchase.edit
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
 import com.veles.purchase.domain.usecase.price.PriceUseCase
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import com.veles.purchase.domain.usecase.storage.GetPhotoStorageUseCase
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.domain.utill.zeroString
+import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.extensions.toLocalDateTime
 import com.veles.purchase.presentation.model.core.PhotoStateModel
@@ -41,7 +41,7 @@ class EditPurchaseViewModel @Inject constructor(
     private val priceUseCase: PriceUseCase,
     private val getPhotoStorageUseCase: GetPhotoStorageUseCase,
     private val savePurchaseUseCase: SavePurchaseUseCase,
-    private val navController: NavController
+    private val router: Router
 ) : ViewModel() {
 
     val flowPurchaseLocalData: MutableStateFlow<TextFieldModel<LocalDateTime>> =
@@ -113,7 +113,7 @@ class EditPurchaseViewModel @Inject constructor(
         )
 
         flowProgress.emit(Progress.End)
-        navController.popBackStack()
+        router().popBackStack()
     }
 
     fun apiDatabaseURL(purchaseModel: PurchasePhotoModel): Any =

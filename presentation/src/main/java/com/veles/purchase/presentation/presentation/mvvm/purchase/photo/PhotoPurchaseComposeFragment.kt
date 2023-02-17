@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.skydoves.landscapist.glide.GlideImage
 import com.veles.purchase.domain.model.purchase.PhotoStatus
 import com.veles.purchase.presentation.R
@@ -128,7 +127,7 @@ class PhotoPurchaseComposeFragment : BaseFragment() {
                     IconSquare(
                         id = R.drawable.ic_baseline_arrow_back_24,
                         onClick = {
-                            findNavController().popBackStack()
+                            viewModel.onBackClicked()
                         },
                         modifier = Modifier
                             .constrainAs(IconBack) {

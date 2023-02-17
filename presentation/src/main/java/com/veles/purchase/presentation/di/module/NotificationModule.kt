@@ -1,6 +1,6 @@
 package com.veles.purchase.presentation.di.module
 
-import com.veles.purchase.presentation.data.notification.fcm.NotificationFirebaseMessagingServiceImpl
+import com.veles.purchase.presentation.data.notification.fcm.FirebaseMessagingService
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -8,5 +8,5 @@ import dagger.android.ContributesAndroidInjector
 interface NotificationModule {
 
     @ContributesAndroidInjector
-    fun notificationFirebaseMessagingService(): NotificationFirebaseMessagingServiceImpl
+    fun notificationFirebaseMessagingService(): FirebaseMessagingService
 }

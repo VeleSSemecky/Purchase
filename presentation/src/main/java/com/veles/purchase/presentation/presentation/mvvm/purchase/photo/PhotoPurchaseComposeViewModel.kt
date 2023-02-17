@@ -2,9 +2,9 @@ package com.veles.purchase.presentation.presentation.mvvm.purchase.photo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
 import com.veles.purchase.domain.usecase.storage.GetPhotoStorageUseCase
+import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.model.event.PurchasePhotoDeleteEvent
 import com.veles.purchase.presentation.model.progress.Progress
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class PhotoPurchaseComposeViewModel @Inject constructor(
     private val args: PhotoPurchaseComposeFragmentArgs,
-    private val navController: NavController,
+    private val router: Router,
     private val sharedFlowBus: SharedFlowBus,
     private val getPhotoStorageUseCase: GetPhotoStorageUseCase
 ) : ViewModel() {
@@ -31,9 +31,11 @@ class PhotoPurchaseComposeViewModel @Inject constructor(
         val modelPurchasePhoto = args.modelPurchasePhoto ?: return@launch
         sharedFlowBus.setSharedFlow(PurchasePhotoDeleteEvent(modelPurchasePhoto))
         flowProgress.emit(Progress.End)
-        navController.popBackStack()
+        router().popBackStack()
     }
 
     fun apiDatabaseURL(purchasePhotoModel: PurchasePhotoModel): Any =
         getPhotoStorageUseCase(purchasePhotoModel)
+
+    fun onBackClicked() = router().popBackStack()
 }

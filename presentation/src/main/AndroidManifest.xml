@@ -3,6 +3,7 @@
     package="com.veles.purchase.presentation">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -40,14 +41,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".presentation.mvvm.pip.PIP"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="true"
-            android:supportsPictureInPicture="true"></activity>
+            android:supportsPictureInPicture="true" />
 
         <service
-            android:name=".data.notification.fcm.NotificationFirebaseMessagingServiceImpl"
+            android:name=".data.notification.fcm.FirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
