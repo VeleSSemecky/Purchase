@@ -6,11 +6,27 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.FabPosition
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,7 +37,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,9 +54,13 @@ import com.veles.purchase.presentation.base.mvvm.fragment.MenuItemSelected
 import com.veles.purchase.presentation.compose.CircularCenterProgressIndicator
 import com.veles.purchase.presentation.compose.IconSquare
 import com.veles.purchase.presentation.databinding.NavHostFragmentBinding
+import com.veles.purchase.presentation.extensions.onCreateComposeView
 import com.veles.purchase.presentation.model.drawer.DrawerItem
+import com.veles.purchase.presentation.model.progress.Progress
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.mvvm.pip.PIP
+import com.veles.purchase.presentation.update.AppUpdateHandler
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -49,31 +68,40 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
 
     private val viewModel: NavigationViewModel by viewModels { viewModelFactory }
 
+    private val updateViewModel: UpdateViewModel by viewModels { viewModelFactory }
+
+    private val updateFlowResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == AppUpdateHandler.REQUEST_CODE_UPDATE &&
+            result.resultCode != DaggerAppCompatActivity.RESULT_OK
+        ) {
+            requireActivity().finish()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        if (viewModel.isNeedLogin()) {
-            findNavController().navigate(
-                NavigationFragmentDirections.fragmentLogin()
-            )
+    ): View = onCreateComposeView {
+        updateViewModel.onUpdateAvailabilityCheck(updateFlowResultLauncher)
+        val progress by updateViewModel.flowProgress.collectAsState()
+        when (progress) {
+            Progress.End -> ComposeContent()
+            Progress.Start -> Progress()
         }
-        return inflater.inflate(
-            R.layout.compose_view,
-            container,
-            false
-        ).apply {
-            findViewById<ComposeView>(R.id.composeView).setContent {
-                ComposeContent()
-            }
-        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateViewModel.onResume(updateFlowResultLauncher)
     }
 
     @Preview
     @Composable
     fun ComposeContent() {
+        if (viewModel.isNeedLogin()) return
         val scaffoldState = rememberScaffoldState()
         val scope = rememberCoroutineScope()
         Scaffold(
@@ -99,6 +127,22 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
             },
             backgroundColor = Color.Black
         )
+    }
+
+    @Composable
+    fun Progress() {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Colors.progress)
+                .clickable(false) {
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = Colors.gr
+            )
+        }
     }
 
     @Composable
@@ -143,9 +187,6 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
                     modifier = Modifier
                         .clickable {
                             viewModel.onSignOutGoogleSignInClient()
-                            findNavController().navigate(
-                                NavigationFragmentDirections.fragmentLogin()
-                            )
                         }
                         .constrainAs(IconExit) {
                             end.linkTo(parent.end)
@@ -180,21 +221,15 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
                 modifier = Modifier
                     .clickable {
                         when (it) {
-                            DrawerItem.HISTORY -> findNavController().navigate(
-                                NavigationFragmentDirections.fragmentHistory()
-                            )
-                            DrawerItem.SKU_LIST -> findNavController().navigate(
-                                NavigationFragmentDirections.fragmentSkuList()
-                            )
+                            DrawerItem.HISTORY -> viewModel.onHistoryClicked()
+                            DrawerItem.SKU_LIST -> viewModel.onSkuListClicked()
                             DrawerItem.PIP -> startActivity(
                                 Intent(
                                     requireActivity(),
                                     PIP::class.java
                                 )
                             )
-                            DrawerItem.SETTING -> findNavController().navigate(
-                                NavigationFragmentDirections.fragmentSettingPurchaseCompose()
-                            )
+                            DrawerItem.SETTING -> viewModel.onSettingPurchaseClicked()
                         }
                         scope.launch { scaffoldState.drawerState.currentValue }
                     }
@@ -213,7 +248,9 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
     fun DrawerItem(drawerItem: DrawerItem) {
         Row(modifier = Modifier) {
             GlideImage(
-                modifier = Modifier.size(24.dp).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically),
                 contentScale = ContentScale.FillBounds,
                 imageModel = drawerItem.resImage,
                 colorFilter = tint(Color.White)

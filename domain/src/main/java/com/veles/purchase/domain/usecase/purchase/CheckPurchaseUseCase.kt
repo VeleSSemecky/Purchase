@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 
 class CheckPurchaseUseCase @Inject constructor(
     private val coroutineDispatcher: AppCoroutineDispatcher,
-    private val firebasePurchaseSetHistoryUseCase: FirebasePurchaseSetHistoryUseCase,
+    private val setPurchaseHistoryUseCase: SetPurchaseHistoryUseCase,
     private val firebasePurchaseSendUseCase: FirebasePurchaseSendUseCase
 ) {
 
@@ -18,7 +18,7 @@ class CheckPurchaseUseCase @Inject constructor(
         purchaseModel: PurchaseModel
     ) {
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {
-            firebasePurchaseSetHistoryUseCase(
+            setPurchaseHistoryUseCase(
                 purchaseModel.createPurchaseTable(purchaseModel.toHistoryType())
             )
         }

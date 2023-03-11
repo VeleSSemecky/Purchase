@@ -95,6 +95,16 @@
             app:argType="com.veles.purchase.presentation.model.purchase.PurchaseModelUI"
             app:nullable="true" />
 
+        <argument
+            android:name="purchaseCollectionId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="purchaseId"
+            android:defaultValue=""
+            app:argType="string" />
+
     </fragment>
 
     <fragment

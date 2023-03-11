@@ -7,26 +7,33 @@ import android.view.ViewGroup
 import androidx.activity.result.launch
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
@@ -115,7 +122,9 @@ class EditPurchaseFragment : BaseFragment() {
         paddingValues: PaddingValues = PaddingValues()
     ) {
         Column(
-            modifier = Modifier.padding(paddingValues = paddingValues),
+            modifier = Modifier
+                .padding(paddingValues = paddingValues)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -127,6 +136,8 @@ class EditPurchaseFragment : BaseFragment() {
             ComponentComment()
             Spacer(modifier = Modifier.padding(8.dp))
             ComponentDate()
+            Spacer(modifier = Modifier.padding(8.dp))
+            ComponentSwitch()
             Spacer(modifier = Modifier.padding(8.dp))
             ComponentPhoto()
             Spacer(modifier = Modifier.padding(8.dp))
@@ -149,10 +160,10 @@ class EditPurchaseFragment : BaseFragment() {
                     start = 20.dp,
                     end = 20.dp
                 ),
-            isError = text.isError,
-            value = text.model,
+            isError = text.isBlank(),
+            value = text,
             onValueChange = {
-                viewModel.setPurchaseName(it)
+                viewModel.onTitleChange(it)
             },
             label = {
                 Text(
@@ -179,8 +190,7 @@ class EditPurchaseFragment : BaseFragment() {
                     start = 20.dp,
                     end = 20.dp
                 ),
-            isError = price.isError,
-            value = price.model,
+            value = price,
             maxLines = 1,
             trailingIcon = {
                 Text(
@@ -210,7 +220,7 @@ class EditPurchaseFragment : BaseFragment() {
                     return@OutlinedTextField
                 }
                 if (it.isEmpty() || it.matches("[0123456789.]+".toRegex())) {
-                    viewModel.setPurchasePrice(
+                    viewModel.onPriceChange(
                         it
                     )
                 }
@@ -242,8 +252,8 @@ class EditPurchaseFragment : BaseFragment() {
                     start = 20.dp,
                     end = 20.dp
                 ),
-            value = text.model,
-            onValueChange = { viewModel.setPurchaseComment(it) },
+            value = text,
+            onValueChange = { viewModel.onCommentChange(it) },
             label = { Text("Comment", color = Color.White) }
         )
     }
@@ -271,7 +281,7 @@ class EditPurchaseFragment : BaseFragment() {
                 },
             enabled = false,
             readOnly = true,
-            value = "${data.model.dayOfMonth}.${data.model.month.ordinal}.${data.model.year}",
+            value = "${data.dayOfMonth}.${data.month.ordinal}.${data.year}",
             onValueChange = {},
             label = { Text("Local Data", color = Color.White) }
         )
@@ -290,8 +300,8 @@ class EditPurchaseFragment : BaseFragment() {
         ) {
             items(
                 purchasePhotoModelList
-                    .filter { it.isNeedDelete.not() }
-                    .map { it.model }
+//                    .filter { it.isNeedDelete.not() }
+                    .map { it }
             ) { purchasePhotoModel ->
                 val imageModel = when (purchasePhotoModel.status) {
                     PhotoStatus.LOCAL -> purchasePhotoModel.purchasePhotoUri
@@ -319,6 +329,43 @@ class EditPurchaseFragment : BaseFragment() {
                     )
                 }
             }
+        }
+    }
+
+    @Composable
+    fun ComponentSwitch(
+        viewModel: EditPurchaseViewModel = viewModel()
+    ) {
+        val purchaseIsChecked by viewModel.flowPurchaseIsChecked.collectAsState()
+        Row(
+            modifier = Modifier
+                .padding(PaddingValues(horizontal = 20.dp))
+                .border(
+                    width = 1.dp,
+                    Color.White.copy(alpha = ContentAlpha.disabled),
+                    shape = MaterialTheme.shapes.small
+                )
+                .padding(PaddingValues(horizontal = 16.dp))
+                .defaultMinSize(
+                    minWidth = TextFieldDefaults.MinWidth,
+                    minHeight = TextFieldDefaults.MinHeight
+                )
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Checked",
+                color = Color.White
+            )
+            Switch(
+                modifier = Modifier,
+                checked = purchaseIsChecked,
+                onCheckedChange = { isChecked ->
+                    viewModel.onCheckedChange(isChecked)
+                }
+            )
         }
     }
 
@@ -377,7 +424,7 @@ class EditPurchaseFragment : BaseFragment() {
                     IconSquare(
                         id = R.drawable.ic_done_black_24dp,
                         onClick = {
-                            viewModel.save()
+                            viewModel.onSaveClicked()
                         },
                         modifier = Modifier
                             .constrainAs(IconSave) {
@@ -442,7 +489,7 @@ class EditPurchaseFragment : BaseFragment() {
             .build()
         picker.show(requireActivity().supportFragmentManager, picker.toString())
         picker.addOnPositiveButtonClickListener { data ->
-            viewModel.setSkuLocalData(data)
+            viewModel.setPurchaseLocalData(data)
         }
     }
 }

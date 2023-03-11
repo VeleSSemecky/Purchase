@@ -2,8 +2,12 @@ package com.veles.purchase.domain.usecase.purchase
 
 import com.veles.purchase.domain.core.dispatcher.AppCoroutineDispatcher
 import com.veles.purchase.domain.model.history.HistoryType
-import com.veles.purchase.domain.model.purchase.*
+import com.veles.purchase.domain.model.purchase.PhotoStatus
+import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
+import com.veles.purchase.domain.model.purchase.createPurchaseTable
 import com.veles.purchase.domain.usecase.NotificationMessageUseCase
+import com.veles.purchase.domain.usecase.price.PriceUseCase
 import com.veles.purchase.domain.usecase.storage.FirebaseStorageUseCase
 import com.veles.purchase.domain.usecase.storage.StorageDeleteUseCase
 import javax.inject.Inject
@@ -11,24 +15,27 @@ import kotlinx.coroutines.withContext
 
 class SavePurchaseUseCase @Inject constructor(
     private val coroutineDispatcher: AppCoroutineDispatcher,
-    private val firebasePurchaseSetHistoryUseCase: FirebasePurchaseSetHistoryUseCase,
+    private val setPurchaseHistoryUseCase: SetPurchaseHistoryUseCase,
     private val storageDeleteUseCase: StorageDeleteUseCase,
     private val firebaseStorageUseCase: FirebaseStorageUseCase,
     private val firebasePurchaseSendUseCase: FirebasePurchaseSendUseCase,
-    private val notificationMessageUseCase: NotificationMessageUseCase
+    private val notificationMessageUseCase: NotificationMessageUseCase,
+    private val priceUseCase: PriceUseCase
 ) {
 
     suspend operator fun invoke(
-        modelCollectionPurchase: PurchaseCollectionModel?,
+        purchaseCollectionId: String,
         listPurchasePhotoModel: List<PurchasePhotoModel>,
-        purchaseModel: PurchaseModel,
+        editPurchaseModel: PurchaseModel,
         isNewPurchase: Boolean
     ) = withContext(coroutineDispatcher.coroutineDispatcherIO()) {
-        if (modelCollectionPurchase == null) return@withContext
-
+        if (purchaseCollectionId.isEmpty()) return@withContext
+        val purchaseModel = editPurchaseModel.copy(
+            price = priceUseCase(editPurchaseModel.price)
+        )
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {
             val historyType = if (isNewPurchase) HistoryType.ADD else HistoryType.CHANGE
-            firebasePurchaseSetHistoryUseCase(purchaseModel.createPurchaseTable(historyType))
+            setPurchaseHistoryUseCase(purchaseModel.createPurchaseTable(historyType))
         }
 
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {
@@ -50,14 +57,14 @@ class SavePurchaseUseCase @Inject constructor(
                         it.copy(status = PhotoStatus.DOWNLOADED)
                     }
                 ),
-                modelCollectionPurchase.id
+                purchaseCollectionId
             )
         }
 
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {
             if (isNewPurchase) {
                 notificationMessageUseCase.apiNotificationMessage(
-                    modelCollectionPurchase.id,
+                    purchaseCollectionId,
                     purchaseModel.text
                 )
             }

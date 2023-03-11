@@ -1,29 +1,21 @@
 package com.veles.purchase.domain.usecase.price
 
-import com.veles.purchase.domain.core.loger.Logger
-import com.veles.purchase.domain.utill.emptyString
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import javax.inject.Inject
 
-class PriceUseCase @Inject constructor(
-    private val logger: Logger
-) {
+class PriceUseCase @Inject constructor() {
 
-    operator fun invoke(): (String) -> String = {
-        try {
+    operator fun invoke(text: String): String {
+        if (text.isEmpty()) return 0.toString()
+        return try {
             val otherSymbols = DecimalFormatSymbols()
             otherSymbols.decimalSeparator = '.'
             otherSymbols.groupingSeparator = '.'
             val df = DecimalFormat("#.##", otherSymbols)
-            df.format(it.toBigDecimal())
+            df.format(text.toBigDecimal())
         } catch (exception: Exception) {
-            logger.e(
-                PriceUseCase::class.java.name,
-                "PriceUseCase ${exception.message}",
-                exception
-            )
-            emptyString()
+            0.toString()
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.veles.purchase.presentation.extensions
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -41,3 +44,9 @@ fun CoroutineScope.launchOnError(
         catch(e)
     }
 }
+
+fun Fragment.onCreateComposeView(content: @Composable () -> Unit) =
+    ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        setContent { content() }
+    }

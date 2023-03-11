@@ -10,3 +10,8 @@ fun String.toCurrency(): Currency {
         Currency.getInstance(Locale.getDefault())
     }
 }
+
+object LocaleCurrency {
+    operator fun invoke(locale: Locale = Locale.getDefault()): Currency =
+        Currency.getInstance(locale)
+}

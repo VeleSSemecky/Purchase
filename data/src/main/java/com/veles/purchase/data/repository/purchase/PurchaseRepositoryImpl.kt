@@ -34,6 +34,19 @@ class PurchaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPurchase(
+        collectionPurchaseId: String,
+        purchaseId: String
+    ): PurchaseModel = firebaseFirestore
+        .collection(COLLECTION_DATABASE)
+        .document(EnvironmentConfig.DB_KEY)
+        .collection(COLLECTION_PURCHASE)
+        .document(collectionPurchaseId)
+        .collection(EnvironmentConfig.PURCHASE)
+        .document(purchaseId).get().await()
+        .toObject<PurchaseModelData>()?.toPurchaseModel()
+        ?: throw IllegalArgumentException("PurchaseModel is null")
+
     private suspend fun searchPurchase(
         purchaseCollectionId: String,
         search: String

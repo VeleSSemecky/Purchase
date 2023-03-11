@@ -13,4 +13,9 @@ interface NavigationModule {
     @IntoMap
     @ViewModelKey(NavigationViewModel::class)
     fun bindViewModel(viewModel: NavigationViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UpdateViewModel::class)
+    fun bindUpdateViewModel(viewModel: UpdateViewModel): ViewModel
 }

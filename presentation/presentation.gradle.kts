@@ -111,12 +111,12 @@ dependencies {
     implementation(project(":config"))
 
     implementation("com.google.android.material:material:1.8.0")
-    implementation("androidx.appcompat:appcompat:1.7.0-alpha01")
+    implementation("androidx.appcompat:appcompat:1.7.0-alpha02")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.6.0-alpha04")
-    implementation("androidx.navigation:navigation-ui-ktx:2.6.0-alpha04")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.6.0-alpha06")
+    implementation("androidx.navigation:navigation-ui-ktx:2.6.0-alpha06")
 
     // JetPack
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1")
@@ -173,16 +173,16 @@ dependencies {
     kapt("androidx.room:room-compiler:2.5.0")
 
     // Compose
-    implementation("androidx.compose.runtime:runtime:1.4.0-alpha05")
-    implementation("androidx.compose.ui:ui:1.4.0-alpha05")
-    implementation("androidx.compose.material:material:1.4.0-alpha05")
-    implementation("androidx.compose.foundation:foundation:1.4.0-alpha05")
-    implementation("androidx.compose.animation:animation:1.4.0-alpha05")
-    implementation("androidx.compose.ui:ui-tooling:1.4.0-alpha05")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.4.0-alpha05")
-    implementation("androidx.compose.ui:ui-viewbinding:1.4.0-alpha05")
+    implementation("androidx.compose.runtime:runtime:1.4.0-beta02")
+    implementation("androidx.compose.ui:ui:1.4.0-beta02")
+    implementation("androidx.compose.material:material:1.4.0-beta02")
+    implementation("androidx.compose.foundation:foundation:1.4.0-beta02")
+    implementation("androidx.compose.animation:animation:1.4.0-beta02")
+    implementation("androidx.compose.ui:ui-tooling:1.4.0-beta02")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.4.0-beta02")
+    implementation("androidx.compose.ui:ui-viewbinding:1.4.0-beta02")
     implementation("androidx.activity:activity-compose:1.7.0-alpha04")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0-alpha05")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0-rc01")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     // Accompanist
@@ -190,15 +190,16 @@ dependencies {
     implementation("com.google.accompanist:accompanist-flowlayout:0.24.6-alpha")
 
     // CameraX core library
-    implementation("androidx.camera:camera-core:1.1.0-alpha10")
-    implementation("androidx.camera:camera-camera2:1.1.0-alpha10")
-    implementation("androidx.camera:camera-lifecycle:1.1.0-alpha10")
-    implementation("androidx.camera:camera-view:1.0.0-alpha30")
-    implementation("androidx.camera:camera-video:1.1.0-alpha10")
+    implementation("androidx.camera:camera-core:1.2.1")
+    implementation("androidx.camera:camera-camera2:1.2.1")
+    implementation("androidx.camera:camera-lifecycle:1.2.1")
+    implementation("androidx.camera:camera-view:1.2.1")
+    implementation("androidx.camera:camera-video:1.2.1")
 
     implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
 
     implementation("com.google.android.play:app-update-ktx:2.0.1")
+    implementation("com.google.android.play:integrity:1.1.0")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

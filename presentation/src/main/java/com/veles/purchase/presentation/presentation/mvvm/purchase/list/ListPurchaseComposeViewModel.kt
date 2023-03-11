@@ -9,7 +9,7 @@ import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.AddLazyPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.CheckPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.DeletePurchaseUseCase
-import com.veles.purchase.domain.usecase.purchase.GetPurchaseUseCase
+import com.veles.purchase.domain.usecase.purchase.GetPurchasesUseCase
 import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.base.mvvm.navigation.Router
@@ -20,7 +20,6 @@ import com.veles.purchase.presentation.model.progress.Progress
 import com.veles.purchase.presentation.model.purchase.PurchaseModelUI
 import com.veles.purchase.presentation.model.purchase.toPurchaseCollectionModelUI
 import com.veles.purchase.presentation.model.purchase.toPurchaseModel
-import com.veles.purchase.presentation.model.purchase.toPurchaseModelUI
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.model.sort.toPurchaseComparator
 import javax.inject.Inject
@@ -34,7 +33,7 @@ import kotlinx.coroutines.flow.onEach
 class ListPurchaseComposeViewModel @Inject constructor(
     private val args: ListPurchaseComposeFragmentArgs,
     private val sharedFlowBus: SharedFlowBus,
-    private val getPurchaseUseCase: GetPurchaseUseCase,
+    private val getPurchasesUseCase: GetPurchasesUseCase,
     private val deletePurchaseUseCase: DeletePurchaseUseCase,
     private val addLazyPurchaseUseCase: AddLazyPurchaseUseCase,
     private val checkPurchaseUseCase: CheckPurchaseUseCase,
@@ -95,8 +94,8 @@ class ListPurchaseComposeViewModel @Inject constructor(
 
     fun onItemClicked(item: PurchaseModel) = router().navigate(
         ListPurchaseComposeFragmentDirections.fragmentAddPurchase(
-            flowCollectionPurchase.value.toPurchaseCollectionModelUI(),
-            item.toPurchaseModelUI()
+            purchaseCollectionId = flowCollectionPurchase.value.id,
+            purchaseId = item.createId
         )
     )
 
@@ -159,7 +158,7 @@ class ListPurchaseComposeViewModel @Inject constructor(
 
     private fun getPurchase(
         search: String = emptyString()
-    ) = getPurchaseUseCase(args.purchaseCollectionId, search).onEach { list ->
+    ) = getPurchasesUseCase(args.purchaseCollectionId, search).onEach { list ->
         _flowListPurchaseModels.emit(
             list.sortedWith(_flowSortPurchase.value.toPurchaseComparator())
         )
