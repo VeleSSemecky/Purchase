@@ -82,3 +82,8 @@
 -keep public class com.veles.purchase.domain.model.** {*;}
 -keep public class com.veles.purchase.data.model.** {*;}
 -keep enum * { *; }
+
+# ToDo: Ignore com.google.firebase.FirebaseException: An internal error has occurred. [ Instantiation of JsonResponse failed! class com.google.android.gms.internal.firebase-auth-api.v0 ]
+-keep public class com.google.firebase.** { *;}
+-keep class com.google.android.gms.internal.** { *;}
+-keepclasseswithmembers class com.google.firebase.FirebaseException

@@ -103,7 +103,8 @@ class BiometricComposeFragment : BaseFragment() {
 //    }
 
     private fun showBiometricPromptForEncryption() = lifecycleScope.launch {
-        val canAuthenticate = BiometricManager.from(requireContext()).canAuthenticate()
+        val canAuthenticate = BiometricManager.from(requireContext())
+            .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
         if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
             val auth = authenticateWithClass3Biometrics(
                 crypto = viewModel.encryptionUseCase.getCryptoObjectForEncryption()

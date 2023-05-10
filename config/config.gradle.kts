@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    namespace = "com.veles.purchase.config"
 
     defaultConfig {
         buildConfigField(
@@ -36,5 +37,5 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20")
 }

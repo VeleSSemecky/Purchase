@@ -21,7 +21,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
 import com.veles.purchase.presentation.base.mvvm.activity.BaseActivity
-import com.veles.purchase.presentation.common.Keys
 import com.veles.purchase.presentation.databinding.ActivityPipBinding
 import com.veles.purchase.presentation.extensions.setPictureInPictureParams
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +66,7 @@ class PIP : BaseActivity() {
             updatePictureInPictureParams()
         }
         viewModel.flowBroadcastReceiverRemoteAction.filterNotNull().onEach {
-            val value = it.getStringExtra(Keys.Video.REMOTE_ACTION) ?: return@onEach
+            val value = it.getStringExtra(VideoRemoteAction.REMOTE_ACTION) ?: return@onEach
             when (VideoControl.valueOf(value)) {
                 VideoControl.PLAY -> remoteActionPlay()
                 VideoControl.PAUSE -> remoteActionPause()

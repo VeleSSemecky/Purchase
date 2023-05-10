@@ -1,3 +1,4 @@
+
 apply(from = rootProject.file("repositories.gradle.kts"))
 
 plugins {
@@ -11,11 +12,11 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:7.4.1")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.6.0-alpha06")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
+        classpath("com.android.tools.build:gradle:8.0.1")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.6.0-beta01")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
         classpath("com.google.gms:google-services:4.3.15")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.4")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.5")
     }
 }
 
@@ -28,7 +29,7 @@ subprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_11.toString()
+            jvmTarget = JavaVersion.VERSION_17.toString()
         }
     }
 }
@@ -55,8 +56,8 @@ fun com.android.build.gradle.AppExtension.applyCommons() {
     }
 
     compileOptions.apply {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -73,7 +74,7 @@ fun com.android.build.gradle.LibraryExtension.applyCommons() {
     }
 
     compileOptions.apply {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }

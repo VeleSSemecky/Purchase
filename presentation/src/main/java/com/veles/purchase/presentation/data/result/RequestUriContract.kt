@@ -11,7 +11,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.content.FileProvider
-import com.veles.purchase.presentation.common.Keys
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -50,7 +49,7 @@ class RequestUriContract : ActivityResultContract<Boolean, Uri?>() {
         // Continue only if the File was successfully created
         photoURI = FileProvider.getUriForFile(
             this,
-            packageName + Keys.Args.FILE_PROVIDER,
+            packageName + FILE_PROVIDER,
             photoFile
         )
 
@@ -94,14 +93,20 @@ class RequestUriContract : ActivityResultContract<Boolean, Uri?>() {
         // Create an image file name
         @SuppressLint("SimpleDateFormat")
         val imageFileName =
-            SimpleDateFormat(Keys.Args.YYYYMMDD_HHMMSS).format(Date())
+            SimpleDateFormat(YYYYMMDD_HHMMSS).format(Date())
         val storageDir =
             context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         // Save a file: path for use with ACTION_VIEW intents
         return File(
             /* prefix */
             storageDir /* directory */,
-            imageFileName + Keys.Args.JPG
+            imageFileName + JPG
         )
+    }
+
+    companion object {
+        const val FILE_PROVIDER = ".fileprovider"
+        const val JPG = ".jpg"
+        const val YYYYMMDD_HHMMSS = "yyyyMMdd_HHmmss"
     }
 }

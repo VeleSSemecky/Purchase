@@ -9,7 +9,6 @@ import com.veles.purchase.data.networking.interceptor.AuthInterceptor
 import com.veles.purchase.data.networking.interceptor.HeadersInterceptor
 import com.veles.purchase.data.networking.service.message.NotificationMessageService
 import com.veles.purchase.domain.core.loger.Logger
-import com.veles.purchase.presentation.common.Keys
 import dagger.Module
 import dagger.Provides
 import java.util.concurrent.TimeUnit
@@ -21,6 +20,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 object NetworkModule {
+
+    private const val READ_TIMEOUT = 2
+    private const val WRITE_TIMEOUT = 1
 
     @Provides
     @Singleton
@@ -39,9 +41,9 @@ object NetworkModule {
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(headersInterceptor)
         .addInterceptor(authInterceptor)
-        .connectTimeout(Keys.NetworkConstants.READ_TIMEOUT.toLong(), TimeUnit.MINUTES)
-        .readTimeout(Keys.NetworkConstants.READ_TIMEOUT.toLong(), TimeUnit.MINUTES)
-        .writeTimeout(Keys.NetworkConstants.WRITE_TIMEOUT.toLong(), TimeUnit.MINUTES)
+        .connectTimeout(READ_TIMEOUT.toLong(), TimeUnit.MINUTES)
+        .readTimeout(READ_TIMEOUT.toLong(), TimeUnit.MINUTES)
+        .writeTimeout(WRITE_TIMEOUT.toLong(), TimeUnit.MINUTES)
         .addInterceptor(httpLoggingInterceptor)
         .build()
 

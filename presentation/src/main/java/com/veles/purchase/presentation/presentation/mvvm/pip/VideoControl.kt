@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.drawable.Icon
 import androidx.annotation.DrawableRes
 import com.veles.purchase.presentation.R
-import com.veles.purchase.presentation.common.Keys
 import java.util.UUID
 
 enum class VideoControl {
@@ -32,14 +31,19 @@ sealed interface VideoRemoteAction {
         PendingIntent.getBroadcast(
             context,
             UUID.randomUUID().hashCode(),
-            Intent("G_ALARM_ACTION").apply {
-                putExtra(Keys.Video.REMOTE_ACTION, videoControl.name)
+            Intent(INTENT_ACTION).apply {
+                putExtra(REMOTE_ACTION, videoControl.name)
             },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
     )
 
     operator fun invoke() = action
+
+    companion object {
+        const val REMOTE_ACTION = "RemoteAction"
+        const val INTENT_ACTION = "G_ALARM_ACTION"
+    }
 }
 
 class PauseRemoteAction(context: Context) : VideoRemoteAction {

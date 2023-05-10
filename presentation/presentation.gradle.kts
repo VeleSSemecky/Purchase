@@ -9,6 +9,8 @@ plugins {
 }
 
 android {
+    namespace = "com.veles.purchase.presentation"
+
     defaultConfig {
         applicationId = Config.Android.applicationId
     }
@@ -21,7 +23,6 @@ android {
         dataBinding = false
     }
 
-    @Suppress("UnstableApiUsage")
     signingConfigs {
         getByName("debug") {
             storeFile = file(Secret.SignIn.debugKeyStoreFile)
@@ -74,7 +75,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs =
             listOf(*kotlinOptions.freeCompilerArgs.toTypedArray(), "-Xjvm-default=all")
     }
@@ -83,8 +84,8 @@ android {
     buildFeatures {
         compose = true
     }
-    @Suppress("UnstableApiUsage")
-    packagingOptions {
+
+    packaging {
         resources {
             excludes.addAll(
                 listOf(
@@ -99,9 +100,8 @@ android {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.2"
+        kotlinCompilerExtensionVersion = "1.4.6"
     }
 }
 
@@ -110,20 +110,20 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":config"))
 
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.appcompat:appcompat:1.7.0-alpha02")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.6.0-alpha06")
-    implementation("androidx.navigation:navigation-ui-ktx:2.6.0-alpha06")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.6.0-beta01")
+    implementation("androidx.navigation:navigation-ui-ktx:2.6.0-beta01")
 
     // JetPack
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.fragment:fragment-ktx:1.5.5")
-    implementation("androidx.activity:activity-ktx:1.6.1")
+    implementation("androidx.fragment:fragment-ktx:1.5.7")
+    implementation("androidx.activity:activity-ktx:1.7.1")
 
     // Google
     implementation("com.google.code.gson:gson:2.9.0")
@@ -144,14 +144,14 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.2")
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.10.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:29.2.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
@@ -159,7 +159,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
 
-    implementation("com.google.android.gms:play-services-auth:20.4.1")
+    implementation("com.google.android.gms:play-services-auth:20.5.0")
     implementation("com.firebaseui:firebase-ui-storage:8.0.1")
 
     // Glide
@@ -168,21 +168,21 @@ dependencies {
     implementation("com.github.skydoves:landscapist-glide:1.5.1")
 
     // Room
-    implementation("androidx.room:room-runtime:2.5.0")
-    implementation("androidx.room:room-ktx:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
+    implementation("androidx.room:room-runtime:2.5.1")
+    implementation("androidx.room:room-ktx:2.5.1")
+    kapt("androidx.room:room-compiler:2.5.1")
 
     // Compose
-    implementation("androidx.compose.runtime:runtime:1.4.0-beta02")
-    implementation("androidx.compose.ui:ui:1.4.0-beta02")
-    implementation("androidx.compose.material:material:1.4.0-beta02")
-    implementation("androidx.compose.foundation:foundation:1.4.0-beta02")
-    implementation("androidx.compose.animation:animation:1.4.0-beta02")
-    implementation("androidx.compose.ui:ui-tooling:1.4.0-beta02")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.4.0-beta02")
-    implementation("androidx.compose.ui:ui-viewbinding:1.4.0-beta02")
-    implementation("androidx.activity:activity-compose:1.7.0-alpha04")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0-rc01")
+    implementation("androidx.compose.runtime:runtime:1.5.0-alpha03")
+    implementation("androidx.compose.ui:ui:1.5.0-alpha03")
+    implementation("androidx.compose.material:material:1.5.0-alpha03")
+    implementation("androidx.compose.foundation:foundation:1.5.0-alpha03")
+    implementation("androidx.compose.animation:animation:1.5.0-alpha03")
+    implementation("androidx.compose.ui:ui-tooling:1.5.0-alpha03")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0-alpha03")
+    implementation("androidx.compose.ui:ui-viewbinding:1.5.0-alpha03")
+    implementation("androidx.activity:activity-compose:1.7.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     // Accompanist
@@ -190,11 +190,11 @@ dependencies {
     implementation("com.google.accompanist:accompanist-flowlayout:0.24.6-alpha")
 
     // CameraX core library
-    implementation("androidx.camera:camera-core:1.2.1")
-    implementation("androidx.camera:camera-camera2:1.2.1")
-    implementation("androidx.camera:camera-lifecycle:1.2.1")
-    implementation("androidx.camera:camera-view:1.2.1")
-    implementation("androidx.camera:camera-video:1.2.1")
+    implementation("androidx.camera:camera-core:1.2.2")
+    implementation("androidx.camera:camera-camera2:1.2.2")
+    implementation("androidx.camera:camera-lifecycle:1.2.2")
+    implementation("androidx.camera:camera-view:1.2.2")
+    implementation("androidx.camera:camera-video:1.2.2")
 
     implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
 

@@ -7,9 +7,9 @@ plugins {
 }
 
 android {
+    namespace = "com.veles.purchase.data"
 
     lint {
-        @Suppress("UnstableApiUsage")
         abortOnError = false
     }
 
@@ -38,12 +38,12 @@ dependencies {
     implementation("com.jakewharton.timber:timber:5.0.1")
 
     // Room
-    implementation("androidx.room:room-runtime:2.5.0")
-    implementation("androidx.room:room-ktx:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
+    implementation("androidx.room:room-runtime:2.5.1")
+    implementation("androidx.room:room-ktx:2.5.1")
+    kapt("androidx.room:room-compiler:2.5.1")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:29.2.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
@@ -53,7 +53,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
 
-    implementation("com.google.android.gms:play-services-auth:20.4.1")
+    implementation("com.google.android.gms:play-services-auth:20.5.0")
     implementation("com.firebaseui:firebase-ui-auth:8.0.1")
     implementation("com.firebaseui:firebase-ui-storage:8.0.1")
 
