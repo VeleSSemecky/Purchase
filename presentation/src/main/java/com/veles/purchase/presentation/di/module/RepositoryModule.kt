@@ -13,42 +13,44 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.veles.purchase.data.repository.auth.AuthWithGoogleRepositoryImpl
 import com.veles.purchase.data.repository.auth.BiometricRepositoryImpl
-import com.veles.purchase.data.repository.collection.get.FirebaseCollectionPurchaseRepositoryImpl
-import com.veles.purchase.data.repository.collection.set.FirebaseSetCollectionPurchaseRepositoryImpl
-import com.veles.purchase.data.repository.firebase.remove.FirebaseRemoveRepositoryImpl
-import com.veles.purchase.data.repository.firebase.set.FirebaseRepositoryImpl
-import com.veles.purchase.data.repository.firebase.storage.FirebaseStorageRepositoryImpl
+import com.veles.purchase.data.repository.collection.delete.DeleteCollectionPurchaseRepositoryImpl
+import com.veles.purchase.data.repository.collection.get.GetCollectionPurchaseRepositoryImpl
+import com.veles.purchase.data.repository.collection.set.SetCollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.history.HistoryRepositoryImpl
+import com.veles.purchase.data.repository.later.PurchaseLaterRepositoryImpl
 import com.veles.purchase.data.repository.message.NotificationMessageRepositoryImpl
-import com.veles.purchase.data.repository.purchase.PurchaseRepositoryImpl
+import com.veles.purchase.data.repository.purchase.delete.DeletePurchaseRepositoryImpl
+import com.veles.purchase.data.repository.purchase.get.GetGetPurchaseRepositoryImpl
+import com.veles.purchase.data.repository.purchase.set.SetPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.setting.SettingRepositoryImpl
 import com.veles.purchase.data.repository.sku.SkuPhotoRepositoryImpl
 import com.veles.purchase.data.repository.sku.SkuRepositoryImpl
-import com.veles.purchase.data.repository.storage.DeleteFirebaseStorageRepositoryImpl
-import com.veles.purchase.data.repository.storage.DeleteLocalStorageRepositoryImpl
+import com.veles.purchase.data.repository.storage.delete.DeletePurchasePhotoRepositoryImpl
+import com.veles.purchase.data.repository.storage.get.GetPurchasePhotoRepositoryImpl
+import com.veles.purchase.data.repository.storage.set.SetPurchasePhotoRepositoryImpl
 import com.veles.purchase.data.repository.user.get.FirebaseGetUserRepositoryImpl
 import com.veles.purchase.data.repository.user.logout.UserLogoutRepositoryImpl
-import com.veles.purchase.data.repository.user.set.FirebaseSetUserRepositoryImpl
 import com.veles.purchase.data.repository.user.token.FirebaseMessageTokenRepositoryImpl
 import com.veles.purchase.domain.repository.auth.AuthWithGoogleRepository
 import com.veles.purchase.domain.repository.auth.BiometricRepository
-import com.veles.purchase.domain.repository.collection.get.FirebaseCollectionPurchaseRepository
-import com.veles.purchase.domain.repository.collection.set.FirebaseSetCollectionPurchaseRepository
-import com.veles.purchase.domain.repository.firebase.remove.FirebaseRemoveRepository
-import com.veles.purchase.domain.repository.firebase.set.FirebaseRepository
-import com.veles.purchase.domain.repository.firebase.storage.FirebaseStorageRepository
+import com.veles.purchase.domain.repository.collection.DeleteCollectionPurchaseRepository
+import com.veles.purchase.domain.repository.collection.GetCollectionPurchaseRepository
+import com.veles.purchase.domain.repository.collection.SetCollectionPurchaseRepository
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.message.NotificationMessageRepository
-import com.veles.purchase.domain.repository.purchase.PurchaseRepository
+import com.veles.purchase.domain.repository.purchase.GetPurchasePhotoRepository
+import com.veles.purchase.domain.repository.purchase.GetPurchaseRepository
+import com.veles.purchase.domain.repository.purchase.PurchaseLaterRepository
+import com.veles.purchase.domain.repository.purchase.SetPurchaseRepository
 import com.veles.purchase.domain.repository.setting.SettingRepository
 import com.veles.purchase.domain.repository.sku.SkuPhotoRepository
 import com.veles.purchase.domain.repository.sku.SkuRepository
-import com.veles.purchase.domain.repository.storage.DeleteFirebaseStorageRepository
-import com.veles.purchase.domain.repository.storage.DeleteLocalStorageRepository
-import com.veles.purchase.domain.repository.user.get.FirebaseGetUserRepository
-import com.veles.purchase.domain.repository.user.logout.UserLogoutRepository
-import com.veles.purchase.domain.repository.user.set.FirebaseSetUserRepository
-import com.veles.purchase.domain.repository.user.token.FirebaseMessageTokenRepository
+import com.veles.purchase.domain.repository.storage.DeletePurchasePhotoRepository
+import com.veles.purchase.domain.repository.storage.DeletePurchaseRepository
+import com.veles.purchase.domain.repository.storage.SetPurchasePhotoRepository
+import com.veles.purchase.domain.repository.user.FirebaseGetUserRepository
+import com.veles.purchase.domain.repository.user.FirebaseMessageTokenRepository
+import com.veles.purchase.domain.repository.user.UserLogoutRepository
 import com.veles.purchase.presentation.R
 import dagger.Binds
 import dagger.Module
@@ -60,11 +62,11 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun provideFirebaseRepository(repository: FirebaseRepositoryImpl): FirebaseRepository
+    fun provideSetPurchaseRepository(repository: SetPurchaseRepositoryImpl): SetPurchaseRepository
 
     @Singleton
     @Binds
-    fun provideFirebaseRemoveRepository(repository: FirebaseRemoveRepositoryImpl): FirebaseRemoveRepository
+    fun provideDeletePurchaseRepository(repository: DeletePurchaseRepositoryImpl): DeletePurchaseRepository
 
     @Singleton
     @Binds
@@ -72,7 +74,7 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun provideFirebaseStorageRepository(repository: FirebaseStorageRepositoryImpl): FirebaseStorageRepository
+    fun provideGetPurchasePhotoRepository(repository: GetPurchasePhotoRepositoryImpl): GetPurchasePhotoRepository
 
     @Singleton
     @Binds
@@ -80,19 +82,11 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun provideFirebaseCollectionPurchaseRepository(
-        repository: FirebaseCollectionPurchaseRepositoryImpl
-    ): FirebaseCollectionPurchaseRepository
+    fun provideGetCollectionPurchaseRepository(repository: GetCollectionPurchaseRepositoryImpl): GetCollectionPurchaseRepository
 
     @Singleton
     @Binds
-    fun provideFirebaseSetCollectionPurchaseRepository(
-        repository: FirebaseSetCollectionPurchaseRepositoryImpl
-    ): FirebaseSetCollectionPurchaseRepository
-
-    @Singleton
-    @Binds
-    fun provideFirebaseSetUserRepository(repository: FirebaseSetUserRepositoryImpl): FirebaseSetUserRepository
+    fun provideSetCollectionPurchaseRepository(repository: SetCollectionPurchaseRepositoryImpl): SetCollectionPurchaseRepository
 
     @Singleton
     @Binds
@@ -120,11 +114,7 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun provideDeleteFirebaseStorageRepository(repository: DeleteFirebaseStorageRepositoryImpl): DeleteFirebaseStorageRepository
-
-    @Singleton
-    @Binds
-    fun provideDeleteLocalStorageRepository(repository: DeleteLocalStorageRepositoryImpl): DeleteLocalStorageRepository
+    fun provideDeletePurchasePhotoRepository(repository: DeletePurchasePhotoRepositoryImpl): DeletePurchasePhotoRepository
 
     @Singleton
     @Binds
@@ -132,11 +122,23 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun providePurchaseRepository(repository: PurchaseRepositoryImpl): PurchaseRepository
+    fun provideGetGetPurchaseRepository(repository: GetGetPurchaseRepositoryImpl): GetPurchaseRepository
 
     @Singleton
     @Binds
     fun provideSettingRepository(repository: SettingRepositoryImpl): SettingRepository
+
+    @Singleton
+    @Binds
+    fun providePurchaseLaterRepository(repository: PurchaseLaterRepositoryImpl): PurchaseLaterRepository
+
+    @Singleton
+    @Binds
+    fun provideSetPurchasePhotoRepository(repository: SetPurchasePhotoRepositoryImpl): SetPurchasePhotoRepository
+
+    @Singleton
+    @Binds
+    fun provideDeleteCollectionPurchaseRepository(repository: DeleteCollectionPurchaseRepositoryImpl): DeleteCollectionPurchaseRepository
 
     companion object {
 

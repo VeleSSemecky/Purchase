@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/fragmentPurchase"
-        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseComposeFragment">
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseFragment">
 
         <action
             android:id="@+id/fragmentSort"

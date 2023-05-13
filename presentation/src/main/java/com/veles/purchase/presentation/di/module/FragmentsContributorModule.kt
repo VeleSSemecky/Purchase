@@ -27,8 +27,8 @@ import com.veles.purchase.presentation.presentation.mvvm.purchase.edit.EditPurch
 import com.veles.purchase.presentation.presentation.mvvm.purchase.edit.EditPurchaseModule
 import com.veles.purchase.presentation.presentation.mvvm.purchase.history.HistoryComposeFragment
 import com.veles.purchase.presentation.presentation.mvvm.purchase.history.HistoryComposeModule
-import com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseComposeFragment
-import com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseComposeModule
+import com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseFragment
+import com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseModule
 import com.veles.purchase.presentation.presentation.mvvm.purchase.login.LoginFragment
 import com.veles.purchase.presentation.presentation.mvvm.purchase.login.LoginModule
 import com.veles.purchase.presentation.presentation.mvvm.purchase.navigation.NavigationFragment
@@ -46,8 +46,8 @@ import dagger.android.ContributesAndroidInjector
 interface FragmentsContributorModule {
 
     @FragmentScope
-    @ContributesAndroidInjector(modules = [ListPurchaseComposeModule::class])
-    fun provideListPurchaseComposeFragment(): ListPurchaseComposeFragment
+    @ContributesAndroidInjector(modules = [ListPurchaseModule::class])
+    fun provideListPurchaseComposeFragment(): ListPurchaseFragment
 
     @FragmentScope
     @ContributesAndroidInjector(modules = [EditPurchaseModule::class])

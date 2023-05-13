@@ -24,23 +24,26 @@ class NotificationMessageRepositoryImpl @Inject constructor(
     private val dataStore: DataStore
 ) : NotificationMessageRepository {
 
+    private fun FirebaseFirestore.getCollectionPurchase() = collection(COLLECTION_DATABASE)
+        .document(EnvironmentConfig.DB_KEY)
+        .collection(EnvironmentConfig.COLLECTION_PURCHASE)
+
+    private fun FirebaseFirestore.getUserPurchase() = collection(COLLECTION_DATABASE)
+        .document(EnvironmentConfig.DB_KEY)
+        .collection(USER_PURCHASE)
+
     override suspend fun sendNotificationMessage(
         purchaseCollectionId: String,
         message: String
     ) {
-        val listMembers = firebaseFirestore
-            .collection(COLLECTION_DATABASE)
-            .document(EnvironmentConfig.DB_KEY)
-            .collection(EnvironmentConfig.COLLECTION_PURCHASE)
+        val listMembers = firebaseFirestore.getCollectionPurchase()
             .document(purchaseCollectionId).get().await()
             .toObject<PurchaseCollectionModelData>()?.listMembers
             ?: return
 
         if (listMembers.isEmpty()) return
 
-        val listUsersMessageToken = firebaseFirestore.collection(COLLECTION_DATABASE)
-            .document(EnvironmentConfig.DB_KEY)
-            .collection(USER_PURCHASE)
+        val listUsersMessageToken = firebaseFirestore.getUserPurchase()
             .whereIn(UID, listMembers)
             .get().await().documents.mapNotNull {
                 it?.toObject<UserPurchaseModelData>()?.fcmToken

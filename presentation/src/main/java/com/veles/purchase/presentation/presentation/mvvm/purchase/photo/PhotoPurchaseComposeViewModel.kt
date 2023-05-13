@@ -3,7 +3,7 @@ package com.veles.purchase.presentation.presentation.mvvm.purchase.photo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
-import com.veles.purchase.domain.usecase.storage.GetPhotoStorageUseCase
+import com.veles.purchase.domain.usecase.storage.GetPhotoUseCase
 import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.model.event.PurchasePhotoDeleteEvent
@@ -17,7 +17,7 @@ class PhotoPurchaseComposeViewModel @Inject constructor(
     private val args: PhotoPurchaseComposeFragmentArgs,
     private val router: Router,
     private val sharedFlowBus: SharedFlowBus,
-    private val getPhotoStorageUseCase: GetPhotoStorageUseCase
+    private val getPhotoUseCase: GetPhotoUseCase
 ) : ViewModel() {
 
     val flowPurchasePhotoModel: MutableStateFlow<PurchasePhotoModel?> =
@@ -35,7 +35,7 @@ class PhotoPurchaseComposeViewModel @Inject constructor(
     }
 
     fun apiDatabaseURL(purchasePhotoModel: PurchasePhotoModel): Any =
-        getPhotoStorageUseCase(purchasePhotoModel)
+        getPhotoUseCase(purchasePhotoModel)
 
     fun onBackClicked() = router().popBackStack()
 }

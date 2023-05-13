@@ -23,6 +23,8 @@ object EnvironmentConfig {
 
     const val PURCHASE = "purchase"
 
+    const val LATER = "later"
+
     const val USER_PURCHASE = "UserPurchase"
 
     const val LIST_MEMBERS = "listMembers"

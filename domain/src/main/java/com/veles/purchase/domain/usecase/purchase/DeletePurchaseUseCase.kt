@@ -1,20 +1,19 @@
 package com.veles.purchase.domain.usecase.purchase
 
 import com.veles.purchase.domain.model.history.HistoryType
-import com.veles.purchase.domain.model.purchase.PhotoStatus
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.createPurchaseTable
-import com.veles.purchase.domain.repository.firebase.remove.FirebaseRemoveRepository
-import com.veles.purchase.domain.repository.firebase.storage.FirebaseStorageRepository
 import com.veles.purchase.domain.repository.history.HistoryRepository
+import com.veles.purchase.domain.repository.storage.DeletePurchasePhotoRepository
+import com.veles.purchase.domain.repository.storage.DeletePurchaseRepository
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.withContext
 
 class DeletePurchaseUseCase @Inject constructor(
-    private val firebaseRemoveRepository: FirebaseRemoveRepository,
-    private val firebaseStorageRepository: FirebaseStorageRepository,
+    private val deletePurchaseRepository: DeletePurchaseRepository,
+    private val deletePurchasePhotoRepository: DeletePurchasePhotoRepository,
     private val historyRepository: HistoryRepository
 ) {
 
@@ -32,7 +31,7 @@ class DeletePurchaseUseCase @Inject constructor(
         purchaseModel: PurchaseModel,
         purchaseCollectionId: String
     ) = withContext(currentCoroutineContext()) {
-        firebaseRemoveRepository.apiFirebaseRemove(
+        deletePurchaseRepository.deletePurchase(
             purchaseModel.createId,
             purchaseCollectionId
         )
@@ -41,9 +40,7 @@ class DeletePurchaseUseCase @Inject constructor(
     private suspend fun removeAsyncFirebaseStorage(
         purchaseModel: PurchaseModel
     ) = withContext(currentCoroutineContext()) {
-        if (purchaseModel.listImage.any { it.status == PhotoStatus.DOWNLOADED }) {
-            firebaseStorageRepository.apiFirebaseStorageDelete(purchaseModel.createId)
-        }
+        deletePurchasePhotoRepository.deletePhotos(purchaseModel.createId, purchaseModel.listImage)
     }
 
     private suspend fun removeAsyncPurchase(

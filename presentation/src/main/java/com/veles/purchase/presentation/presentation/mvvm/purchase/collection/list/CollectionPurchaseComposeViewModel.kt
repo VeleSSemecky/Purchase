@@ -3,8 +3,8 @@ package com.veles.purchase.presentation.presentation.mvvm.purchase.collection.li
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
+import com.veles.purchase.domain.usecase.collection.DeletePurchaseCollectionUseCase
 import com.veles.purchase.domain.usecase.collection.FirebaseFirestorePurchaseCollectionUseCase
-import com.veles.purchase.domain.usecase.collection.PurchaseCollectionDeleteUseCase
 import com.veles.purchase.presentation.model.progress.Progress
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class CollectionPurchaseComposeViewModel @Inject constructor(
     private val firebaseFirestorePurchaseCollectionUseCase: FirebaseFirestorePurchaseCollectionUseCase,
-    private val purchaseCollectionDeleteUseCase: PurchaseCollectionDeleteUseCase
+    private val deletePurchaseCollectionUseCase: DeletePurchaseCollectionUseCase
 ) : ViewModel() {
 
     val stateFlowProgress: MutableStateFlow<Progress> = MutableStateFlow(Progress.End)
@@ -36,7 +36,7 @@ class CollectionPurchaseComposeViewModel @Inject constructor(
     fun apiFirebaseRemovePurchaseCollection(
         item: PurchaseCollectionModel
     ) = viewModelScope.launch {
-        purchaseCollectionDeleteUseCase(item)
+        deletePurchaseCollectionUseCase(item)
     }
 
     private fun apiFirebasePurchase() = viewModelScope.launch {

@@ -55,7 +55,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.skydoves.landscapist.glide.GlideImage
-import com.veles.purchase.domain.model.purchase.PhotoStatus
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
@@ -303,10 +302,6 @@ class EditPurchaseFragment : BaseFragment() {
 //                    .filter { it.isNeedDelete.not() }
                     .map { it }
             ) { purchasePhotoModel ->
-                val imageModel = when (purchasePhotoModel.status) {
-                    PhotoStatus.LOCAL -> purchasePhotoModel.purchasePhotoUri
-                    PhotoStatus.DOWNLOADED -> viewModel.apiDatabaseURL(purchasePhotoModel)
-                }
                 Card(
                     border = BorderStroke(2.dp, Color.White.copy(alpha = ContentAlpha.disabled))
                 ) {
@@ -321,7 +316,7 @@ class EditPurchaseFragment : BaseFragment() {
                                 )
                             },
                         contentScale = ContentScale.FillBounds,
-                        imageModel = imageModel,
+                        imageModel = viewModel.apiDatabaseURL(purchasePhotoModel),
                         loading = {
                             CircularCenterProgressIndicator()
                         },

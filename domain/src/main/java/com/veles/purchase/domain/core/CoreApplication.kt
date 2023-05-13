@@ -1,16 +1,15 @@
 package com.veles.purchase.domain.core
 
-import kotlinx.coroutines.CancellableContinuation
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 
 suspend inline fun <T> suspendCancellableCoroutineWithTimeout(
-    timeout: Long,
-    crossinline block: (CancellableContinuation<T>) -> Unit
+    timeout: Long = TimeUnit.SECONDS.toMillis(5.toLong()),
+    crossinline block: suspend () -> T
 ): T = try {
     withTimeout(timeout) {
-        suspendCancellableCoroutine(block = block)
+        block()
     }
 } catch (e: TimeoutCancellationException) {
     throw e

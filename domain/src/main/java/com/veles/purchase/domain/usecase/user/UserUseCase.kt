@@ -1,7 +1,7 @@
 package com.veles.purchase.domain.usecase.user
 
 import com.veles.purchase.domain.model.user.UserPurchaseModel
-import com.veles.purchase.domain.repository.user.get.FirebaseGetUserRepository
+import com.veles.purchase.domain.repository.user.FirebaseGetUserRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 

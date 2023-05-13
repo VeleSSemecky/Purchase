@@ -63,12 +63,12 @@ class EditCollectionComposeViewModel @Inject constructor(
 
     private suspend fun apiFirebaseFirestore(
         purchaseModel: PurchaseCollectionModel
-    ): Boolean {
+    ) {
         val list = flowListUserChecked.value
             .filter { userChecked -> userChecked.isCheck }
             .map { userChecked -> userChecked.userPurchase.uid }
         val purchaseModelCopy = purchaseModel.copy(listMembers = ArrayList(list))
-        return setCollectionPurchaseUseCase(purchaseModelCopy)
+        setCollectionPurchaseUseCase(purchaseModelCopy)
     }
 
     private fun apiFirebaseUser() = viewModelScope.launchOnError {

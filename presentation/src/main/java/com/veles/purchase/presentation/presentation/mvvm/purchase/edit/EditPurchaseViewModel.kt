@@ -11,7 +11,7 @@ import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
 import com.veles.purchase.domain.usecase.purchase.GetPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
-import com.veles.purchase.domain.usecase.storage.GetPhotoStorageUseCase
+import com.veles.purchase.domain.usecase.storage.GetPhotoUseCase
 import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.extensions.LocaleCurrency
@@ -33,7 +33,7 @@ class EditPurchaseViewModel @Inject constructor(
     private val args: EditPurchaseFragmentArgs,
     private val sharedFlowBus: SharedFlowBus,
     private val getPurchaseUseCase: GetPurchaseUseCase,
-    private val getPhotoStorageUseCase: GetPhotoStorageUseCase,
+    private val getPhotoUseCase: GetPhotoUseCase,
     private val savePurchaseUseCase: SavePurchaseUseCase,
     private val router: Router
 ) : ViewModel() {
@@ -118,7 +118,7 @@ class EditPurchaseViewModel @Inject constructor(
     }
 
     fun apiDatabaseURL(purchaseModel: PurchasePhotoModel): Any =
-        getPhotoStorageUseCase(purchaseModel)
+        getPhotoUseCase(purchaseModel)
 
     private fun getPurchaseModel() = viewModelScope.launchOnError {
         flowProgress.emit(Progress.Start)

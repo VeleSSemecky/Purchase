@@ -7,6 +7,7 @@ import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
 import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
 import com.veles.purchase.domain.usecase.setting.SetSettingUseCase
+import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.extensions.launchOnError
 import com.veles.purchase.presentation.model.setting.CornerSetting
 import com.veles.purchase.presentation.model.setting.setCorner
@@ -20,7 +21,8 @@ import kotlinx.coroutines.flow.onEach
 
 class SettingPurchaseComposeViewModel @Inject constructor(
     private val getSettingUseCase: GetSettingUseCase,
-    private val setSettingUseCase: SetSettingUseCase
+    private val setSettingUseCase: SetSettingUseCase,
+    private val router: Router
 ) : ViewModel() {
 
     private val _flowPurchaseSetting = MutableStateFlow(PurchaseSetting())
@@ -41,6 +43,7 @@ class SettingPurchaseComposeViewModel @Inject constructor(
 
     fun onSaveSettingsPurchaseChanged() = viewModelScope.launchOnError {
         setSettingUseCase(flowPurchaseSetting.value)
+        router().popBackStack()
     }
 
     fun onIsSymmetryChanged(isSymmetry: Boolean) = onSettingsPurchaseChanged { settingsPurchase ->

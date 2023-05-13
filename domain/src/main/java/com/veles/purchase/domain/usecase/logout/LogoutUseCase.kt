@@ -1,6 +1,6 @@
 package com.veles.purchase.domain.usecase.logout
 
-import com.veles.purchase.domain.repository.user.logout.UserLogoutRepository
+import com.veles.purchase.domain.repository.user.UserLogoutRepository
 import javax.inject.Inject
 
 class LogoutUseCase @Inject constructor(

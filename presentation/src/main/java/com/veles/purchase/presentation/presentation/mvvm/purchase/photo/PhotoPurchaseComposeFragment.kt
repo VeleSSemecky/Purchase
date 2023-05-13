@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.viewModels
 import com.skydoves.landscapist.glide.GlideImage
-import com.veles.purchase.domain.model.purchase.PhotoStatus
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.CircularCenterProgressIndicator
@@ -87,11 +86,7 @@ class PhotoPurchaseComposeFragment : BaseFragment() {
                 color = Color.White
             )
         } else {
-            val imageModel = when (purchasePhotoModel.status) {
-                PhotoStatus.LOCAL -> purchasePhotoModel.purchasePhotoUri
-                PhotoStatus.DOWNLOADED -> viewModel.apiDatabaseURL(purchasePhotoModel)
-            }
-            ZoomableGlideImage(imageModel)
+            ZoomableGlideImage(viewModel.apiDatabaseURL(purchasePhotoModel))
         }
     }
 
