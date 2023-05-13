@@ -29,9 +29,7 @@ class DeletePurchasePhotoRepositoryImpl @Inject constructor(
         listImage: List<PurchasePhotoModel>
     ) {
         listImage.filter { it.status == PhotoStatus.LOCAL }.map { deleteLocalPhoto(it) }
-        if (listImage.any { it.status == PhotoStatus.DOWNLOADED }) {
-            storage.reference.child(purchaseId).delete().await().toUnit()
-        }
+        listImage.filter { it.status == PhotoStatus.DOWNLOADED }.map { deleteStoragePhoto(it) }
     }
 
     private suspend fun deleteStoragePhoto(purchaseModel: PurchasePhotoModel) = try {
