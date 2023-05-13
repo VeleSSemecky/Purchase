@@ -2,8 +2,8 @@ object Config {
 
     object Android {
 
-        const val versionName = "1.0.2"
-        const val versionCode = 3
+        const val versionName = "1.0.3"
+        const val versionCode = 4
         const val applicationId = "com.veles.kotlinmvvm"
 
         const val minSdkVersion = 26
