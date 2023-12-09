@@ -2,8 +2,8 @@ plugins {
     id("com.android.library")
     id("kotlin-android")
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
     kotlin("android")
-    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -18,7 +18,6 @@ android {
         buildConfigField("String", "VERSION_NAME", "\"${Config.Android.versionName}\"")
     }
 
-    @Suppress("UnstableApiUsage")
     flavorDimensions.add("default")
     productFlavors {
         create("configProduction") {}
@@ -30,7 +29,7 @@ dependencies {
     implementation(project(":domain"))
     api(project(":config"))
     implementation("javax.inject:javax.inject:1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.facebook.flipper:flipper:0.162.0")
@@ -38,12 +37,12 @@ dependencies {
     implementation("com.jakewharton.timber:timber:5.0.1")
 
     // Room
-    implementation("androidx.room:room-runtime:2.5.1")
-    implementation("androidx.room:room-ktx:2.5.1")
-    kapt("androidx.room:room-compiler:2.5.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
@@ -53,11 +52,11 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
 
-    implementation("com.google.android.gms:play-services-auth:20.5.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.firebaseui:firebase-ui-auth:8.0.1")
     implementation("com.firebaseui:firebase-ui-storage:8.0.1")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

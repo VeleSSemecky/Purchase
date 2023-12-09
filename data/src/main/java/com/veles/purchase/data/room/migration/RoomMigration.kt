@@ -14,8 +14,8 @@ fun migrationList() = arrayOf(
 )
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
             "ALTER TABLE SkuEntity ADD COLUMN SkuCurrencyCode TEXT NOT NULL DEFAULT '${
                 Currency.getInstance(
                     Locale.getDefault()
@@ -26,8 +26,8 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
 }
 
 val MIGRATION_2_3 = object : Migration(2, LAST_VERSION) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
             "CREATE TABLE `SkuPhotoEntity` (\n`SkuPhotoId` TEXT NOT NULL DEFAULT '${createPrimaryIDKey()}',\n`SkuPhotoUri` TEXT NOT NULL DEFAULT '',\n`SkuId` TEXT NOT NULL,\nPRIMARY KEY(`SkuPhotoId`)\n)"
         )
     }

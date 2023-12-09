@@ -3,6 +3,7 @@ apply(from = rootProject.file("repositories.gradle.kts"))
 
 plugins {
     id("com.github.ben-manes.versions") version "0.45.0"
+    id("com.google.devtools.ksp") version "1.9.10-1.0.13" apply false
 }
 
 buildscript {
@@ -12,11 +13,11 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.0.1")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.6.0-beta01")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
-        classpath("com.google.gms:google-services:4.3.15")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.5")
+        classpath("com.android.tools.build:gradle:8.1.4")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.5")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.21")
+        classpath("com.google.gms:google-services:4.4.0")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
     }
 }
 
@@ -46,11 +47,11 @@ fun PluginContainer.configure(project: Project) {
 }
 
 fun com.android.build.gradle.AppExtension.applyCommons() {
-    compileSdkVersion(33)
+    compileSdkVersion(34)
 
     defaultConfig.apply {
         minSdk = Config.Android.minSdkVersion
-        targetSdk = 33
+        targetSdk = 34
         versionCode = Config.Android.versionCode
         versionName = Config.Android.versionName
     }
@@ -62,11 +63,11 @@ fun com.android.build.gradle.AppExtension.applyCommons() {
 }
 
 fun com.android.build.gradle.LibraryExtension.applyCommons() {
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig.apply {
         minSdk = Config.Android.minSdkVersion
-        targetSdk = 33
+        targetSdk = 34
         versionCode = Config.Android.versionCode
         versionName = Config.Android.versionName
 
