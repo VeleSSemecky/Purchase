@@ -1,0 +1,370 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>FragmentsContributorModule</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            Purchase
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":presentation:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="presentation::com.veles.purchase.presentation.di.module/FragmentsContributorModule///PointingToDeclaration//199237881">
+  <div class="breadcrumbs"><a href="../../index.html">presentation</a><span class="delimiter">/</span><a href="../index.html">com.veles.purchase.presentation.di.module</a><span class="delimiter">/</span><span class="current">FragmentsContributorModule</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Fragments</span><wbr><span>Contributor</span><wbr><span><span>Module</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger/Module///PointingToDeclaration/"><span class="token annotation builtin">Module</span></span></div></div><span class="token keyword">interface </span><a href="index.html">FragmentsContributorModule</a></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="649008485%2FFunctions%2F199237881" anchor-label="provideAddedPurchaseCompose" id="649008485%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-added-purchase-compose.html"><span>provide</span><wbr><span>Added</span><wbr><span>Purchase</span><wbr><span><span>Compose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="649008485%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.edit/-edit-purchase-module/index.html">EditPurchaseModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-added-purchase-compose.html"><span class="token function">provideAddedPurchaseCompose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.edit/-edit-purchase-fragment/index.html">EditPurchaseFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1113227140%2FFunctions%2F199237881" anchor-label="provideBiometricCompose" id="-1113227140%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-biometric-compose.html"><span>provide</span><wbr><span>Biometric</span><wbr><span><span>Compose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1113227140%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.biometric/-biometric-compose-module/index.html">BiometricComposeModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-biometric-compose.html"><span class="token function">provideBiometricCompose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.biometric/-biometric-compose-fragment/index.html">BiometricComposeFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1808881457%2FFunctions%2F199237881" anchor-label="provideCollectionPurchaseCompose" id="1808881457%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-collection-purchase-compose.html"><span>provide</span><wbr><span>Collection</span><wbr><span>Purchase</span><wbr><span><span>Compose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1808881457%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.collection.list/-collection-purchase-compose-module/index.html">CollectionPurchaseComposeModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-collection-purchase-compose.html"><span class="token function">provideCollectionPurchaseCompose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.collection.list/-collection-purchase-compose-fragment/index.html">CollectionPurchaseComposeFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-380911636%2FFunctions%2F199237881" anchor-label="provideCreateCollectionCompose" id="-380911636%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-create-collection-compose.html"><span>provide</span><wbr><span>Create</span><wbr><span>Collection</span><wbr><span><span>Compose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-380911636%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit/-edit-collection-compose-module/index.html">EditCollectionComposeModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-create-collection-compose.html"><span class="token function">provideCreateCollectionCompose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit/-edit-collection-compose-fragment/index.html">EditCollectionComposeFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-151209298%2FFunctions%2F199237881" anchor-label="provideCurrencyChoose" id="-151209298%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-currency-choose.html"><span>provide</span><wbr><span>Currency</span><wbr><span><span>Choose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-151209298%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.dialog.currency.choose/-currency-choose-module/index.html">CurrencyChooseModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-currency-choose.html"><span class="token function">provideCurrencyChoose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.dialog.currency.choose/-currency-choose-fragment/index.html">CurrencyChooseFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1142079549%2FFunctions%2F199237881" anchor-label="provideCurrencySearch" id="1142079549%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-currency-search.html"><span>provide</span><wbr><span>Currency</span><wbr><span><span>Search</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1142079549%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.dialog.currency.search/-currency-search-module/index.html">CurrencySearchModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-currency-search.html"><span class="token function">provideCurrencySearch</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.dialog.currency.search/-currency-search-fragment/index.html">CurrencySearchFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="609051288%2FFunctions%2F199237881" anchor-label="provideHistoryCompose" id="609051288%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-history-compose.html"><span>provide</span><wbr><span>History</span><wbr><span><span>Compose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="609051288%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.history/-history-compose-module/index.html">HistoryComposeModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-history-compose.html"><span class="token function">provideHistoryCompose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.history/-history-compose-fragment/index.html">HistoryComposeFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1336555009%2FFunctions%2F199237881" anchor-label="provideListPurchaseComposeFragment" id="1336555009%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-list-purchase-compose-fragment.html"><span>provide</span><wbr><span>List</span><wbr><span>Purchase</span><wbr><span>Compose</span><wbr><span><span>Fragment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1336555009%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.list/-list-purchase-module/index.html">ListPurchaseModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-list-purchase-compose-fragment.html"><span class="token function">provideListPurchaseComposeFragment</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.list/-list-purchase-fragment/index.html">ListPurchaseFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1145790245%2FFunctions%2F199237881" anchor-label="provideLogin" id="-1145790245%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-login.html"><span>provide</span><wbr><span><span>Login</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1145790245%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.login/-login-module/index.html">LoginModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-login.html"><span class="token function">provideLogin</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.login/-login-fragment/index.html">LoginFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2030062067%2FFunctions%2F199237881" anchor-label="provideMonthChoose" id="-2030062067%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-month-choose.html"><span>provide</span><wbr><span>Month</span><wbr><span><span>Choose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2030062067%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.dialog.date.month/-month-choose-module/index.html">MonthChooseModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-month-choose.html"><span class="token function">provideMonthChoose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.dialog.date.month/-month-choose-fragment/index.html">MonthChooseFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1726090274%2FFunctions%2F199237881" anchor-label="provideNavigation" id="1726090274%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-navigation.html"><span>provide</span><wbr><span><span>Navigation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1726090274%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.navigation/-navigation-module/index.html">NavigationModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-navigation.html"><span class="token function">provideNavigation</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.navigation/-navigation-fragment/index.html">NavigationFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1674327412%2FFunctions%2F199237881" anchor-label="provideOutlayGraph" id="-1674327412%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-outlay-graph.html"><span>provide</span><wbr><span>Outlay</span><wbr><span><span>Graph</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1674327412%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.graph/-outlay-graph-module/index.html">OutlayGraphModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-outlay-graph.html"><span class="token function">provideOutlayGraph</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.graph/-outlay-graph-fragment/index.html">OutlayGraphFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1481301836%2FFunctions%2F199237881" anchor-label="providePhotoList" id="-1481301836%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-photo-list.html"><span>provide</span><wbr><span>Photo</span><wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1481301836%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.photo/-photo-list-module/index.html">PhotoListModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-photo-list.html"><span class="token function">providePhotoList</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.photo/-photo-list-fragment/index.html">PhotoListFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1788094313%2FFunctions%2F199237881" anchor-label="providePhotoPurchaseCompose" id="-1788094313%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-photo-purchase-compose.html"><span>provide</span><wbr><span>Photo</span><wbr><span>Purchase</span><wbr><span><span>Compose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1788094313%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.photo/-photo-purchase-compose-module/index.html">PhotoPurchaseComposeModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-photo-purchase-compose.html"><span class="token function">providePhotoPurchaseCompose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.photo/-photo-purchase-compose-fragment/index.html">PhotoPurchaseComposeFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1983080565%2FFunctions%2F199237881" anchor-label="provideSettingPurchaseCompose" id="1983080565%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-setting-purchase-compose.html"><span>provide</span><wbr><span>Setting</span><wbr><span>Purchase</span><wbr><span><span>Compose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1983080565%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.setting/-setting-purchase-compose-module/index.html">SettingPurchaseComposeModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-setting-purchase-compose.html"><span class="token function">provideSettingPurchaseCompose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.setting/-setting-purchase-compose-fragment/index.html">SettingPurchaseComposeFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1222438781%2FFunctions%2F199237881" anchor-label="provideSkuEdit" id="1222438781%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-sku-edit.html"><span>provide</span><wbr><span>Sku</span><wbr><span><span>Edit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1222438781%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.edit/-sku-edit-module/index.html">SkuEditModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-sku-edit.html"><span class="token function">provideSkuEdit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.edit/-sku-edit-fragment/index.html">SkuEditFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1531706217%2FFunctions%2F199237881" anchor-label="provideSkuList" id="1531706217%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-sku-list.html"><span>provide</span><wbr><span>Sku</span><wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1531706217%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.list/-sku-list-module/index.html">SkuListModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-sku-list.html"><span class="token function">provideSkuList</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.list/-sku-list-fragment/index.html">SkuListFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1451319703%2FFunctions%2F199237881" anchor-label="provideSortPurchase" id="1451319703%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-sort-purchase.html"><span>provide</span><wbr><span>Sort</span><wbr><span><span>Purchase</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1451319703%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.sort/-sort-purchase-module/index.html">SortPurchaseModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-sort-purchase.html"><span class="token function">provideSortPurchase</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.sort/-sort-purchase-fragment/index.html">SortPurchaseFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-56311422%2FFunctions%2F199237881" anchor-label="provideYearChoose" id="-56311422%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provide-year-choose.html"><span>provide</span><wbr><span>Year</span><wbr><span><span>Choose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-56311422%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.veles.purchase.presentation.di.annotation.scope/-fragment-scope/index.html"><span class="token annotation builtin">FragmentScope</span></a></div><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="dagger.android/ContributesAndroidInjector///PointingToDeclaration/"><span class="token annotation builtin">ContributesAndroidInjector</span></span><span class="token punctuation">(</span><span>modules<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.dialog.date.year/-year-choose-module/index.html">YearChooseModule::class</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="provide-year-choose.html"><span class="token function">provideYearChoose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.veles.purchase.presentation.presentation.compose.shopping.dialog.date.year/-year-choose-fragment/index.html">YearChooseFragment</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

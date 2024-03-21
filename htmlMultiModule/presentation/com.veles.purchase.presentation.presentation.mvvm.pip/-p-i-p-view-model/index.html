@@ -1,0 +1,318 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PIPViewModel</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            Purchase
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":presentation:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="presentation::com.veles.purchase.presentation.presentation.mvvm.pip/PIPViewModel///PointingToDeclaration//199237881">
+  <div class="breadcrumbs"><a href="../../index.html">presentation</a><span class="delimiter">/</span><a href="../index.html">com.veles.purchase.presentation.presentation.mvvm.pip</a><span class="delimiter">/</span><span class="current">PIPViewModel</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>PIPView</span><wbr><span><span>Model</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">PIPViewModel</a>&nbsp;<span><span class="token annotation builtin">@</span><span data-unresolved-link="javax.inject/Inject///PointingToDeclaration/"><span class="token annotation builtin">Inject</span></span>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">logger<span class="token operator">: </span><a href="../../../domain/com.veles.purchase.domain.core.loger/-logger/index.html">Logger</a><span class="token punctuation">, </span></span><span class="parameter ">contentResolver<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/ContentResolver.html">ContentResolver</a><span class="token punctuation">, </span></span><span class="parameter ">remoteActionBroadcastReceiver<span class="token operator">: </span><a href="../../com.veles.purchase.presentation.data.broadcast/-remote-action-broadcast-receiver/index.html">RemoteActionBroadcastReceiver</a></span></span><span class="token punctuation">)</span> : <a href="https://developer.android.com/reference/kotlin/androidx/lifecycle/ViewModel.html">ViewModel</a></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1449338833%2FConstructors%2F199237881" anchor-label="PIPViewModel" id="1449338833%2FConstructors%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-i-p-view-model.html"><span>PIPView</span><wbr><span><span>Model</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1449338833%2FConstructors%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="javax.inject/Inject///PointingToDeclaration/"><span class="token annotation builtin">Inject</span></span></div></div><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">logger<span class="token operator">: </span><a href="../../../domain/com.veles.purchase.domain.core.loger/-logger/index.html">Logger</a><span class="token punctuation">, </span></span><span class="parameter ">contentResolver<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/ContentResolver.html">ContentResolver</a><span class="token punctuation">, </span></span><span class="parameter ">remoteActionBroadcastReceiver<span class="token operator">: </span><a href="../../com.veles.purchase.presentation.data.broadcast/-remote-action-broadcast-receiver/index.html">RemoteActionBroadcastReceiver</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1188642777%2FProperties%2F199237881" anchor-label="flowActiveRecording" id="1188642777%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flow-active-recording.html"><span>flow</span><wbr><span>Active</span><wbr><span><span>Recording</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1188642777%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="flow-active-recording.html">flowActiveRecording</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/androidx/camera/video/Recording.html">Recording</a><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2029037624%2FProperties%2F199237881" anchor-label="flowBroadcastReceiverRemoteAction" id="2029037624%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flow-broadcast-receiver-remote-action.html"><span>flow</span><wbr><span>Broadcast</span><wbr><span>Receiver</span><wbr><span>Remote</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2029037624%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="flow-broadcast-receiver-remote-action.html">flowBroadcastReceiverRemoteAction</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/Flow///PointingToDeclaration/">Flow</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="225109623%2FProperties%2F199237881" anchor-label="flowCameraIndex" id="225109623%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flow-camera-index.html"><span>flow</span><wbr><span>Camera</span><wbr><span><span>Index</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="225109623%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="flow-camera-index.html">flowCameraIndex</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1076645560%2FProperties%2F199237881" anchor-label="flowIsAudio" id="1076645560%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flow-is-audio.html"><span>flow</span><wbr><span>Is</span><wbr><span><span>Audio</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1076645560%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="flow-is-audio.html">flowIsAudio</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1047690445%2FProperties%2F199237881" anchor-label="flowVideoCaptureRecorder" id="1047690445%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flow-video-capture-recorder.html"><span>flow</span><wbr><span>Video</span><wbr><span>Capture</span><wbr><span><span>Recorder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1047690445%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="flow-video-capture-recorder.html">flowVideoCaptureRecorder</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/androidx/camera/video/VideoCapture.html">VideoCapture</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/androidx/camera/video/Recorder.html">Recorder</a><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-410658872%2FProperties%2F199237881" anchor-label="flowVideoRecordEvent" id="-410658872%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flow-video-record-event.html"><span>flow</span><wbr><span>Video</span><wbr><span>Record</span><wbr><span><span>Event</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-410658872%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="flow-video-record-event.html">flowVideoRecordEvent</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/androidx/camera/video/VideoRecordEvent.html">VideoRecordEvent</a><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="264516373%2FFunctions%2F199237881" anchor-label="addCloseable" id="264516373%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.sort/-sort-purchase-view-model/index.html#264516373%2FFunctions%2F199237881"><span>add</span><wbr><span><span>Closeable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="264516373%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../com.veles.purchase.presentation.presentation.mvvm.purchase.sort/-sort-purchase-view-model/index.html#264516373%2FFunctions%2F199237881"><span class="token function">addCloseable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>p0<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/io/Closeable.html">Closeable</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2031149360%2FFunctions%2F199237881" anchor-label="getLogger" id="2031149360%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-logger.html"><span>get</span><wbr><span><span>Logger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2031149360%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-logger.html"><span class="token function">getLogger</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../domain/com.veles.purchase.domain.core.loger/-logger/index.html">Logger</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="817274221%2FFunctions%2F199237881" anchor-label="onCameraSwitched" id="817274221%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-camera-switched.html"><span>on</span><wbr><span>Camera</span><wbr><span><span>Switched</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="817274221%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="on-camera-switched.html"><span class="token function">onCameraSwitched</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-883108704%2FFunctions%2F199237881" anchor-label="onRecordingPause" id="-883108704%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-recording-pause.html"><span>on</span><wbr><span>Recording</span><wbr><span><span>Pause</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-883108704%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-recording-pause.html"><span class="token function">onRecordingPause</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1376596617%2FFunctions%2F199237881" anchor-label="onRecordingPlay" id="-1376596617%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-recording-play.html"><span>on</span><wbr><span>Recording</span><wbr><span><span>Play</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1376596617%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-recording-play.html"><span class="token function">onRecordingPlay</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1564067010%2FFunctions%2F199237881" anchor-label="onRecordingStop" id="1564067010%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-recording-stop.html"><span>on</span><wbr><span>Recording</span><wbr><span><span>Stop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1564067010%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-recording-stop.html"><span class="token function">onRecordingStop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-59926212%2FFunctions%2F199237881" anchor-label="setVideoCaptureRecorder" id="-59926212%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-video-capture-recorder.html"><span>set</span><wbr><span>Video</span><wbr><span>Capture</span><wbr><span><span>Recorder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-59926212%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-video-capture-recorder.html"><span class="token function">setVideoCaptureRecorder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">videoCapture<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/camera/video/VideoCapture.html">VideoCapture</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/androidx/camera/video/Recorder.html">Recorder</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/Job///PointingToDeclaration/">Job</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1173305759%2FFunctions%2F199237881" anchor-label="setVideoRecordEvent" id="-1173305759%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-video-record-event.html"><span>set</span><wbr><span>Video</span><wbr><span>Record</span><wbr><span><span>Event</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1173305759%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-video-record-event.html"><span class="token function">setVideoRecordEvent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/camera/video/VideoRecordEvent.html">VideoRecordEvent</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/Job///PointingToDeclaration/">Job</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

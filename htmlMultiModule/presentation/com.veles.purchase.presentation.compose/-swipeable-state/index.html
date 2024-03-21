@@ -1,0 +1,292 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>SwipeableState</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            Purchase
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":presentation:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="presentation::com.veles.purchase.presentation.compose/SwipeableState///PointingToDeclaration//199237881">
+  <div class="breadcrumbs"><a href="../../index.html">presentation</a><span class="delimiter">/</span><a href="../index.html">com.veles.purchase.presentation.compose</a><span class="delimiter">/</span><span class="current">SwipeableState</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Swipeable</span><wbr><span><span>State</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Stable.html"><span class="token annotation builtin">Stable</span></a></div></div><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">SwipeableState</a><span class="token operator">&lt;</span><a href="index.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">initialValue<span class="token operator">: </span><a href="index.html">T</a><span class="token punctuation">, </span></span><span class="parameter ">animationSpec<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/animation/core/AnimationSpec.html">AnimationSpec</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span><span class="token operator"> = </span>SwipeableDefaults.AnimationSpec<span class="token punctuation">, </span></span><span class="parameter ">confirmStateChange<span class="token operator">: </span><span class="token punctuation">(</span>newValue<span class="token operator">: </span><a href="index.html">T</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span>{ true }</span></span><span class="token punctuation">)</span></div><p class="paragraph">State of the <a href="../swipeable.html">swipeable</a> modifier.</p><p class="paragraph">This contains necessary information about any ongoing swipe or animation and provides methods to change the state either immediately or by starting an animation. To create and remember a <a href="index.html">SwipeableState</a> with the default animation clock, use <a href="../remember-swipeable-state.html">rememberSwipeableState</a>.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>initial</span><wbr><span><span>Value</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The initial value of the state.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>animation</span><wbr><span><span>Spec</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default animation that will be used to animate to a new state.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>confirm</span><wbr><span>State</span><wbr><span><span>Change</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Optional callback invoked to confirm or veto a pending state change.</p></div></div></div></div></div><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-dismiss-state/index.html">DismissState</a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="563051203%2FConstructors%2F199237881" anchor-label="SwipeableState" id="563051203%2FConstructors%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-swipeable-state.html"><span>Swipeable</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="563051203%2FConstructors%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">initialValue<span class="token operator">: </span><a href="index.html">T</a><span class="token punctuation">, </span></span><span class="parameter ">animationSpec<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/animation/core/AnimationSpec.html">AnimationSpec</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span><span class="token operator"> = </span>SwipeableDefaults.AnimationSpec<span class="token punctuation">, </span></span><span class="parameter ">confirmStateChange<span class="token operator">: </span><span class="token punctuation">(</span>newValue<span class="token operator">: </span><a href="index.html">T</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span>{ true }</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-853383230%2FClasslikes%2F199237881" anchor-label="Companion" id="-853383230%2FClasslikes%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-853383230%2FClasslikes%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1471332409%2FProperties%2F199237881" anchor-label="currentValue" id="-1471332409%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-value.html"><span>current</span><wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1471332409%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="current-value.html">currentValue</a><span class="token operator">: </span><a href="index.html">T</a></div><div class="brief "><p class="paragraph">The current value of the state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="236694492%2FProperties%2F199237881" anchor-label="direction" id="236694492%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="direction.html"><span><span>direction</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="236694492%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="direction.html">direction</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">The direction in which the <a href="../swipeable.html">swipeable</a> is moving, relative to the current <a href="current-value.html">currentValue</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1350602886%2FProperties%2F199237881" anchor-label="isAnimationRunning" id="-1350602886%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-animation-running.html"><span>is</span><wbr><span>Animation</span><wbr><span><span>Running</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1350602886%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-animation-running.html">isAnimationRunning</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the state is currently animating.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="337817740%2FProperties%2F199237881" anchor-label="offset" id="337817740%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="offset.html"><span><span>offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="337817740%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="offset.html">offset</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/State.html">State</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The current position (in pixels) of the <a href="../swipeable.html">swipeable</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1945424765%2FProperties%2F199237881" anchor-label="overflow" id="1945424765%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="overflow.html"><span><span>overflow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1945424765%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="overflow.html">overflow</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/State.html">State</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The amount by which the <a href="../swipeable.html">swipeable</a> has been swiped past its bounds.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-761365582%2FProperties%2F199237881" anchor-label="progress" id="-761365582%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="progress.html"><span><span>progress</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-761365582%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="progress.html">progress</a><span class="token operator">: </span><a href="../-swipe-progress/index.html">SwipeProgress</a><span class="token operator">&lt;</span><a href="index.html">T</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Information about the ongoing swipe or animation, if any. See <a href="../-swipe-progress/index.html">SwipeProgress</a> for details.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-495925093%2FProperties%2F199237881" anchor-label="targetValue" id="-495925093%2FProperties%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="target-value.html"><span>target</span><wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-495925093%2FProperties%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="target-value.html">targetValue</a><span class="token operator">: </span><a href="index.html">T</a></div><div class="brief "><p class="paragraph">The target value of the state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="2044983540%2FFunctions%2F199237881" anchor-label="animateTo" id="2044983540%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="animate-to.html"><span>animate</span><wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2044983540%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="animate-to.html"><span class="token function">animateTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targetValue<span class="token operator">: </span><a href="index.html">T</a><span class="token punctuation">, </span></span><span class="parameter ">anim<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/animation/core/AnimationSpec.html">AnimationSpec</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span><span class="token operator"> = </span>animationSpec</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set the state to the target value by starting an animation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="671258871%2FFunctions%2F199237881" anchor-label="performDrag" id="671258871%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="perform-drag.html"><span>perform</span><wbr><span><span>Drag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="671258871%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="perform-drag.html"><span class="token function">performDrag</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">delta<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Force <a href="../swipeable.html">swipeable</a> to consume drag delta provided from outside of the regular <a href="../swipeable.html">swipeable</a> gesture flow.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1524586020%2FFunctions%2F199237881" anchor-label="performFling" id="1524586020%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="perform-fling.html"><span>perform</span><wbr><span><span>Fling</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1524586020%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="perform-fling.html"><span class="token function">performFling</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Perform fling with settling to one of the anchors which is determined by the given . Fling with settling <a href="../swipeable.html">swipeable</a> will always consume all the velocity provided since it will settle at the anchor.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1380649284%2FFunctions%2F199237881" anchor-label="snapTo" id="1380649284%2FFunctions%2F199237881" data-filterable-set=":presentation:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="snap-to.html"><span>snap</span><wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1380649284%2FFunctions%2F199237881"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="snap-to.html"><span class="token function">snapTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targetValue<span class="token operator">: </span><a href="index.html">T</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set the state without any animation and suspend until it's set</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

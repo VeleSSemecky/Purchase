@@ -1,0 +1,76 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>swipeable</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../index.html">
+                            Purchase
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":presentation:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="member" id="content" pageids="presentation::com.veles.purchase.presentation.compose//swipeable/androidx.compose.ui.Modifier#com.veles.purchase.presentation.compose.SwipeableState[TypeParam(bounds=[kotlin.Any?])]#kotlin.collections.Map[kotlin.Float,TypeParam(bounds=[kotlin.Any?])]#androidx.compose.foundation.gestures.Orientation#kotlin.Boolean#kotlin.Boolean#androidx.compose.foundation.interaction.MutableInteractionSource?#kotlin.Function2[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?]),com.veles.purchase.presentation.compose.ThresholdConfig]#com.veles.purchase.presentation.compose.ResistanceConfig?#androidx.compose.ui.unit.Dp/PointingToDeclaration//199237881">
+  <div class="breadcrumbs"><a href="../index.html">presentation</a><span class="delimiter">/</span><a href="index.html">com.veles.purchase.presentation.compose</a><span class="delimiter">/</span><span class="current">swipeable</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>swipeable</span></span></h1>
+  </div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":presentation:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="swipeable.html">T</a><span class="token operator">&gt; </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token punctuation">.</span><a href="swipeable.html"><span class="token function">swipeable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">state<span class="token operator">: </span><a href="-swipeable-state/index.html">SwipeableState</a><span class="token operator">&lt;</span><a href="swipeable.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">anchors<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span><a href="swipeable.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">orientation<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/gestures/Orientation.html">Orientation</a><span class="token punctuation">, </span></span><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">reverseDirection<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">interactionSource<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/interaction/MutableInteractionSource.html">MutableInteractionSource</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">thresholds<span class="token operator">: </span><span class="token punctuation">(</span>from<span class="token operator">: </span><a href="swipeable.html">T</a><span class="token punctuation">, </span>to<span class="token operator">: </span><a href="swipeable.html">T</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="-threshold-config/index.html">ThresholdConfig</a><span class="token operator"> = </span>{ _, _ -&gt; FixedThreshold(56.dp) }<span class="token punctuation">, </span></span><span class="parameter ">resistance<span class="token operator">: </span><a href="-resistance-config/index.html">ResistanceConfig</a><span class="token operator">?</span><span class="token operator"> = </span>resistanceConfig(anchors.keys)<span class="token punctuation">, </span></span><span class="parameter ">velocityThreshold<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a><span class="token operator"> = </span>VelocityThreshold</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a></div><p class="paragraph">Enable swipe gestures between a set of predefined states.</p><p class="paragraph">To use this, you must provide a map of anchors (in pixels) to states (of type <a href="swipeable.html">T</a>). Note that this map cannot be empty and cannot have two anchors mapped to the same state.</p><p class="paragraph">When a swipe is detected, the offset of the <a href="-swipeable-state/index.html">SwipeableState</a> will be updated with the swipe delta. You should use this offset to move your content accordingly (see <code class="lang-kotlin">Modifier.offsetPx</code>). When the swipe ends, the offset will be animated to one of the anchors and when that anchor is reached, the value of the <a href="-swipeable-state/index.html">SwipeableState</a> will also be updated to the state corresponding to the new anchor. The target anchor is calculated based on the provided positional <a href="swipeable.html">thresholds</a>.</p><p class="paragraph">Swiping is constrained between the minimum and maximum anchors. If the user attempts to swipe past these bounds, a resistance effect will be applied by default. The amount of resistance at each edge is specified by the <a href="swipeable.html">resistance</a> config. To disable all resistance, set it to <code class="lang-kotlin">null</code>.</p><p class="paragraph">For an example of a <a href="swipeable.html">swipeable</a> with three states, see:</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>T</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The type of the state.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>state</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The state of the <a href="swipeable.html">swipeable</a>.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>anchors</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Pairs of anchors and states, used to map anchors to states and vice versa.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>thresholds</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Specifies where the thresholds between the states are. The thresholds will be used to determine which state to animate to when swiping stops. This is represented as a lambda that takes two states and returns the threshold between them in the form of a <a href="-threshold-config/index.html">ThresholdConfig</a>. Note that the order of the states corresponds to the swipe direction.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>orientation</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The orientation in which the <a href="swipeable.html">swipeable</a> can be swiped.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>enabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Whether this <a href="swipeable.html">swipeable</a> is enabled and should react to the user's input.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>reverse</span><wbr><span><span>Direction</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Whether to reverse the direction of the swipe, so a top to bottom swipe will behave like bottom to top, and a left to right swipe will behave like right to left.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>interaction</span><wbr><span><span>Source</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Optional <a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/interaction/MutableInteractionSource.html">MutableInteractionSource</a> that will passed on to the internal <a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/gestures/package-summary.html">Modifier.draggable</a>.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>resistance</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Controls how much resistance will be applied when swiping past the bounds.</p></div></div></div></div><div class="table-row" data-filterable-current=":presentation:dokkaHtmlPartial/release" data-filterable-set=":presentation:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>velocity</span><wbr><span><span>Threshold</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The threshold (in dp per second) that the end velocity has to exceed in order to animate to the next state, even if the positional <a href="swipeable.html">thresholds</a> have not been reached.</p></div></div></div></div></div></div></div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
