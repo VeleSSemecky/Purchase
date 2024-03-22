@@ -1,3 +1,6 @@
+import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 
 apply(from = rootProject.file("repositories.gradle.kts"))
 
@@ -36,6 +39,17 @@ buildscript {
     }
 }
 
+//afterEvaluate {
+//    tasks.withType<DokkaTask>().configureEach {
+//        outputDirectory.set(file("${project.rootDir}/docs"))
+////        outputDirectory.set(file(project.layout.buildDirectory.dir("docs")))
+//    }
+//}
+
+tasks.dokkaGfmMultiModule{
+    outputDirectory.set(file("${project.rootDir}/docs"))
+}
+
 subprojects {
     project.plugins.configure(project)
 
@@ -44,6 +58,14 @@ subprojects {
     buildscript {
         apply(from = rootProject.file("repositories.gradle.kts"))
     }
+
+//    tasks.withType<DokkaTaskPartial>().configureEach {
+//        outputDirectory.set(file("${project.rootDir}/docs"))
+//    }
+//
+//    tasks.withType<DokkaMultiModuleTask>().configureEach {
+//        outputDirectory.set(file("${project.rootDir}/docs"))
+//    }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
@@ -57,6 +79,7 @@ fun PluginContainer.configure(project: Project) {
         when (this) {
             is com.android.build.gradle.AppPlugin -> project.extensions.getByType<com.android.build.gradle.AppExtension>()
                 .applyCommons()
+
             is com.android.build.gradle.LibraryPlugin -> project.extensions.getByType<com.android.build.gradle.LibraryExtension>()
                 .applyCommons()
         }
