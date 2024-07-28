@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,17 +20,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Chip
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ElevatedAssistChip
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,10 +43,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.veles.purchase.presentation.R
@@ -92,56 +94,41 @@ class HistoryComposeFragment : BaseFragment() {
             bottomBar = {
             },
             floatingActionButtonPosition = FabPosition.End,
-            isFloatingActionButtonDocked = true,
             content = {
                 Content(it)
             },
-            backgroundColor = Color.Black
+            contentColor = Color.Black
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Preview
     @Composable
     fun ToolBar() {
         TopAppBar(
-            contentPadding = PaddingValues(0.dp),
-            content = {
-                ConstraintLayout(
-                    modifier = Modifier.fillMaxSize()
+            navigationIcon = {
+                IconButton(
+                    onClick = { findNavController().popBackStack() },
                 ) {
-                    val (
-                        IconBack,
-                        TextTitle
-                    ) = createRefs()
-                    IconSquare(
-                        id = R.drawable.ic_baseline_arrow_back_24,
-                        onClick = {
-                            findNavController().popBackStack()
-                        },
-                        modifier = Modifier
-                            .constrainAs(IconBack) {
-                                start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
-                    )
-                    Text(
-                        text = requireContext().getString(R.string.history),
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .constrainAs(TextTitle) {
-                                start.linkTo(parent.start, margin = 24.dp)
-                                end.linkTo(parent.end, margin = 24.dp)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                        contentDescription = "Localized description"
                     )
                 }
             },
-            elevation = 0.dp,
-            backgroundColor = Colors.colorPrimary
+            title = {
+                Text(
+                    text = requireContext().getString(R.string.history),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            colors = TopAppBarDefaults.topAppBarColors().copy(
+                containerColor = Colors.colorPrimary
+            )
         )
     }
 
@@ -150,6 +137,7 @@ class HistoryComposeFragment : BaseFragment() {
         paddingValues: PaddingValues = PaddingValues()
     ) = Column(
         modifier = Modifier
+            .padding(paddingValues)
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
@@ -167,15 +155,19 @@ class HistoryComposeFragment : BaseFragment() {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
+    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     fun ItemPurchase(
         item: PurchaseTableModelUI
     ) {
         Card(
-            backgroundColor = Colors.colorAccent,
+            colors = CardDefaults.cardColors().copy(
+                containerColor = Colors.colorAccent
+            ),
             shape = RoundedCornerShape(0.dp),
-            elevation = 0.dp,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 0.dp
+            ),
             modifier = Modifier
                 .padding(
                     start = 8.dp,
@@ -232,81 +224,81 @@ class HistoryComposeFragment : BaseFragment() {
                     )
                 }
                 FlowRow(modifier = Modifier.fillMaxWidth()) {
-                    Chip(
-                        modifier = Modifier.padding(
-                            start = 8.dp
-                        ),
-                        onClick = {
+                    ElevatedAssistChip(
+                        modifier = Modifier.padding(start = 8.dp),
+                        onClick = {},
+                        label = {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .align(alignment = Alignment.CenterVertically)
+                            ) {
+                                Text(
+                                    text = requireContext().getString(item.typeHistory.text),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.White
+                                )
+                            }
+                        },
+                        leadingIcon = {
+                            IconSquare(
+                                enabled = false,
+                                id = R.drawable.ic_press,
+                                tint = Colors.gr
+                            )
                         },
                         shape = MaterialTheme.shapes.medium.copy(CornerSize(percent = 50))
-                    ) {
-                        IconSquare(
-                            modifier = Modifier.padding(8.dp),
-                            enabled = false,
-                            id = R.drawable.ic_press,
-                            tint = Colors.gr
-                        )
-                        Text(
-                            text = requireContext().getString(item.typeHistory.text),
-                            style = MaterialTheme.typography.body2,
-                            color = Color.White,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                    Chip(
-                        modifier = Modifier.padding(
-                            start = 8.dp
-                        ),
-                        onClick = {
+                    )
+                    ElevatedAssistChip(
+                        modifier = Modifier.padding(start = 8.dp),
+                        onClick = {},
+                        label = {
+                            Text(
+                                text = let {
+                                    val ins = Instant.ofEpochMilli(item.time)
+                                        .atZone(ZoneId.systemDefault())
+                                    val form = DateTimeFormatter.ofPattern("HH:mm")
+                                        .withZone(ZoneId.systemDefault())
+                                    form.format(ins)
+                                },
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White,
+                            )
+                        },
+                        leadingIcon = {
+                            IconSquare(
+                                enabled = false,
+                                id = R.drawable.ic_baseline_access_time_24,
+                                tint = Colors.gr
+                            )
                         },
                         shape = MaterialTheme.shapes.medium.copy(CornerSize(percent = 50))
-                    ) {
-                        IconSquare(
-                            modifier = Modifier.padding(8.dp),
-                            enabled = false,
-                            id = R.drawable.ic_baseline_access_time_24,
-                            tint = Colors.gr
-                        )
-                        Text(
-                            text = let {
-                                val ins = Instant.ofEpochMilli(item.time)
-                                    .atZone(ZoneId.systemDefault())
-                                val form = DateTimeFormatter.ofPattern("HH:mm")
-                                    .withZone(ZoneId.systemDefault())
-                                form.format(ins)
-                            },
-                            style = MaterialTheme.typography.body2,
-                            color = Color.White,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                    Chip(
-                        modifier = Modifier.padding(
-                            start = 8.dp
-                        ),
-                        onClick = {
+                    )
+                    ElevatedAssistChip(
+                        modifier = Modifier.padding(start = 8.dp),
+                        onClick = {},
+                        label = {
+                            Text(
+                                text = let {
+                                    val ins = Instant.ofEpochMilli(item.time)
+                                        .atZone(ZoneId.systemDefault())
+                                    val form = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+                                        .withZone(ZoneId.systemDefault())
+                                    form.format(ins)
+                                },
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White
+                            )
+                        },
+                        leadingIcon = {
+                            IconSquare(
+                                enabled = false,
+                                id = R.drawable.ic_baseline_access_time_24,
+                                tint = Colors.gr
+                            )
                         },
                         shape = MaterialTheme.shapes.medium.copy(CornerSize(percent = 50))
-                    ) {
-                        IconSquare(
-                            modifier = Modifier.padding(8.dp),
-                            enabled = false,
-                            id = R.drawable.ic_baseline_access_time_24,
-                            tint = Colors.gr
-                        )
-                        Text(
-                            text = let {
-                                val ins = Instant.ofEpochMilli(item.time)
-                                    .atZone(ZoneId.systemDefault())
-                                val form = DateTimeFormatter.ofPattern("dd MMMM yyyy")
-                                    .withZone(ZoneId.systemDefault())
-                                form.format(ins)
-                            },
-                            style = MaterialTheme.typography.body2,
-                            color = Color.White,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
+                    )
                 }
             }
         }

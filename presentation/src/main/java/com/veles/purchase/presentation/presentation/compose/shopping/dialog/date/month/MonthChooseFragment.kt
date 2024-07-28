@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -94,7 +94,7 @@ class MonthChooseFragment : BaseBottomSheetDialogFragment() {
                     findNavController().popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Colors.colorPrimaryDark
+                    containerColor = Colors.colorPrimaryDark
                 )
             ) {
                 Text(
@@ -117,7 +117,7 @@ class MonthChooseFragment : BaseBottomSheetDialogFragment() {
                     findNavController().popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Colors.colorPrimaryDark
+                    containerColor = Colors.colorPrimaryDark
                 )
             ) {
                 Text(

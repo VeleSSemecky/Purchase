@@ -1,16 +1,12 @@
 package com.veles.purchase.presentation.presentation.compose
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import com.veles.purchase.presentation.presentation.compose.Colors.colorPrimary
 
 object Colors {
     val colorPrimary = Color(0xff212121)
@@ -26,9 +22,13 @@ fun MyTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    MaterialTheme(
+    androidx.compose.material3.MaterialTheme(
 //        colors = if (darkTheme) DarkColors else LightColors,
-        colors = DarkColors,
+        colorScheme = darkColorScheme().copy(
+            primary = Colors.colorPrimary,
+            surface = Colors.surface,
+            primaryContainer = Colors.gr
+        ),
         content = content
     )
 }
@@ -36,17 +36,26 @@ fun MyTheme(
 fun textStyle() = TextStyle(color = Color.White, fontWeight = FontWeight.Bold)
 fun textStyle1() = TextStyle(color = Color.White)
 
+//@Composable
+//fun textFieldColors() = TextFieldDefaults.outlinedTextFieldColors(
+//    textColor = Color.White,
+//    focusedBorderColor = Colors.gr,
+//    unfocusedBorderColor = Color.White.copy(alpha = ContentAlpha.disabled),
+//    cursorColor = Colors.colorAccent
+//)
+
 @Composable
-fun textFieldColors() = TextFieldDefaults.outlinedTextFieldColors(
-    textColor = Color.White,
+fun textFieldColorsMaterial3() = OutlinedTextFieldDefaults.colors(
+    focusedTextColor = Color.White,
+    unfocusedTextColor = Color.White,
     focusedBorderColor = Colors.gr,
-    unfocusedBorderColor = Color.White.copy(alpha = ContentAlpha.disabled),
+    unfocusedBorderColor = Color.White.copy(alpha = 0.38f),
     cursorColor = Colors.colorAccent
 )
 
-private val DarkColors = darkColors(
-    primary = colorPrimary
-)
-private val LightColors = lightColors(
-    primary = colorPrimary
-)
+//private val DarkColors = darkColors(
+//    primary = Colors.colorPrimary
+//)
+//private val LightColors = lightColors(
+//    primary = Colors.colorPrimary
+//)

@@ -10,7 +10,6 @@ import com.veles.purchase.data.room.table.PurchaseTable
 
 @Dao
 interface PurchaseDAO {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg purchaseTables: PurchaseTable)
 

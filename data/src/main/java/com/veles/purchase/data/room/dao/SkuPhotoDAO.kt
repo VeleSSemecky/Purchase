@@ -8,7 +8,6 @@ import com.veles.purchase.data.room.table.SkuPhotoEntity
 
 @Dao
 interface SkuPhotoDAO {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: SkuPhotoEntity)
 

@@ -12,32 +12,28 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,8 +42,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
@@ -87,8 +85,8 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
                             FAB()
                         },
                         floatingActionButtonPosition = FabPosition.End,
-                        isFloatingActionButtonDocked = true,
-                        backgroundColor = Color.Black
+//                        isFloatingActionButtonDocked = true,
+                        containerColor = Colors.surface
                     )
                     Progress()
                     DialogDelete()
@@ -99,8 +97,7 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
 
     @Composable
     fun FAB() {
-        FloatingActionButton(
-            shape = CircleShape,
+        androidx.compose.material3.FloatingActionButton(
             modifier = Modifier,
             onClick = {
                 findParentNavController().navigate(
@@ -133,7 +130,7 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun Content(
         paddingValues: PaddingValues = PaddingValues()
@@ -144,26 +141,26 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
             .padding(paddingValues = paddingValues)
     ) {
         val list by viewModel.stateFlowListPurchaseCollections.collectAsState()
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
+            verticalItemSpacing = 20.dp,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.weight(1f)
         ) {
             itemsIndexed(
                 list
             ) { _, item ->
-                val dismissState = rememberDismissState()
-                if (dismissState.isDismissed(DismissDirection.EndToStart) ||
-                    dismissState.isDismissed(DismissDirection.StartToEnd)
+                val dismissState = rememberSwipeToDismissBoxState()
+                if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
+                    dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd
                 ) {
                     LaunchedEffect(key1 = this@CollectionPurchaseComposeFragment, block = {
                         viewModel.onDeletePurchaseCollections(item)
-                        dismissState.snapTo(DismissValue.Default)
+                        dismissState.snapTo(SwipeToDismissBoxValue.Settled)
                     })
                 }
-                SwipeToDismiss(state = dismissState, background = {}) {
+                SwipeToDismissBox(state = dismissState, backgroundContent = {}) {
                     ItemPurchaseCollections(item)
                 }
             }
@@ -171,17 +168,18 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
     }
 
     @OptIn(ExperimentalFoundationApi::class)
+    @Preview(showBackground = true, showSystemUi = true)
     @Composable
     fun ItemPurchaseCollections(
-        item: PurchaseCollectionModel
+        item: PurchaseCollectionModel = PurchaseCollectionModel.TEST
     ) {
-        Card(
-            backgroundColor = Colors.colorAccent,
-            shape = RoundedCornerShape(0.dp),
-            elevation = 0.dp,
+        androidx.compose.material3.ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = 92.dp, min = 92.dp)
+                .wrapContentHeight()
                 .combinedClickable(
                     onClick = {
                         findParentNavController().navigate(
@@ -196,27 +194,47 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
                 )
 
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = item.name,
-                    fontSize = 18.sp,
-                    style = textStyle1(),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+            Column {
+                Row(
                     modifier = Modifier
+                        .background(Color(0xFF38A186))
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        textAlign = TextAlign.Start,
+                        text = item.name,
+                        fontSize = 16.sp,
+                        style = textStyle1(),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 12.dp,
+                                bottom = 12.dp
+                            )
+                    )
+                    Icon(
+                        modifier = Modifier.padding(8.dp),
+                        painter = painterResource(R.drawable.ic_purchase_collections),
+                        contentDescription = "Purchase Collections Icon",
+                        tint = Color.White
+                    )
+                }
+                Text(
+                    textAlign = TextAlign.Start,
+                    text = "In the catalog of items ${item.count}",
+                    color = Color(0xFFEDEDED),
+                    fontSize = 14.sp,
+                    style = textStyle1(),
+                    modifier = Modifier
+                        .background(Colors.colorAccent)
                         .fillMaxWidth()
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 24.dp,
-                            bottom = 24.dp
-                        )
-
+                        .padding(16.dp)
                 )
             }
         }
@@ -226,7 +244,7 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
     fun DialogDelete() {
         val itemState = viewModel.stateFlowDeletePurchaseCollections.collectAsState()
         val item = itemState.value ?: return
-        AlertDialog(
+        androidx.compose.material3.AlertDialog(
             title = {
                 Text(text = getString(R.string.are_you_sure), color = Color.White, fontSize = 20.sp)
             },

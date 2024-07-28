@@ -23,22 +23,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Card
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -108,11 +109,11 @@ class ListPurchaseFragment : BaseFragment() {
             bottomBar = {
             },
             floatingActionButtonPosition = FabPosition.End,
-            isFloatingActionButtonDocked = true,
+//            isFloatingActionButtonDocked = true,
             content = {
                 Content(it)
             },
-            backgroundColor = Color.Black
+            containerColor = Color.Black
         )
         Progress()
     }
@@ -129,9 +130,7 @@ class ListPurchaseFragment : BaseFragment() {
                 },
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(
-                color = Colors.gr
-            )
+            CircularProgressIndicator(color = Colors.gr)
         }
     }
 
@@ -145,89 +144,137 @@ class ListPurchaseFragment : BaseFragment() {
             onTextChange = {
                 viewModel.updateSearchText(it)
             },
-            content = { state ->
-                ConstraintLayout(
-                    modifier = Modifier.fillMaxSize()
+            navigationIcon = {
+                IconButton(
+                    onClick = { viewModel.onBackClicked() },
                 ) {
-                    val (
-                        IconBack,
-                        TextTitle,
-                        IconSearch,
-                        IconSettings,
-                        IconLater
-                    ) = createRefs()
-                    IconSquare(
-                        id = R.drawable.ic_baseline_arrow_back_24,
-                        modifier = Modifier
-                            .constrainAs(IconBack) {
-                                start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            },
-                        onClick = {
-                            viewModel.onBackClicked()
-                        },
-                        contentDescription = "Search Icon",
-                        tint = Color.White
-                    )
-                    val collectionPurchaseName by viewModel.flowCollectionPurchase.collectAsState()
-                    Text(
-                        text = collectionPurchaseName.name,
-                        textAlign = TextAlign.Start,
-                        fontSize = 20.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .constrainAs(TextTitle) {
-                                start.linkTo(IconBack.end, margin = 8.dp)
-                                end.linkTo(IconSearch.start, margin = 8.dp)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
-                    )
-                    IconSquare(
-                        id = R.drawable.ic_baseline_search_24,
-                        onClick = {
-                            state.value = SearchWidgetState.OPENED
-                        },
-                        modifier = Modifier
-                            .constrainAs(IconSearch) {
-                                end.linkTo(IconLater.start)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            },
-                        tint = Colors.gr,
-                        contentDescription = "Search Icon"
-                    )
-                    IconSquare(
-                        id = R.drawable.ic_later,
-                        modifier = Modifier
-                            .constrainAs(IconLater) {
-                                end.linkTo(IconSettings.start)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            },
-                        onClick = {
-                            viewModel.onSettingsClicked()
-                        },
-                        contentDescription = "Setting Icon",
-                        tint = Colors.gr
-                    )
-                    IconSquare(
-                        id = R.drawable.ic_baseline_settings_24,
-                        modifier = Modifier
-                            .constrainAs(IconSettings) {
-                                end.linkTo(parent.end)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            },
-                        onClick = {
-                            viewModel.onSettingsClicked()
-                        },
-                        contentDescription = "Setting Icon",
-                        tint = Colors.gr
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                        contentDescription = "Localized description"
                     )
                 }
-            }
+            },
+            title = {
+                val collectionPurchaseName by viewModel.flowCollectionPurchase.collectAsState()
+                Text(
+                    text = collectionPurchaseName.name,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            actions = { state ->
+                IconButton(
+                    onClick = { state.value = SearchWidgetState.OPENED },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                        contentDescription = "Localized description"
+                    )
+                }
+                IconButton(
+                    onClick = { viewModel.onSettingsClicked() },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_later),
+                        contentDescription = "Localized description"
+                    )
+                }
+                IconButton(
+                    onClick = { viewModel.onSettingsClicked() },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_settings_24),
+                        contentDescription = "Localized description"
+                    )
+                }
+            },
+//            content = { state ->
+//                ConstraintLayout(
+//                    modifier = Modifier.fillMaxSize()
+//                ) {
+//                    val (
+//                        IconBack,
+//                        TextTitle,
+//                        IconSearch,
+//                        IconSettings,
+//                        IconLater
+//                    ) = createRefs()
+//                    IconSquare(
+//                        id = R.drawable.ic_baseline_arrow_back_24,
+//                        modifier = Modifier
+//                            .constrainAs(IconBack) {
+//                                start.linkTo(parent.start)
+//                                top.linkTo(parent.top)
+//                                bottom.linkTo(parent.bottom)
+//                            },
+//                        onClick = {
+//                            viewModel.onBackClicked()
+//                        },
+//                        contentDescription = "Search Icon",
+//                        tint = Color.White
+//                    )
+//                    val collectionPurchaseName by viewModel.flowCollectionPurchase.collectAsState()
+//                    Text(
+//                        text = collectionPurchaseName.name,
+//                        textAlign = TextAlign.Start,
+//                        fontSize = 20.sp,
+//                        color = Color.White,
+//                        modifier = Modifier
+//                            .constrainAs(TextTitle) {
+//                                start.linkTo(IconBack.end, margin = 8.dp)
+//                                end.linkTo(IconSearch.start, margin = 8.dp)
+//                                top.linkTo(parent.top)
+//                                bottom.linkTo(parent.bottom)
+//                            }
+//                    )
+//                    IconSquare(
+//                        id = R.drawable.ic_baseline_search_24,
+//                        onClick = {
+//                            state.value = SearchWidgetState.OPENED
+//                        },
+//                        modifier = Modifier
+//                            .constrainAs(IconSearch) {
+//                                end.linkTo(IconLater.start)
+//                                top.linkTo(parent.top)
+//                                bottom.linkTo(parent.bottom)
+//                            },
+//                        tint = Colors.gr,
+//                        contentDescription = "Search Icon"
+//                    )
+//                    IconSquare(
+//                        id = R.drawable.ic_later,
+//                        modifier = Modifier
+//                            .constrainAs(IconLater) {
+//                                end.linkTo(IconSettings.start)
+//                                top.linkTo(parent.top)
+//                                bottom.linkTo(parent.bottom)
+//                            },
+//                        onClick = {
+//                            viewModel.onSettingsClicked()
+//                        },
+//                        contentDescription = "Setting Icon",
+//                        tint = Colors.gr
+//                    )
+//                    IconSquare(
+//                        id = R.drawable.ic_baseline_settings_24,
+//                        modifier = Modifier
+//                            .constrainAs(IconSettings) {
+//                                end.linkTo(parent.end)
+//                                top.linkTo(parent.top)
+//                                bottom.linkTo(parent.bottom)
+//                            },
+//                        onClick = {
+//                            viewModel.onSettingsClicked()
+//                        },
+//                        contentDescription = "Setting Icon",
+//                        tint = Colors.gr
+//                    )
+//                }
+//            }
         )
     }
 
@@ -261,7 +308,9 @@ class ListPurchaseFragment : BaseFragment() {
                     })
                 }
                 SwipeToDismiss(
-                    modifier = Modifier.fillMaxWidth().animateItemPlacement(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateItemPlacement(),
                     state = dismissState,
                     background = {},
                     dismissThresholds = { FractionalThreshold(0.7f) }
@@ -314,13 +363,13 @@ class ListPurchaseFragment : BaseFragment() {
             placeholder = {
                 Text(
                     modifier = Modifier
-                        .alpha(ContentAlpha.medium),
+                        .alpha(0.60f),
                     text = getString(R.string.name_purchase),
                     color = Color.White
                 )
             },
             textStyle = TextStyle(
-                fontSize = MaterialTheme.typography.subtitle1.fontSize
+                fontSize = MaterialTheme.typography.titleMedium.fontSize
             ),
             singleLine = true,
             trailingIcon = {
@@ -366,12 +415,36 @@ class ListPurchaseFragment : BaseFragment() {
                     viewModel.insertAdd(createTextState)
                 }
             ),
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.White,
-                backgroundColor = Color.Transparent,
-                cursorColor = Color.White.copy(alpha = ContentAlpha.medium),
-                focusedIndicatorColor = Colors.gr.copy(alpha = ContentAlpha.high),
-                focusedLabelColor = Colors.gr.copy(alpha = ContentAlpha.high)
+
+//            private object HighContrastContentAlpha {
+//                const val high: Float = 1.00f
+//                const val medium: Float = 0.74f
+//                const val disabled: Float = 0.38f
+//            }
+//
+//                    /**
+//                     * Alpha levels for low luminance content in light theme, or high luminance content in dark theme.
+//                     *
+//                     * This content will typically be placed on grayscale surfaces, so the contrast here can be lower
+//                     * without sacrificing accessibility and legibility.
+//                     *
+//                     * These levels are typically used for body text on the main surface (white in light theme, grey
+//                     * in dark theme) and text / iconography in surface colored tabs / bottom navigation / etc.
+//                     */
+//                    private object LowContrastContentAlpha {
+//                const val high: Float = 0.87f
+//                const val medium: Float = 0.60f
+//                const val disabled: Float = 0.38f
+//            }
+
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                cursorColor = Color.White.copy(alpha = 0.60f),
+                focusedIndicatorColor = Colors.gr.copy(alpha = 0.87f),
+                focusedLabelColor = Colors.gr.copy(alpha = 0.87f)
             )
         )
     }
@@ -385,9 +458,13 @@ class ListPurchaseFragment : BaseFragment() {
     ) {
         val purchaseSetting by viewModel.flowPurchaseSetting.collectAsState()
         Card(
-            backgroundColor = Colors.colorAccent,
+            colors = CardDefaults.cardColors().copy(
+                containerColor = Colors.colorAccent
+            ),
             shape = purchaseSetting.toShape(),
-            elevation = elevation,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = elevation
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(

@@ -1,17 +1,12 @@
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    id("kotlin-parcelize")
-    id("com.google.devtools.ksp")
-    kotlin("android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.parcelize)
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 android {
     namespace = "com.veles.purchase.data"
-
-    lint {
-        abortOnError = false
-    }
 
     defaultConfig {
         buildConfigField("int", "VERSION_CODE", "${Config.Android.versionCode}")
@@ -28,35 +23,37 @@ android {
 dependencies {
     implementation(project(":domain"))
     api(project(":config"))
-    implementation("javax.inject:javax.inject:1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.google.code.gson:gson:2.9.0")
-    implementation("com.facebook.flipper:flipper:0.162.0")
-    implementation("com.facebook.flipper:flipper-network-plugin:0.162.0")
-    implementation("com.jakewharton.timber:timber:5.0.1")
+
+    // DI
+    implementation(libs.inject)
+
+    // Coroutines
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.play.services)
+
+    // Network
+    implementation(libs.retrofit)
+    implementation(libs.gson)
+    implementation(libs.flipper)
+    implementation(libs.flipper.network.plugin)
+
+    // Logger
+    implementation(libs.timber)
 
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-    implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
-    implementation("com.google.firebase:firebase-messaging-ktx")
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-storage-ktx")
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase.data)
+    implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.ui.storage)
 
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-    implementation("com.firebaseui:firebase-ui-auth:8.0.1")
-    implementation("com.firebaseui:firebase-ui-storage:8.0.1")
+    // Utils
+    implementation(libs.play.services.auth)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
-
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    // DataStore
+    implementation(libs.datastore.preferences)
 }

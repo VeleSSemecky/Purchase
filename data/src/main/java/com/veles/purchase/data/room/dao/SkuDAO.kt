@@ -13,7 +13,6 @@ import com.veles.purchase.domain.utill.zeroString
 
 @Dao
 interface SkuDAO {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: SkuEntity)
 
@@ -24,26 +23,48 @@ interface SkuDAO {
     suspend fun getSkuEntityList(): List<SkuEntity>
 
     @Query(
-        "SELECT sum(SkuPrice) SkuSumMonth, strftime('%m', SkuLocalData/1000, 'unixepoch') SkuMonth, SkuCurrencyCode SkuCurrencyCode, SkuLocalData SkuLocalData FROM SkuEntity WHERE strftime('%Y', SkuLocalData/1000, 'unixepoch')=:year GROUP BY SkuCurrencyCode, strftime('%m', SkuLocalData/1000, 'unixepoch')"
+        "SELECT sum(SkuPrice) SkuSumMonth, " +
+            "strftime('%m', SkuLocalData/1000, 'unixepoch') SkuMonth, " +
+            "SkuCurrencyCode SkuCurrencyCode, " +
+            "SkuLocalData SkuLocalData " +
+            "FROM SkuEntity WHERE strftime('%Y', SkuLocalData/1000, 'unixepoch')=:year " +
+            "GROUP BY SkuCurrencyCode, strftime('%m', SkuLocalData/1000, 'unixepoch')",
     )
     suspend fun getSkuSumMonthListFilterYear(year: String): List<SkuSumMonthRelations>
 
     @Query(
-        "SELECT sum(SkuPrice) SkuSumMonth, strftime('%m', SkuLocalData/1000, 'unixepoch') SkuMonth, SkuCurrencyCode SkuCurrencyCode, SkuLocalData SkuLocalData FROM SkuEntity GROUP BY strftime('%m', SkuLocalData/1000, 'unixepoch')"
+        "SELECT sum(SkuPrice) SkuSumMonth, " +
+            "strftime('%m', SkuLocalData/1000, 'unixepoch') SkuMonth, " +
+            "SkuCurrencyCode SkuCurrencyCode, " +
+            "SkuLocalData SkuLocalData " +
+            "FROM SkuEntity " +
+            "GROUP BY strftime('%m', SkuLocalData/1000, 'unixepoch')",
     )
     suspend fun getSkuSumMonthList(): List<SkuSumMonthRelations>
 
     @Query(
-        "SELECT sum(SkuPrice) SkuSumMonth, strftime('%m', SkuLocalData/1000, 'unixepoch') SkuMonth, SkuCurrencyCode SkuCurrencyCode, SkuLocalData SkuLocalData FROM SkuEntity WHERE CAST(strftime('%m', SkuLocalData/1000, 'unixepoch') AS INTEGER)=:month GROUP BY SkuCurrencyCode, strftime('%m', SkuLocalData/1000, 'unixepoch')"
+        "SELECT sum(SkuPrice) SkuSumMonth, " +
+            "strftime('%m', SkuLocalData/1000, 'unixepoch') SkuMonth, " +
+            "SkuCurrencyCode SkuCurrencyCode, " +
+            "SkuLocalData SkuLocalData " +
+            "FROM SkuEntity WHERE CAST(strftime('%m', SkuLocalData/1000, 'unixepoch') AS INTEGER)=:month " +
+            "GROUP BY SkuCurrencyCode, strftime('%m', SkuLocalData/1000, 'unixepoch')",
     )
     suspend fun getSkuSumMonthListFilterMonth(month: Int): List<SkuSumMonthRelations>
 
     @Query(
-        "SELECT sum(SkuPrice) SkuSumMonth, strftime('%m', SkuLocalData/1000, 'unixepoch') SkuMonth, SkuCurrencyCode SkuCurrencyCode, SkuLocalData SkuLocalData FROM SkuEntity WHERE strftime('%Y', SkuLocalData/1000, 'unixepoch')=:year AND CAST(strftime('%m', SkuLocalData/1000, 'unixepoch') AS INTEGER)=:month GROUP BY SkuCurrencyCode, strftime('%m', SkuLocalData/1000, 'unixepoch')"
+        "SELECT sum(SkuPrice) SkuSumMonth, " +
+            "strftime('%m', SkuLocalData/1000, 'unixepoch') SkuMonth, " +
+            "SkuCurrencyCode SkuCurrencyCode, " +
+            "SkuLocalData SkuLocalData " +
+            "FROM SkuEntity " +
+            "WHERE strftime('%Y', SkuLocalData/1000, 'unixepoch')=:year " +
+            "AND CAST(strftime('%m', SkuLocalData/1000, 'unixepoch') AS INTEGER)=:month " +
+            "GROUP BY SkuCurrencyCode, strftime('%m', SkuLocalData/1000, 'unixepoch')",
     )
     suspend fun getSkuSumMonthListFilterMonthAndYear(
         month: Int,
-        year: String
+        year: String,
     ): List<SkuSumMonthRelations>
 
     @Query("DELETE FROM SkuEntity WHERE SkuId=:skuId")
@@ -59,22 +80,29 @@ interface SkuDAO {
     }
 
     @Transaction
-    suspend fun getSkuSumMonthList(month: Int, year: String) =
-        when {
-            month != zeroInt() && year != zeroString() -> getSkuSumMonthListFilterMonthAndYear(
+    suspend fun getSkuSumMonthList(
+        month: Int,
+        year: String,
+    ) = when {
+        month != zeroInt() && year != zeroString() ->
+            getSkuSumMonthListFilterMonthAndYear(
                 month,
-                year
+                year,
             )
-            month != zeroInt() && year == zeroString() -> getSkuSumMonthListFilterMonth(month)
-            month == zeroInt() && year != zeroString() -> getSkuSumMonthListFilterYear(year)
-            else -> getSkuSumMonthList()
-        }
+
+        month != zeroInt() && year == zeroString() -> getSkuSumMonthListFilterMonth(month)
+        month == zeroInt() && year != zeroString() -> getSkuSumMonthListFilterYear(year)
+        else -> getSkuSumMonthList()
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: List<SkuPhotoEntity>)
 
     @Transaction
-    suspend fun insert(skuEntity: SkuEntity, skuPhotoEntity: List<SkuPhotoEntity> = emptyList()) {
+    suspend fun insert(
+        skuEntity: SkuEntity,
+        skuPhotoEntity: List<SkuPhotoEntity> = emptyList(),
+    ) {
         insert(skuEntity)
         if (skuPhotoEntity.isNotEmpty()) {
             insert(skuPhotoEntity)

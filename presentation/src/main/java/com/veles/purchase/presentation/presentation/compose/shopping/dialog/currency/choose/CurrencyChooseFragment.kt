@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -134,7 +134,7 @@ class CurrencyChooseFragment : BaseBottomSheetDialogFragment() {
                     findNavController().popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Colors.colorPrimaryDark
+                    containerColor = Colors.colorPrimaryDark
                 )
 //                contentPadding = PaddingValues(16.dp)
             ) {
@@ -162,7 +162,7 @@ class CurrencyChooseFragment : BaseBottomSheetDialogFragment() {
                     )
                 },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Colors.colorPrimaryDark
+                    containerColor = Colors.colorPrimaryDark
                 )
 //                contentPadding = PaddingValues(16.dp)
             ) {

@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -61,7 +63,7 @@ class PhotoPurchaseComposeFragment : BaseFragment() {
                     content = {
                         Content(it)
                     },
-                    backgroundColor = Color.Black
+                    containerColor = Color.Black
                 )
                 Progress()
             }
@@ -105,12 +107,16 @@ class PhotoPurchaseComposeFragment : BaseFragment() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Preview
     @Composable
     fun ToolBar() {
         TopAppBar(
-            contentPadding = PaddingValues(0.dp),
-            content = {
+            colors =  TopAppBarDefaults.topAppBarColors().copy(
+                containerColor = Colors.colorPrimary
+            ),
+//            contentPadding = PaddingValues(0.dp),
+            title = {
                 ConstraintLayout(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -157,9 +163,7 @@ class PhotoPurchaseComposeFragment : BaseFragment() {
                             }
                     )
                 }
-            },
-            elevation = 0.dp,
-            backgroundColor = Colors.colorPrimary
+            }
         )
     }
 

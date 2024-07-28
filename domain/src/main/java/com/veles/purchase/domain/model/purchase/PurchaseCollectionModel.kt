@@ -7,7 +7,8 @@ data class PurchaseCollectionModel(
     val id: String,
     val name: String,
     val creator: UserPurchaseModel,
-    val listMembers: List<String>
+    val listMembers: List<String>,
+    val count: Int
 ) {
 
     companion object {
@@ -16,7 +17,16 @@ data class PurchaseCollectionModel(
             id = emptyString(),
             name = emptyString(),
             creator = UserPurchaseModel.EMPTY,
-            listMembers = emptyList()
+            listMembers = emptyList(),
+            count = 0
+        )
+
+        val TEST = PurchaseCollectionModel(
+            id = emptyString(),
+            name = "Collection Name",
+            creator = UserPurchaseModel.EMPTY,
+            listMembers = emptyList(),
+            count = 0
         )
     }
 }

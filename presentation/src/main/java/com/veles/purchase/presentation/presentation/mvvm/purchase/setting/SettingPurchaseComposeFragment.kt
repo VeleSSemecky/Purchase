@@ -19,17 +19,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.RadioButton
-import androidx.compose.material.RadioButtonDefaults
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Slider
-import androidx.compose.material.SliderDefaults
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -81,7 +84,7 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                         content = {
                             Content(it)
                         },
-                        backgroundColor = Color.Black
+                        containerColor = Color.Black
                     )
                 }
             }
@@ -102,11 +105,12 @@ class SettingPurchaseComposeFragment : BaseFragment() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ToolBar() {
         TopAppBar(
-            contentPadding = PaddingValues(0.dp),
-            content = {
+//            contentPadding = PaddingValues(0.dp),
+            title = {
                 ConstraintLayout(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -154,8 +158,10 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                     )
                 }
             },
-            elevation = 0.dp,
-            backgroundColor = Colors.colorPrimary
+//            elevation = 0.dp,
+            colors = TopAppBarDefaults.topAppBarColors().copy(
+                containerColor = Colors.colorPrimary
+            )
         )
     }
 
@@ -173,7 +179,7 @@ class SettingPurchaseComposeFragment : BaseFragment() {
             ItemPurchase(purchaseSetting = settingsPurchase)
             Spacer(modifier = Modifier.padding(16.dp))
 
-            ShapeType.values().forEach {
+            ShapeType.entries.forEach {
                 TypeShape(it, settingsPurchase)
             }
 
@@ -183,7 +189,7 @@ class SettingPurchaseComposeFragment : BaseFragment() {
 
             Spacer(modifier = Modifier.padding(16.dp))
 
-            SizeType.values().forEach {
+            SizeType.entries.forEach {
                 SizeType(it, settingsPurchase)
             }
 
@@ -207,12 +213,13 @@ class SettingPurchaseComposeFragment : BaseFragment() {
     @Composable
     fun IsMaintainSymmetry(purchaseSetting: PurchaseSetting) {
         Row(
-            modifier = Modifier.selectable(
-                selected = purchaseSetting.isSymmetry,
-                onClick = {
-                    viewModel.onIsSymmetryChanged(purchaseSetting.isSymmetry.not())
-                }
-            )
+            modifier = Modifier
+                .selectable(
+                    selected = purchaseSetting.isSymmetry,
+                    onClick = {
+                        viewModel.onIsSymmetryChanged(purchaseSetting.isSymmetry.not())
+                    }
+                )
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -239,12 +246,13 @@ class SettingPurchaseComposeFragment : BaseFragment() {
     @Composable
     fun IsShowImage(purchaseSetting: PurchaseSetting) {
         Row(
-            modifier = Modifier.selectable(
-                selected = purchaseSetting.isImage,
-                onClick = {
-                    viewModel.onIsShowImageChanged(purchaseSetting.isImage.not())
-                }
-            )
+            modifier = Modifier
+                .selectable(
+                    selected = purchaseSetting.isImage,
+                    onClick = {
+                        viewModel.onIsShowImageChanged(purchaseSetting.isImage.not())
+                    }
+                )
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -314,10 +322,11 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                 onClick = {
                     viewModel.onSizeTypeChanged(item)
                 },
-                colors = RadioButtonDefaults.colors(
+                colors = RadioButtonDefaults.colors().copy(
                     selectedColor = Colors.gr,
                     unselectedColor = Colors.gr,
-                    disabledColor = Color.Black
+                    disabledSelectedColor = Color.Black,
+                    disabledUnselectedColor = Color.Black
                 )
             )
             Text(
@@ -381,10 +390,10 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                 onClick = {
                     viewModel.onTypeShapeChanged(item)
                 },
-                colors = RadioButtonDefaults.colors(
+                colors = RadioButtonDefaults.colors().copy(
                     selectedColor = Colors.gr,
                     unselectedColor = Colors.gr,
-                    disabledColor = Color.Black
+                    disabledSelectedColor = Color.Black
                 )
             )
             Text(
@@ -402,9 +411,13 @@ class SettingPurchaseComposeFragment : BaseFragment() {
         item: PurchaseModel = PurchaseModel.TEST
     ) {
         Card(
-            backgroundColor = Colors.colorAccent,
+            colors = CardDefaults.cardColors().copy(
+                containerColor = Colors.colorAccent
+            ),
             shape = purchaseSetting.toShape(),
-            elevation = 4.dp,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(

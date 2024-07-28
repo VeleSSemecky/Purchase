@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.compose
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec

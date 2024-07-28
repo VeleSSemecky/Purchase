@@ -1,7 +1,7 @@
 package com.veles.purchase.data.repository.message
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.toObject
 import com.veles.purchase.config.EnvironmentConfig
 import com.veles.purchase.config.EnvironmentConfig.COLLECTION_DATABASE
 import com.veles.purchase.config.EnvironmentConfig.UID
@@ -60,6 +60,6 @@ class NotificationMessageRepositoryImpl @Inject constructor(
             registrationIds = listUsersMessageToken
         )
 
-        notificationMessageService.sendNotificationMessage(notificationMessageModel)
+//        notificationMessageService.sendNotificationMessage(notificationMessageModel)
     }
 }

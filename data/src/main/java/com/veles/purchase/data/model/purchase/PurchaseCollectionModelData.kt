@@ -1,6 +1,7 @@
 package com.veles.purchase.data.model.purchase
 
 import android.os.Parcelable
+import com.google.firebase.firestore.AggregateQuery
 import com.veles.purchase.data.model.user.UserPurchaseModelData
 import com.veles.purchase.data.model.user.toUserPurchaseModel
 import com.veles.purchase.data.model.user.toUserPurchaseModelData
@@ -17,11 +18,12 @@ data class PurchaseCollectionModelData(
     val listMembers: List<String> = arrayListOf()
 ) : Parcelable
 
-fun PurchaseCollectionModelData.toPurchaseCollectionModel() = PurchaseCollectionModel(
+fun PurchaseCollectionModelData.toPurchaseCollectionModel(count: Int) = PurchaseCollectionModel(
     id = id,
     name = name,
     creator = creator.toUserPurchaseModel(),
-    listMembers = listMembers
+    listMembers = listMembers,
+    count = count
 )
 
 fun PurchaseCollectionModel.toPurchaseCollectionModelData() = PurchaseCollectionModelData(

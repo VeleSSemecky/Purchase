@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,13 +19,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,8 +41,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,7 +58,6 @@ import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.base.mvvm.fragment.MenuItemSelected
 import com.veles.purchase.presentation.compose.CircularCenterProgressIndicator
-import com.veles.purchase.presentation.compose.IconSquare
 import com.veles.purchase.presentation.databinding.NavHostFragmentBinding
 import com.veles.purchase.presentation.extensions.onCreateComposeView
 import com.veles.purchase.presentation.model.drawer.DrawerItem
@@ -102,31 +107,30 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
     @Composable
     fun ComposeContent() {
         if (viewModel.isNeedLogin()) return
-        val scaffoldState = rememberScaffoldState()
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
-                ToolBar(scaffoldState, scope)
-            },
-            floatingActionButton = {
-            },
-            bottomBar = {
-            },
+
+        ModalNavigationDrawer(
+            scrimColor = Color.Transparent,
             drawerContent = {
-                DrawerContent(scaffoldState, scope)
+                DrawerContent(drawerState, scope)
             },
-            drawerBackgroundColor = Color.Transparent,
-            drawerContentColor = Color.Transparent,
-            drawerScrimColor = Color.Transparent,
-            drawerElevation = 0.dp,
-            floatingActionButtonPosition = FabPosition.End,
-            isFloatingActionButtonDocked = true,
-            content = {
-                AndroidViewBinding(NavHostFragmentBinding::inflate, Modifier.padding(it))
-            },
-            backgroundColor = Color.Black
-        )
+            drawerState = drawerState,
+        ) {
+            Scaffold(
+                topBar = {
+                    ToolBar(drawerState, scope)
+                },
+                floatingActionButton = {
+                },
+                bottomBar = {
+                },
+                content = {
+                    AndroidViewBinding(NavHostFragmentBinding::inflate, Modifier.padding(it))
+                },
+                contentColor = Color.Black
+            )
+        }
     }
 
     @Composable
@@ -146,7 +150,7 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
     }
 
     @Composable
-    fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+    fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope) {
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -154,7 +158,7 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
                 .background(Colors.colorPrimaryDark)
         ) {
             DrawerHeader()
-            DrawerItems(scaffoldState, scope)
+            DrawerItems(drawerState, scope)
         }
     }
 
@@ -215,8 +219,8 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
     }
 
     @Composable
-    fun DrawerItems(scaffoldState: ScaffoldState, scope: CoroutineScope) {
-        DrawerItem.values().forEach {
+    fun DrawerItems(drawerState: DrawerState, scope: CoroutineScope) {
+        DrawerItem.entries.forEach {
             Box(
                 modifier = Modifier
                     .clickable {
@@ -229,9 +233,10 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
                                     PIP::class.java
                                 )
                             )
+
                             DrawerItem.SETTING -> viewModel.onSettingPurchaseClicked()
                         }
-                        scope.launch { scaffoldState.drawerState.currentValue }
+                        scope.launch { drawerState.currentValue }
                     }
                     .padding(
                         horizontal = 24.dp,
@@ -264,44 +269,35 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun ToolBar(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+    fun ToolBar(drawerState: DrawerState, scope: CoroutineScope) {
         TopAppBar(
-            contentPadding = PaddingValues(0.dp),
-            content = {
-                ConstraintLayout(
-                    modifier = Modifier.fillMaxSize()
+            navigationIcon = {
+                IconButton(
+                    onClick = { scope.launch { drawerState.open() } },
                 ) {
-                    val (IconBack, TextTitle) = createRefs()
-                    IconSquare(
-                        id = R.drawable.ic_baseline_menu,
-                        onClick = {
-                            scope.launch { scaffoldState.drawerState.open() }
-                        },
-                        modifier = Modifier
-                            .constrainAs(IconBack) {
-                                start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
-                    )
-                    Text(
-                        text = "Collection List",
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .constrainAs(TextTitle) {
-                                start.linkTo(parent.start, margin = 24.dp)
-                                end.linkTo(parent.end, margin = 24.dp)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_menu),
+                        contentDescription = "Localized description",
+                        tint = Color.White
                     )
                 }
             },
-            elevation = 0.dp,
-            backgroundColor = Colors.colorPrimary
+            title = {
+                Text(
+                    text = "Collection List",
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            colors = TopAppBarDefaults.topAppBarColors().copy(
+                containerColor = Colors.colorPrimary
+            )
         )
     }
 

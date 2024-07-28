@@ -1,8 +1,10 @@
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.jetbrains.kotlin.jvm)
 }
 
 dependencies {
-    implementation("javax.inject:javax.inject:1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    // DI
+    implementation(libs.inject)
+    // Coroutines
+    implementation(libs.coroutines.core)
 }

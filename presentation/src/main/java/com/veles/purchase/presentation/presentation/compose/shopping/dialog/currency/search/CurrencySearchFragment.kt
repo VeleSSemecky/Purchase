@@ -17,10 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,7 +42,7 @@ import com.veles.purchase.presentation.compose.autocomplete.TextSearchBar
 import com.veles.purchase.presentation.model.currency.CurrencyModel
 import com.veles.purchase.presentation.model.currency.filteredCurrencyModelList
 import com.veles.purchase.presentation.presentation.compose.Colors
-import com.veles.purchase.presentation.presentation.compose.textFieldColors
+import com.veles.purchase.presentation.presentation.compose.textFieldColorsMaterial3
 import com.veles.purchase.presentation.presentation.compose.textStyle
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 
@@ -94,7 +94,7 @@ class CurrencySearchFragment : BaseFragment() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 12.dp, start = 16.dp, end = 16.dp),
-            colors = textFieldColors(),
+            colors = textFieldColorsMaterial3(),
             textStyle = textStyle(),
             value = value,
             label = {
@@ -165,7 +165,7 @@ class CurrencySearchFragment : BaseFragment() {
                     findNavController().popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Colors.colorPrimaryDark
+                    containerColor = Colors.colorPrimaryDark
                 )
             ) {
                 Text(
@@ -191,7 +191,7 @@ class CurrencySearchFragment : BaseFragment() {
                     )
                 },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Colors.colorPrimaryDark
+                    containerColor = Colors.colorPrimaryDark
                 )
             ) {
                 Icon(

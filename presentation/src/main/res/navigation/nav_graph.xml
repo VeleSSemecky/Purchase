@@ -130,7 +130,6 @@
         <action
             android:id="@+id/fragmentCurrencyChoose"
             app:destination="@id/fragmentCurrencyChoose">
-
         </action>
 
         <action

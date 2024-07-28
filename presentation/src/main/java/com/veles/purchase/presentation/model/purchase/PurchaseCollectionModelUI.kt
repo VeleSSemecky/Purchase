@@ -14,19 +14,22 @@ data class PurchaseCollectionModelUI(
     val id: String = Calendar.getInstance().timeInMillis.toString(),
     val name: String = emptyString(),
     val creator: UserPurchaseModelUI = UserPurchaseModelUI(),
-    val listMembers: List<String> = arrayListOf()
+    val listMembers: List<String> = arrayListOf(),
+    val count: Int = 0
 ) : Parcelable
 
 fun PurchaseCollectionModelUI.toPurchaseCollectionModel() = PurchaseCollectionModel(
     id = id,
     name = name,
     creator = creator.toUserPurchaseModel(),
-    listMembers = listMembers
+    listMembers = listMembers,
+    count = count
 )
 
 fun PurchaseCollectionModel.toPurchaseCollectionModelUI() = PurchaseCollectionModelUI(
     id = id,
     name = name,
     creator = creator.toUserPurchaseModelUI(),
-    listMembers = listMembers
+    listMembers = listMembers,
+    count = count
 )
