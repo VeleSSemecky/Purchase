@@ -229,10 +229,16 @@ dependencies {
     implementation(libs.camera.view)
     implementation(libs.camera.video)
 
+    // Credentials
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.identity)
+
     // DataStore
     implementation(libs.datastore.preferences)
 
     // Utils
+    implementation(libs.security.crypto)
     implementation(libs.play.services.auth)
     implementation(libs.play.services.location)
     implementation(libs.biometric)

@@ -6,6 +6,7 @@ import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.createPurchaseTable
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.message.NotificationMessageRepository
+import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import com.veles.purchase.domain.repository.purchase.SetPurchaseRepository
 import javax.inject.Inject
 import kotlinx.coroutines.currentCoroutineContext
@@ -13,7 +14,7 @@ import kotlinx.coroutines.withContext
 
 class AddLazyPurchaseUseCase @Inject constructor(
     private val appCoroutineDispatcher: AppCoroutineDispatcher,
-    private val setPurchaseRepository: SetPurchaseRepository,
+    private val purchaseRepository: PurchaseRepository,
     private val notificationMessageRepository: NotificationMessageRepository,
     private val historyRepository: HistoryRepository
 ) {
@@ -31,7 +32,7 @@ class AddLazyPurchaseUseCase @Inject constructor(
         purchaseModel: PurchaseModel,
         purchaseCollectionId: String
     ) = withContext(currentCoroutineContext()) {
-        setPurchaseRepository.setPurchase(
+        purchaseRepository.setPurchase(
             purchaseModel,
             purchaseCollectionId
         )

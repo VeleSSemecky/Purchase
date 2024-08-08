@@ -4,6 +4,7 @@ import com.veles.purchase.domain.model.history.HistoryType
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.createPurchaseTable
 import com.veles.purchase.domain.repository.history.HistoryRepository
+import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import com.veles.purchase.domain.repository.storage.DeletePurchasePhotoRepository
 import com.veles.purchase.domain.repository.storage.DeletePurchaseRepository
 import javax.inject.Inject
@@ -12,7 +13,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.withContext
 
 class DeletePurchaseUseCase @Inject constructor(
-    private val deletePurchaseRepository: DeletePurchaseRepository,
+    private val purchaseRepository: PurchaseRepository,
     private val deletePurchasePhotoRepository: DeletePurchasePhotoRepository,
     private val historyRepository: HistoryRepository
 ) {
@@ -31,7 +32,7 @@ class DeletePurchaseUseCase @Inject constructor(
         purchaseModel: PurchaseModel,
         purchaseCollectionId: String
     ) = withContext(currentCoroutineContext()) {
-        deletePurchaseRepository.deletePurchase(
+        purchaseRepository.deletePurchase(
             purchaseModel.createId,
             purchaseCollectionId
         )

@@ -22,6 +22,11 @@ android {
             "MESSAGE_API",
             "\"${Secret.Server.messageApi}\""
         )
+        buildConfigField(
+            "String",
+            "SERVER_CLIENT_ID",
+            "\"${Secret.Server.serverClientId}\""
+        )
     }
 
     flavorDimensions.add("default")

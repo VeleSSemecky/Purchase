@@ -1,4 +1,4 @@
-package com.veles.purchase.data.networking.entity
+package com.veles.purchase.data.networking.entity.core
 
 import com.google.gson.Gson
 import kotlin.properties.Delegates

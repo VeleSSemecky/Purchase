@@ -1,11 +1,11 @@
 package com.veles.purchase.domain.usecase.purchase
 
 import com.veles.purchase.domain.model.purchase.PurchaseModel
-import com.veles.purchase.domain.repository.purchase.GetPurchaseRepository
+import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import javax.inject.Inject
 
 class GetPurchaseUseCase @Inject constructor(
-    private val getPurchaseRepository: GetPurchaseRepository
+    private val purchaseRepository: PurchaseRepository
 ) {
 
     suspend operator fun invoke(
@@ -13,7 +13,7 @@ class GetPurchaseUseCase @Inject constructor(
         purchaseCreateId: String?
     ): PurchaseModel? = when {
         collectionPurchaseId.isNullOrEmpty() || purchaseCreateId.isNullOrEmpty() -> null
-        else -> getPurchaseRepository.getPurchase(
+        else -> purchaseRepository.getPurchase(
             collectionPurchaseId,
             purchaseCreateId
         )

@@ -3,13 +3,11 @@ package com.veles.purchase.data.repository.user.get
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.veles.purchase.config.EnvironmentConfig
-import com.veles.purchase.config.EnvironmentConfig.COLLECTION_DATABASE
 import com.veles.purchase.config.EnvironmentConfig.UID
-import com.veles.purchase.config.EnvironmentConfig.USER_PURCHASE
 import com.veles.purchase.data.core.extensions.snapshotFlow
-import com.veles.purchase.data.model.user.UserPurchaseModelData
-import com.veles.purchase.data.model.user.toUserPurchaseModel
+import com.veles.purchase.data.extensions.userPurchase
+import com.veles.purchase.data.networking.entity.user.UserDto
+import com.veles.purchase.data.networking.entity.user.toUserPurchaseModel
 import com.veles.purchase.domain.core.suspendCancellableCoroutineWithTimeout
 import com.veles.purchase.domain.model.user.UserPurchaseModel
 import com.veles.purchase.domain.repository.user.FirebaseGetUserRepository
@@ -25,14 +23,11 @@ class FirebaseGetUserRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : FirebaseGetUserRepository {
 
-    override suspend fun apiFirebaseFirestore(): Flow<List<UserPurchaseModel>> = firebaseFirestore
-        .collection(COLLECTION_DATABASE)
-        .document(EnvironmentConfig.DB_KEY)
-        .collection(USER_PURCHASE)
+    override suspend fun apiFirebaseFirestore(): Flow<List<UserPurchaseModel>> = firebaseFirestore.userPurchase
         .snapshotFlow()
         .map { snapshot ->
             snapshot.documents.mapNotNull {
-                it.toObject<UserPurchaseModelData>()?.toUserPurchaseModel()
+                it.toObject<UserDto>()?.toUserPurchaseModel()
             }
         }.map { value ->
             value.toMutableList()
@@ -41,14 +36,11 @@ class FirebaseGetUserRepositoryImpl @Inject constructor(
 
     override suspend fun apiGetUserPurchase(): UserPurchaseModel? =
         suspendCancellableCoroutineWithTimeout {
-            firebaseFirestore
-                .collection(COLLECTION_DATABASE)
-                .document(EnvironmentConfig.DB_KEY)
-                .collection(USER_PURCHASE)
+            firebaseFirestore.userPurchase
                 .whereEqualTo(UID, firebaseAuth.currentUser?.uid).get()
                 .await()
                 .documents.firstNotNullOfOrNull {
-                    it.toObject<UserPurchaseModelData>()?.toUserPurchaseModel()
+                    it.toObject<UserDto>()?.toUserPurchaseModel()
                 }
         }
 

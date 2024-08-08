@@ -2,15 +2,14 @@ package com.veles.purchase.data.repository.message
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import com.veles.purchase.config.EnvironmentConfig
-import com.veles.purchase.config.EnvironmentConfig.COLLECTION_DATABASE
 import com.veles.purchase.config.EnvironmentConfig.UID
-import com.veles.purchase.config.EnvironmentConfig.USER_PURCHASE
+import com.veles.purchase.data.extensions.collectionPurchase
+import com.veles.purchase.data.extensions.userPurchase
 import com.veles.purchase.data.local.data.DataStore
-import com.veles.purchase.data.model.fcm.DataModelData
-import com.veles.purchase.data.model.fcm.NotificationMessageModelData
-import com.veles.purchase.data.model.purchase.PurchaseCollectionModelData
-import com.veles.purchase.data.model.user.UserPurchaseModelData
+import com.veles.purchase.data.networking.entity.fcm.DataModelData
+import com.veles.purchase.data.networking.entity.fcm.NotificationMessageModelData
+import com.veles.purchase.data.networking.entity.purchase.PurchaseCollectionDto
+import com.veles.purchase.data.networking.entity.user.UserDto
 import com.veles.purchase.data.networking.service.message.NotificationMessageService
 import com.veles.purchase.domain.repository.message.NotificationMessageRepository
 import javax.inject.Inject
@@ -24,29 +23,21 @@ class NotificationMessageRepositoryImpl @Inject constructor(
     private val dataStore: DataStore
 ) : NotificationMessageRepository {
 
-    private fun FirebaseFirestore.getCollectionPurchase() = collection(COLLECTION_DATABASE)
-        .document(EnvironmentConfig.DB_KEY)
-        .collection(EnvironmentConfig.COLLECTION_PURCHASE)
-
-    private fun FirebaseFirestore.getUserPurchase() = collection(COLLECTION_DATABASE)
-        .document(EnvironmentConfig.DB_KEY)
-        .collection(USER_PURCHASE)
-
     override suspend fun sendNotificationMessage(
         purchaseCollectionId: String,
         message: String
     ) {
-        val listMembers = firebaseFirestore.getCollectionPurchase()
+        val listMembers = firebaseFirestore.collectionPurchase
             .document(purchaseCollectionId).get().await()
-            .toObject<PurchaseCollectionModelData>()?.listMembers
+            .toObject<PurchaseCollectionDto>()?.listMembers
             ?: return
 
         if (listMembers.isEmpty()) return
 
-        val listUsersMessageToken = firebaseFirestore.getUserPurchase()
+        val listUsersMessageToken = firebaseFirestore.userPurchase
             .whereIn(UID, listMembers)
             .get().await().documents.mapNotNull {
-                it?.toObject<UserPurchaseModelData>()?.fcmToken
+                it?.toObject<UserDto>()?.fcmToken
             }
 
         if (listUsersMessageToken.isEmpty()) return

@@ -10,7 +10,9 @@ import dagger.Provides
 import javax.crypto.Cipher
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [
+    SecurityModule::class
+])
 object CryptographyModule {
 
     @Provides

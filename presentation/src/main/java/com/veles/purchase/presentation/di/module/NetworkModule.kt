@@ -63,18 +63,14 @@ object NetworkModule {
         httpClient: OkHttpClient,
         exceptionFactory: ExceptionFactory,
         gson: Gson
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(EnvironmentConfig.MESSAGE_API)
-            .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(ErrorsCallAdapterFactory(exceptionFactory, gson))
-            .build()
-    }
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(EnvironmentConfig.MESSAGE_API)
+        .client(httpClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .addCallAdapterFactory(ErrorsCallAdapterFactory(exceptionFactory, gson))
+        .build()
 
     @Singleton
     @Provides
-    fun provideNotificationMessageService(retrofit: Retrofit): NotificationMessageService {
-        return retrofit.create(NotificationMessageService::class.java)
-    }
+    fun provideNotificationMessageService(retrofit: Retrofit): NotificationMessageService = retrofit.create(NotificationMessageService::class.java)
 }

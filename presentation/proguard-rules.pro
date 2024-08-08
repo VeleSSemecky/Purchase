@@ -33,7 +33,7 @@
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models.
 # Modify this rule to fit the structure of your app.
--keepclassmembers class com.veles.purchase.data.model.** {
+-keepclassmembers class com.veles.purchase.data.entity.** {
   *;
 }
 
@@ -80,10 +80,20 @@
 #####################
 -keep public class com.veles.purchase.presentation.model.** {*;}
 -keep public class com.veles.purchase.domain.model.** {*;}
--keep public class com.veles.purchase.data.model.** {*;}
+-keep public class com.veles.purchase.data.entity.** {*;}
 -keep enum * { *; }
+#####################
+### Credential Manager
+#####################
+-if class androidx.credentials.CredentialManager
+-keep class androidx.credentials.playservices.** {
+  *;
+}
 
 # ToDo: Ignore com.google.firebase.FirebaseException: An internal error has occurred. [ Instantiation of JsonResponse failed! class com.google.android.gms.internal.firebase-auth-api.v0 ]
 -keep public class com.google.firebase.** { *;}
 -keep class com.google.android.gms.internal.** { *;}
 -keepclasseswithmembers class com.google.firebase.FirebaseException
+
+
+

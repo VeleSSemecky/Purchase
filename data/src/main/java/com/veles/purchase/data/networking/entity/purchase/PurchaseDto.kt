@@ -1,4 +1,4 @@
-package com.veles.purchase.data.model.purchase
+package com.veles.purchase.data.networking.entity.purchase
 
 import android.os.Parcelable
 import com.veles.purchase.domain.model.purchase.PurchaseModel
@@ -7,19 +7,17 @@ import java.util.Calendar
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class PurchaseModelData(
+data class PurchaseDto(
     val createId: String = Calendar.getInstance().timeInMillis.toString(),
     val text: String = emptyString(),
     val count: String = emptyString(),
     val check: Boolean = false,
     val price: String = emptyString(),
     val userList: List<String> = emptyList(),
-    val listImage: List<PurchasePhotoModelData> = emptyList()
+    val listImage: List<PurchasePhotoDto> = emptyList()
 ) : Parcelable
 
-fun PurchaseModelData?.createIfNull(): PurchaseModelData = this ?: PurchaseModelData()
-
-fun PurchaseModelData.toPurchaseModel() = PurchaseModel(
+fun PurchaseDto.toPurchaseModel() = PurchaseModel(
     createId = createId,
     text = text,
     count = count,
@@ -29,7 +27,7 @@ fun PurchaseModelData.toPurchaseModel() = PurchaseModel(
     listImage = listImage.map { it.toPurchasePhotoModel() }
 )
 
-fun PurchaseModel.toPurchaseModelData() = PurchaseModelData(
+fun PurchaseModel.toPurchaseModelData() = PurchaseDto(
     createId = createId,
     text = text,
     count = count,

@@ -17,7 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,12 +40,12 @@ fun GoogleButton(
     borderColor: Color = Color.LightGray,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     progressIndicatorColor: Color = MaterialTheme.colorScheme.primary,
+    isClicked: Boolean,
     onClicked: () -> Unit
 ) {
-    var clicked by remember { mutableStateOf(false) }
 
     Surface(
-        modifier = modifier.clickable { clicked = !clicked },
+        modifier = modifier.clickable { if (!isClicked) onClicked() },
         shape = shape,
         border = BorderStroke(width = 1.dp, color = borderColor),
         color = backgroundColor
@@ -70,8 +73,8 @@ fun GoogleButton(
                 tint = Color.Unspecified
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = if (clicked) loadingText else text)
-            if (clicked) {
+            Text(text = if (isClicked) loadingText else text)
+            if (isClicked) {
                 Spacer(modifier = Modifier.width(16.dp))
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -80,7 +83,6 @@ fun GoogleButton(
                     strokeWidth = 2.dp,
                     color = progressIndicatorColor
                 )
-                onClicked()
             }
         }
     }
@@ -89,9 +91,13 @@ fun GoogleButton(
 @Composable
 @Preview
 private fun GoogleButtonPreview() {
+    val isClickedState = remember { mutableStateOf(false) }
     GoogleButton(
         text = "Sign Up with Google",
         loadingText = "Creating Account...",
-        onClicked = {}
+        isClicked = isClickedState.value,
+        onClicked = {
+            isClickedState.value = !isClickedState.value
+        }
     )
 }

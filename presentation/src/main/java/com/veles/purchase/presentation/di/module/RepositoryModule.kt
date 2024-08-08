@@ -1,9 +1,7 @@
 package com.veles.purchase.presentation.di.module
 
 import android.content.Context
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import androidx.credentials.CredentialManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,15 +11,14 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.veles.purchase.data.repository.auth.AuthWithGoogleRepositoryImpl
 import com.veles.purchase.data.repository.auth.BiometricRepositoryImpl
+import com.veles.purchase.data.repository.auth.LoginRepositoryImpl
 import com.veles.purchase.data.repository.collection.delete.DeleteCollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.collection.get.GetCollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.collection.set.SetCollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.history.HistoryRepositoryImpl
 import com.veles.purchase.data.repository.later.PurchaseLaterRepositoryImpl
 import com.veles.purchase.data.repository.message.NotificationMessageRepositoryImpl
-import com.veles.purchase.data.repository.purchase.delete.DeletePurchaseRepositoryImpl
-import com.veles.purchase.data.repository.purchase.get.GetGetPurchaseRepositoryImpl
-import com.veles.purchase.data.repository.purchase.set.SetPurchaseRepositoryImpl
+import com.veles.purchase.data.repository.purchase.PurchaseRepositoryImpl
 import com.veles.purchase.data.repository.setting.SettingRepositoryImpl
 import com.veles.purchase.data.repository.sku.SkuPhotoRepositoryImpl
 import com.veles.purchase.data.repository.sku.SkuRepositoryImpl
@@ -29,17 +26,18 @@ import com.veles.purchase.data.repository.storage.delete.DeletePurchasePhotoRepo
 import com.veles.purchase.data.repository.storage.get.GetPurchasePhotoRepositoryImpl
 import com.veles.purchase.data.repository.storage.set.SetPurchasePhotoRepositoryImpl
 import com.veles.purchase.data.repository.user.get.FirebaseGetUserRepositoryImpl
-import com.veles.purchase.data.repository.user.logout.UserLogoutRepositoryImpl
+import com.veles.purchase.data.repository.auth.LogoutRepositoryImpl
 import com.veles.purchase.data.repository.user.token.FirebaseMessageTokenRepositoryImpl
 import com.veles.purchase.domain.repository.auth.AuthWithGoogleRepository
 import com.veles.purchase.domain.repository.auth.BiometricRepository
+import com.veles.purchase.domain.repository.auth.LoginRepository
 import com.veles.purchase.domain.repository.collection.DeleteCollectionPurchaseRepository
 import com.veles.purchase.domain.repository.collection.GetCollectionPurchaseRepository
 import com.veles.purchase.domain.repository.collection.SetCollectionPurchaseRepository
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.message.NotificationMessageRepository
 import com.veles.purchase.domain.repository.purchase.GetPurchasePhotoRepository
-import com.veles.purchase.domain.repository.purchase.GetPurchaseRepository
+import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseLaterRepository
 import com.veles.purchase.domain.repository.purchase.SetPurchaseRepository
 import com.veles.purchase.domain.repository.setting.SettingRepository
@@ -50,8 +48,7 @@ import com.veles.purchase.domain.repository.storage.DeletePurchaseRepository
 import com.veles.purchase.domain.repository.storage.SetPurchasePhotoRepository
 import com.veles.purchase.domain.repository.user.FirebaseGetUserRepository
 import com.veles.purchase.domain.repository.user.FirebaseMessageTokenRepository
-import com.veles.purchase.domain.repository.user.UserLogoutRepository
-import com.veles.purchase.presentation.R
+import com.veles.purchase.domain.repository.auth.LogoutRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -59,14 +56,6 @@ import javax.inject.Singleton
 
 @Module
 interface RepositoryModule {
-
-    @Singleton
-    @Binds
-    fun provideSetPurchaseRepository(repository: SetPurchaseRepositoryImpl): SetPurchaseRepository
-
-    @Singleton
-    @Binds
-    fun provideDeletePurchaseRepository(repository: DeletePurchaseRepositoryImpl): DeletePurchaseRepository
 
     @Singleton
     @Binds
@@ -106,7 +95,7 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun provideUserLogoutRepository(repository: UserLogoutRepositoryImpl): UserLogoutRepository
+    fun provideUserLogoutRepository(repository: LogoutRepositoryImpl): LogoutRepository
 
     @Singleton
     @Binds
@@ -122,7 +111,7 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun provideGetGetPurchaseRepository(repository: GetGetPurchaseRepositoryImpl): GetPurchaseRepository
+    fun providePurchaseRepository(repository: PurchaseRepositoryImpl): PurchaseRepository
 
     @Singleton
     @Binds
@@ -140,33 +129,26 @@ interface RepositoryModule {
     @Binds
     fun provideDeleteCollectionPurchaseRepository(repository: DeleteCollectionPurchaseRepositoryImpl): DeleteCollectionPurchaseRepository
 
+    @Singleton
+    @Binds
+    fun provideLoginRepository(repository: LoginRepositoryImpl): LoginRepository
+
     companion object {
 
         @Singleton
         @Provides
-        fun provideFirebaseStorage(): FirebaseStorage {
-            return Firebase.storage
-        }
+        fun provideFirebaseStorage(): FirebaseStorage = Firebase.storage
 
         @Singleton
         @Provides
-        fun provideFirebaseFirestore(): FirebaseFirestore {
-            return Firebase.firestore
-        }
+        fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
 
         @Singleton
         @Provides
-        fun provideFirebaseAuth(): FirebaseAuth {
-            return Firebase.auth
-        }
+        fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
 
+        @Singleton
         @Provides
-        fun provideGoogleSignInClient(context: Context): GoogleSignInClient {
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(context.getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-            return GoogleSignIn.getClient(context, gso)
-        }
+        fun provideCredentialManager(context: Context): CredentialManager = CredentialManager.create(context)
     }
 }

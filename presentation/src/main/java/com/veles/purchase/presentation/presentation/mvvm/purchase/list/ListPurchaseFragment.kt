@@ -150,7 +150,8 @@ class ListPurchaseFragment : BaseFragment() {
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        contentDescription = "Localized description"
+                        contentDescription = "Localized description",
+                        tint = Color.White
                     )
                 }
             },
@@ -172,15 +173,8 @@ class ListPurchaseFragment : BaseFragment() {
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                        contentDescription = "Localized description"
-                    )
-                }
-                IconButton(
-                    onClick = { viewModel.onSettingsClicked() },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_later),
-                        contentDescription = "Localized description"
+                        contentDescription = "Localized description",
+                        tint = Color.White
                     )
                 }
                 IconButton(
@@ -188,93 +182,11 @@ class ListPurchaseFragment : BaseFragment() {
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_settings_24),
-                        contentDescription = "Localized description"
+                        contentDescription = "Localized description",
+                        tint = Color.White
                     )
                 }
-            },
-//            content = { state ->
-//                ConstraintLayout(
-//                    modifier = Modifier.fillMaxSize()
-//                ) {
-//                    val (
-//                        IconBack,
-//                        TextTitle,
-//                        IconSearch,
-//                        IconSettings,
-//                        IconLater
-//                    ) = createRefs()
-//                    IconSquare(
-//                        id = R.drawable.ic_baseline_arrow_back_24,
-//                        modifier = Modifier
-//                            .constrainAs(IconBack) {
-//                                start.linkTo(parent.start)
-//                                top.linkTo(parent.top)
-//                                bottom.linkTo(parent.bottom)
-//                            },
-//                        onClick = {
-//                            viewModel.onBackClicked()
-//                        },
-//                        contentDescription = "Search Icon",
-//                        tint = Color.White
-//                    )
-//                    val collectionPurchaseName by viewModel.flowCollectionPurchase.collectAsState()
-//                    Text(
-//                        text = collectionPurchaseName.name,
-//                        textAlign = TextAlign.Start,
-//                        fontSize = 20.sp,
-//                        color = Color.White,
-//                        modifier = Modifier
-//                            .constrainAs(TextTitle) {
-//                                start.linkTo(IconBack.end, margin = 8.dp)
-//                                end.linkTo(IconSearch.start, margin = 8.dp)
-//                                top.linkTo(parent.top)
-//                                bottom.linkTo(parent.bottom)
-//                            }
-//                    )
-//                    IconSquare(
-//                        id = R.drawable.ic_baseline_search_24,
-//                        onClick = {
-//                            state.value = SearchWidgetState.OPENED
-//                        },
-//                        modifier = Modifier
-//                            .constrainAs(IconSearch) {
-//                                end.linkTo(IconLater.start)
-//                                top.linkTo(parent.top)
-//                                bottom.linkTo(parent.bottom)
-//                            },
-//                        tint = Colors.gr,
-//                        contentDescription = "Search Icon"
-//                    )
-//                    IconSquare(
-//                        id = R.drawable.ic_later,
-//                        modifier = Modifier
-//                            .constrainAs(IconLater) {
-//                                end.linkTo(IconSettings.start)
-//                                top.linkTo(parent.top)
-//                                bottom.linkTo(parent.bottom)
-//                            },
-//                        onClick = {
-//                            viewModel.onSettingsClicked()
-//                        },
-//                        contentDescription = "Setting Icon",
-//                        tint = Colors.gr
-//                    )
-//                    IconSquare(
-//                        id = R.drawable.ic_baseline_settings_24,
-//                        modifier = Modifier
-//                            .constrainAs(IconSettings) {
-//                                end.linkTo(parent.end)
-//                                top.linkTo(parent.top)
-//                                bottom.linkTo(parent.bottom)
-//                            },
-//                        onClick = {
-//                            viewModel.onSettingsClicked()
-//                        },
-//                        contentDescription = "Setting Icon",
-//                        tint = Colors.gr
-//                    )
-//                }
-//            }
+            }
         )
     }
 

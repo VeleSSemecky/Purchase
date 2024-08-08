@@ -58,7 +58,7 @@ appCompat = "1.7.0"
 constraintLayout = "2.1.4"
 swiperefreshLayout = "1.1.0"
 viewPager = "1.1.0"
-paging = "3.3.0"
+paging = "3.3.1"
 workRuntime = "2.9.0"
 
 #Compose
@@ -87,6 +87,10 @@ datastorePreferences = "1.1.1"
 
 #Camera
 camera = "1.3.1"
+
+#Credentials
+credentials= "1.2.2"
+identity = "1.1.1"
 
 #Testing
 jUnit = "5.8.2"
@@ -204,6 +208,11 @@ camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.r
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera" }
 camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
 camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "camera" }
+
+#Credentials
+credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
+identity = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "identity" }
 
 #Testing
 junit = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "jUnit" }

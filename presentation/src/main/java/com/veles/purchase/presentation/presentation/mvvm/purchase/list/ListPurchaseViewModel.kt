@@ -133,7 +133,7 @@ class ListPurchaseViewModel @Inject constructor(
             args.purchaseCollectionId
         )
 
-        getPurchase(emptyString())
+        getPurchase(purchaseName)
 
         _flowProgress.emit(Progress.End)
     }
@@ -172,9 +172,7 @@ class ListPurchaseViewModel @Inject constructor(
     private fun getPurchase(
         search: String = emptyString()
     ) = getPurchasesUseCase(args.purchaseCollectionId, search).onEach { list ->
-        _flowListPurchaseModels.emit(
-            list.sortedWith(_flowSortPurchase.value.toPurchaseComparator())
-        )
+        _flowListPurchaseModels.emit(list)
     }.launchIn(viewModelScope)
 
     private fun getCollectionPurchase() = viewModelScope.launchOnError {

@@ -1,23 +1,30 @@
 package com.veles.purchase.domain.usecase.purchase
 
 import com.veles.purchase.domain.model.purchase.PurchaseModel
-import com.veles.purchase.domain.repository.purchase.GetPurchaseRepository
+import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class GetPurchasesUseCase @Inject constructor(
-    private val getPurchaseRepository: GetPurchaseRepository
+    private val purchaseRepository: PurchaseRepository
 ) {
 
     operator fun invoke(
-        modelCollectionPurchaseId: String,
+        collectionId: String,
         search: String
-    ): Flow<List<PurchaseModel>> = when {
-        modelCollectionPurchaseId.isEmpty() -> emptyFlow()
-        else -> getPurchaseRepository.getLisPurchases(
-            modelCollectionPurchaseId,
-            search
-        )
+    ): Flow<List<PurchaseModel>> = flow {
+        when {
+            collectionId.isEmpty() -> emit(emptyList())
+            search.isEmpty() -> emitAll(purchaseRepository.getPurchaseFlow(collectionId))
+            else -> emitAll(
+                purchaseRepository.getPurchaseFlow(collectionId).map { list ->
+                    val searchList = purchaseRepository.getSearchPurchaseList(collectionId, search)
+                    searchList + list.filter { !searchList.contains(it) }
+                }
+            )
+        }
     }
 }

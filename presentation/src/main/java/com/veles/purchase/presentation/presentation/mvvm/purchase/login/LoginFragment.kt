@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,18 +38,13 @@ import androidx.fragment.app.viewModels
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.GoogleButton
-import com.veles.purchase.presentation.data.result.GoogleSignInContract
 import com.veles.purchase.presentation.presentation.compose.Colors
+import com.veles.purchase.presentation.presentation.compose.shopping.dialog.error.ErrorAlertDialog
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 
 class LoginFragment : BaseFragment() {
 
     private val viewModel: LoginViewModel by viewModels { viewModelFactory }
-
-    private val googleSignInLauncher =
-        registerForActivityResult(GoogleSignInContract()) { idToken ->
-            viewModel.firebaseAuthWithGoogle(idToken ?: return@registerForActivityResult)
-        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,6 +59,10 @@ class LoginFragment : BaseFragment() {
         ).apply {
             findViewById<ComposeView>(R.id.composeView).setContent {
                 ComposeContent()
+                val isShowError by viewModel.flowIsShowError.collectAsState()
+                if (isShowError) ErrorAlertDialog {
+                    viewModel.onErrorHideClicked()
+                }
             }
         }
     }
@@ -145,13 +146,13 @@ class LoginFragment : BaseFragment() {
                     .fillMaxHeight(.2f),
                 contentAlignment = Alignment.Center
             ) {
+                val isClicked by viewModel.flowIsClickedGoogle.collectAsState()
                 GoogleButton(
                     Modifier.fillMaxWidth(),
                     text = "Sign Up with Google",
                     loadingText = "Creating Account...",
-                    onClicked = {
-                        googleSignInLauncher.launch(viewModel.googleSignInIntent())
-                    }
+                    isClicked = isClicked,
+                    onClicked = { viewModel.onLoginClicked() }
                 )
             }
         }

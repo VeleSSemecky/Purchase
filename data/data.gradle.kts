@@ -56,4 +56,9 @@ dependencies {
 
     // DataStore
     implementation(libs.datastore.preferences)
+
+    // Credentials
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.identity)
 }

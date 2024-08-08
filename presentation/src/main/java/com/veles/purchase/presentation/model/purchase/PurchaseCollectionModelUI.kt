@@ -22,14 +22,12 @@ fun PurchaseCollectionModelUI.toPurchaseCollectionModel() = PurchaseCollectionMo
     id = id,
     name = name,
     creator = creator.toUserPurchaseModel(),
-    listMembers = listMembers,
-    count = count
+    listMembers = listMembers
 )
 
 fun PurchaseCollectionModel.toPurchaseCollectionModelUI() = PurchaseCollectionModelUI(
     id = id,
     name = name,
     creator = creator.toUserPurchaseModelUI(),
-    listMembers = listMembers,
-    count = count
+    listMembers = listMembers
 )

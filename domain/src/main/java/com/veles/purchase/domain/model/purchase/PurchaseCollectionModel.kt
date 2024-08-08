@@ -7,8 +7,7 @@ data class PurchaseCollectionModel(
     val id: String,
     val name: String,
     val creator: UserPurchaseModel,
-    val listMembers: List<String>,
-    val count: Int
+    val listMembers: List<String>
 ) {
 
     companion object {
@@ -17,16 +16,18 @@ data class PurchaseCollectionModel(
             id = emptyString(),
             name = emptyString(),
             creator = UserPurchaseModel.EMPTY,
-            listMembers = emptyList(),
-            count = 0
+            listMembers = emptyList()
         )
 
         val TEST = PurchaseCollectionModel(
             id = emptyString(),
             name = "Collection Name",
             creator = UserPurchaseModel.EMPTY,
-            listMembers = emptyList(),
-            count = 0
+            listMembers = listOf("TEst,TEST")
         )
     }
 }
+
+fun PurchaseCollectionModel.isMoreThanOneMembers() = listMembers.size - 1 > 0
+
+fun PurchaseCollectionModel.countAdditionalMembers() = listMembers.size - 1

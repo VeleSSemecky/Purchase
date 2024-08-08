@@ -1,4 +1,4 @@
-package com.veles.purchase.data.model.fcm
+package com.veles.purchase.data.networking.entity.fcm
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

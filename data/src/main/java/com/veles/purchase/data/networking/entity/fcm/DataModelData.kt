@@ -1,4 +1,4 @@
-package com.veles.purchase.data.model.fcm
+package com.veles.purchase.data.networking.entity.fcm
 
 import android.os.Parcelable
 import com.veles.purchase.domain.model.fcm.DataModel

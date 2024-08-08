@@ -2,12 +2,10 @@ package com.veles.purchase.data.repository.collection.set
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.veles.purchase.config.EnvironmentConfig
-import com.veles.purchase.config.EnvironmentConfig.COLLECTION_DATABASE
-import com.veles.purchase.config.EnvironmentConfig.COLLECTION_PURCHASE
 import com.veles.purchase.data.core.extensions.toUnit
-import com.veles.purchase.data.model.user.createUserPurchase
-import com.veles.purchase.data.model.user.toUserPurchaseModel
+import com.veles.purchase.data.extensions.collectionPurchase
+import com.veles.purchase.data.networking.entity.user.toUserDto
+import com.veles.purchase.data.networking.entity.user.toUserPurchaseModel
 import com.veles.purchase.domain.core.suspendCancellableCoroutineWithTimeout
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
 import com.veles.purchase.domain.repository.collection.SetCollectionPurchaseRepository
@@ -21,10 +19,6 @@ class SetCollectionPurchaseRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : SetCollectionPurchaseRepository {
 
-    private fun FirebaseFirestore.getCollectionPurchase() = collection(COLLECTION_DATABASE)
-        .document(EnvironmentConfig.DB_KEY)
-        .collection(COLLECTION_PURCHASE)
-
     override suspend fun setCollectionPurchase(
         purchaseCollection: PurchaseCollectionModel
     ) = suspendCancellableCoroutineWithTimeout {
@@ -32,13 +26,13 @@ class SetCollectionPurchaseRepositoryImpl @Inject constructor(
             ?: throw IllegalArgumentException("FirebaseAuth currentUser is null")
 
         val changePurchaseCollection = purchaseCollection.copy(
-            creator = user.createUserPurchase().toUserPurchaseModel(),
+            creator = user.toUserDto().toUserPurchaseModel(),
             listMembers = purchaseCollection.listMembers.toMutableList().apply {
                 add(user.uid)
             }
         )
 
-        firebaseFirestore.getCollectionPurchase()
+        firebaseFirestore.collectionPurchase
             .document(changePurchaseCollection.id)
             .set(changePurchaseCollection)
             .await().toUnit()

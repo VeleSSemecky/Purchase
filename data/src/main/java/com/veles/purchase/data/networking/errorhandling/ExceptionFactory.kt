@@ -1,6 +1,6 @@
 package com.veles.purchase.data.networking.errorhandling
 
-import com.veles.purchase.data.networking.entity.NetworkException
+import com.veles.purchase.data.networking.entity.core.NetworkException
 import com.veles.purchase.domain.model.exception.AnotherSpecificException
 import com.veles.purchase.domain.model.exception.ConnectivityException
 import com.veles.purchase.domain.model.exception.ReadableException

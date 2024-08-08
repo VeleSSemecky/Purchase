@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -85,7 +86,6 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
                             FAB()
                         },
                         floatingActionButtonPosition = FabPosition.End,
-//                        isFloatingActionButtonDocked = true,
                         containerColor = Colors.surface
                     )
                     Progress()
@@ -173,32 +173,31 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
     fun ItemPurchaseCollections(
         item: PurchaseCollectionModel = PurchaseCollectionModel.TEST
     ) {
-        androidx.compose.material3.ElevatedCard(
+        ElevatedCard(
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 6.dp
             ),
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .combinedClickable(
-                    onClick = {
-                        findParentNavController().navigate(
-                            NavigationFragmentDirections.fragmentPurchase(
-                                item.id
-                            )
-                        )
-                    },
-                    onLongClick = {
-                        viewModel.onDeletePurchaseCollections(item)
-                    }
-                )
-
         ) {
             Column {
                 Row(
                     modifier = Modifier
                         .background(Color(0xFF38A186))
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = {
+                                findParentNavController().navigate(
+                                    NavigationFragmentDirections.fragmentPurchase(
+                                        item.id
+                                    )
+                                )
+                            },
+                            onLongClick = {
+                                viewModel.onDeletePurchaseCollections(item)
+                            }
+                        ),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -225,17 +224,6 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
                         tint = Color.White
                     )
                 }
-                Text(
-                    textAlign = TextAlign.Start,
-                    text = "In the catalog of items ${item.count}",
-                    color = Color(0xFFEDEDED),
-                    fontSize = 14.sp,
-                    style = textStyle1(),
-                    modifier = Modifier
-                        .background(Colors.colorAccent)
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
             }
         }
     }

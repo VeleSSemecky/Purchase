@@ -17,6 +17,8 @@ object EnvironmentConfig {
     const val MESSAGE_AUTHENTICATOR_VALUE = BuildConfig.MESSAGE_AUTHENTICATOR_VALUE
     const val MESSAGE_API = BuildConfig.MESSAGE_API
 
+    const val SERVER_CLIENT_ID = BuildConfig.SERVER_CLIENT_ID
+
     const val COLLECTION_DATABASE = "FirebaseFirestore"
 
     const val COLLECTION_PURCHASE = "CollectionPurchase"

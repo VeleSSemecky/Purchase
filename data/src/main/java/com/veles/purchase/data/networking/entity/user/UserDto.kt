@@ -1,4 +1,4 @@
-package com.veles.purchase.data.model.user
+package com.veles.purchase.data.networking.entity.user
 
 import android.os.Parcelable
 import com.google.firebase.auth.FirebaseUser
@@ -8,7 +8,7 @@ import com.veles.purchase.domain.utill.emptyString
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class UserPurchaseModelData(
+data class UserDto(
     val uid: String = emptyString(),
     val providerId: String = emptyString(),
     val displayName: String? = dashString(),
@@ -18,17 +18,17 @@ data class UserPurchaseModelData(
     val photoUrl: String? = emptyString()
 ) : Parcelable
 
-fun FirebaseUser.createUserPurchase(): UserPurchaseModelData =
-    UserPurchaseModelData(
-        uid = uid,
-        providerId = providerId,
-        displayName = displayName,
-        email = email,
-        phoneNumber = phoneNumber,
-        photoUrl = photoUrl.toString()
-    )
+fun FirebaseUser.toUserDto(fcmToken:String = emptyString()): UserDto = UserDto(
+    uid = uid,
+    providerId = providerId,
+    displayName = displayName,
+    email = email,
+    phoneNumber = phoneNumber,
+    fcmToken = fcmToken,
+    photoUrl = photoUrl.toString()
+)
 
-fun UserPurchaseModelData.toUserPurchaseModel() = UserPurchaseModel(
+fun UserDto.toUserPurchaseModel() = UserPurchaseModel(
     uid = uid,
     providerId = providerId,
     displayName = displayName,
@@ -38,7 +38,7 @@ fun UserPurchaseModelData.toUserPurchaseModel() = UserPurchaseModel(
     photoUrl = photoUrl
 )
 
-fun UserPurchaseModel.toUserPurchaseModelData() = UserPurchaseModelData(
+fun UserPurchaseModel.toUserDto() = UserDto(
     uid = uid,
     providerId = providerId,
     displayName = displayName,

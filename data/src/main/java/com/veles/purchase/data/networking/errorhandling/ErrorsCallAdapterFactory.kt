@@ -1,7 +1,7 @@
 package com.veles.purchase.data.networking.errorhandling
 
 import com.google.gson.Gson
-import com.veles.purchase.data.networking.entity.NetworkException
+import com.veles.purchase.data.networking.entity.core.NetworkException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import retrofit2.Call
