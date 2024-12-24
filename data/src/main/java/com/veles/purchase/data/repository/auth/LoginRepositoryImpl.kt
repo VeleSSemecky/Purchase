@@ -6,7 +6,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.veles.purchase.config.EnvironmentConfig
@@ -19,9 +19,7 @@ class LoginRepositoryImpl @Inject constructor(
 ) : LoginRepository {
 
     override suspend fun getGoogleIdToken(): String {
-        val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(EnvironmentConfig.SERVER_CLIENT_ID)
+        val googleIdOption: GetSignInWithGoogleOption = GetSignInWithGoogleOption.Builder(EnvironmentConfig.SERVER_CLIENT_ID)
             .build()
 
         val request: GetCredentialRequest = GetCredentialRequest.Builder()
