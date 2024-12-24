@@ -1,3 +1,5 @@
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.LibraryExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -94,25 +96,25 @@ fun PluginContainer.configure(project: Project) {
         when (this) {
             is com.android.build.gradle.AppPlugin ->
                 project.extensions
-                    .getByType<com.android.build.gradle.AppExtension>()
+                    .getByType<AppExtension>()
                     .applyCommons()
 
             is com.android.build.gradle.LibraryPlugin ->
                 project.extensions
-                    .getByType<com.android.build.gradle.LibraryExtension>()
+                    .getByType<LibraryExtension>()
                     .applyCommons()
         }
     }
 }
 
-fun com.android.build.gradle.AppExtension.applyCommons() {
-    compileSdkVersion(34)
+fun AppExtension.applyCommons() {
+    compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
     defaultConfig.apply {
-        minSdk = Config.Android.minSdkVersion
-        targetSdk = 34
-        versionCode = Config.Android.versionCode
-        versionName = Config.Android.versionName
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
     }
 
     compileOptions.apply {
@@ -121,14 +123,14 @@ fun com.android.build.gradle.AppExtension.applyCommons() {
     }
 }
 
-fun com.android.build.gradle.LibraryExtension.applyCommons() {
-    compileSdk = 34
+fun LibraryExtension.applyCommons() {
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig.apply {
-        minSdk = Config.Android.minSdkVersion
-        targetSdk = 34
-        versionCode = Config.Android.versionCode
-        versionName = Config.Android.versionName
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
 
         consumerProguardFiles("proguard-rules.pro")
     }

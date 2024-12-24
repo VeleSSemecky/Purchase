@@ -1,6 +1,6 @@
 import java.util.Locale
 
-plugins {
+    plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
@@ -16,7 +16,7 @@ android {
     namespace = "com.veles.purchase.presentation"
 
     defaultConfig {
-        applicationId = Config.Android.applicationId
+        applicationId = libs.versions.applicationId.get()
     }
 
     viewBinding.isEnabled = true
@@ -128,6 +128,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -151,7 +152,7 @@ android {
 }
 
 composeCompiler {
-    enableStrongSkippingMode = true
+//    enableStrongSkippingMode = true
 
 //    reportsDestination = layout.buildDirectory.dir("compose_compiler")
 //    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")

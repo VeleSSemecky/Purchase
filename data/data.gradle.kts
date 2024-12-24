@@ -8,11 +8,6 @@ plugins {
 android {
     namespace = "com.veles.purchase.data"
 
-    defaultConfig {
-        buildConfigField("int", "VERSION_CODE", "${Config.Android.versionCode}")
-        buildConfigField("String", "VERSION_NAME", "\"${Config.Android.versionName}\"")
-    }
-
     flavorDimensions.add("default")
     productFlavors {
         create("configProduction") {}
