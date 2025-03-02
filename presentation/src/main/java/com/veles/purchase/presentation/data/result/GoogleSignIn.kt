@@ -1,6 +1,6 @@
-package com.veles.purchase.data.repository.auth
+package com.veles.purchase.presentation.data.result
 
-import android.content.Context
+import android.app.Activity
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
@@ -10,15 +10,10 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.veles.purchase.config.EnvironmentConfig
-import com.veles.purchase.domain.repository.auth.LoginRepository
-import javax.inject.Inject
 
-class LoginRepositoryImpl @Inject constructor(
-    private val credentialManager: CredentialManager,
-    private val context: Context
-) : LoginRepository {
+object GoogleSignIn {
 
-    override suspend fun getGoogleIdToken(): String {
+    suspend operator fun invoke(context: Activity): String {
         val googleIdOption: GetSignInWithGoogleOption = GetSignInWithGoogleOption.Builder(EnvironmentConfig.SERVER_CLIENT_ID)
             .build()
 
@@ -27,7 +22,7 @@ class LoginRepositoryImpl @Inject constructor(
             .build()
 
         try {
-            val result = credentialManager.getCredential(
+            val result = CredentialManager.create(context).getCredential(
                 request = request,
                 context = context
             )

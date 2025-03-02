@@ -152,7 +152,7 @@ class LoginFragment : BaseFragment() {
                     text = "Sign Up with Google",
                     loadingText = "Creating Account...",
                     isClicked = isClicked,
-                    onClicked = { viewModel.onLoginClicked() }
+                    onClicked = { viewModel.onLoginClicked(requireActivity()) }
                 )
             }
         }

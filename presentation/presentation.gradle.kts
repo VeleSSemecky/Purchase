@@ -246,4 +246,9 @@ dependencies {
     implementation(libs.play.app.update)
     implementation(libs.play.integrity)
     implementation(libs.concurrent.futures)
+
+    // Test
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.core.testing )
 }

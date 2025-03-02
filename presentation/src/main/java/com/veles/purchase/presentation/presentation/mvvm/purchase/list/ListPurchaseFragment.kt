@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -54,26 +55,27 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Visibility
 import androidx.fragment.app.viewModels
-import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.DismissDirection
 import com.veles.purchase.presentation.compose.DismissValue
 import com.veles.purchase.presentation.compose.FractionalThreshold
-import com.veles.purchase.presentation.compose.IconSquare
 import com.veles.purchase.presentation.compose.SwipeToDismiss
 import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.search.SearchTopAppBar
 import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.model.progress.Progress
+import com.veles.purchase.presentation.model.purchase.compose.ItemPurchaseState
 import com.veles.purchase.presentation.model.setting.toShape
 import com.veles.purchase.presentation.model.sort.SortPurchase
+import com.veles.purchase.presentation.model.sort.toPurchaseComparator
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 
@@ -110,8 +112,8 @@ class ListPurchaseFragment : BaseFragment() {
             },
             floatingActionButtonPosition = FabPosition.End,
 //            isFloatingActionButtonDocked = true,
-            content = {
-                Content(it)
+            content = { innerPadding ->
+                Content(innerPadding)
             },
             containerColor = Color.Black
         )
@@ -190,7 +192,6 @@ class ListPurchaseFragment : BaseFragment() {
         )
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Content(
         paddingValues: PaddingValues = PaddingValues()
@@ -203,12 +204,14 @@ class ListPurchaseFragment : BaseFragment() {
         SortPurchase()
 
         val purchaseModels by viewModel.flowListPurchaseModels.collectAsState()
+        val sortPurchase by viewModel.flowSortPurchase.collectAsState()
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
         ) {
             itemsIndexed(
-                purchaseModels
+                purchaseModels.sortedWith(sortPurchase.toPurchaseComparator())
             ) { _, item ->
                 val dismissState = rememberDismissState()
                 if (dismissState.isDismissed(DismissDirection.EndToStart) ||
@@ -219,10 +222,12 @@ class ListPurchaseFragment : BaseFragment() {
                         dismissState.snapTo(DismissValue.Default)
                     })
                 }
+                Modifier
+                    .fillMaxWidth()
                 SwipeToDismiss(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateItemPlacement(),
+                        .animateItem(fadeInSpec = null, fadeOutSpec = null),
                     state = dismissState,
                     background = {},
                     dismissThresholds = { FractionalThreshold(0.7f) }
@@ -231,7 +236,15 @@ class ListPurchaseFragment : BaseFragment() {
                         animateDpAsState(
                             if (dismissState.dismissDirection == null) 0.dp else 4.dp
                         ).value
-                    ItemPurchase(elevation, item)
+                    val state = ItemPurchaseState(
+                        elevation = elevation,
+                        item = item,
+                        flowPurchaseSetting = viewModel.flowPurchaseSetting,
+                        onItemClicked = { item -> viewModel.onItemClicked(item) },
+                        onLongClicked = { item -> viewModel.onLongClicked(item) },
+                        onChecked = { item -> viewModel.onChecked(item) }
+                    )
+                    ItemPurchase(state = state)
                 }
             }
         }
@@ -267,7 +280,8 @@ class ListPurchaseFragment : BaseFragment() {
         val createTextState by viewModel.flowNewNamePurchase.collectAsState()
         TextField(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .imePadding(),
             value = createTextState,
             onValueChange = {
                 viewModel.onNewNamePurchaseChanged(it)
@@ -365,17 +379,17 @@ class ListPurchaseFragment : BaseFragment() {
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun ItemPurchase(
-        elevation: Dp = 4.dp,
-        item: PurchaseModel = PurchaseModel.TEST
+        state: ItemPurchaseState = ItemPurchaseState()
     ) {
-        val purchaseSetting by viewModel.flowPurchaseSetting.collectAsState()
+        val item = state.item
+        val purchaseSetting by state.flowPurchaseSetting.collectAsState()
         Card(
             colors = CardDefaults.cardColors().copy(
                 containerColor = Colors.colorAccent
             ),
             shape = purchaseSetting.toShape(),
             elevation = CardDefaults.cardElevation(
-                defaultElevation = elevation
+                defaultElevation = state.elevation
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -384,23 +398,26 @@ class ListPurchaseFragment : BaseFragment() {
                     end = 16.dp
                 )
                 .combinedClickable(
-                    onClick = { viewModel.onItemClicked(item) },
-                    onLongClick = { viewModel.onLongClicked(item) }
+                    onClick = { state.onItemClicked(item) },
+                    onLongClick = { state.onLongClicked(item) }
                 )
         ) {
             ConstraintLayout(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             ) {
                 val (
-                    IconPhoto,
-                    TextTitle,
-                    IconCheck
+                    referenceIconPhoto,
+                    referenceTextTitle,
+                    referenceTextDescription,
+                    referenceIconCheck
                 ) = createRefs()
-
+                createVerticalChain(referenceTextTitle, referenceTextDescription, chainStyle = ChainStyle.Packed)
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .constrainAs(IconPhoto) {
+                        .padding(8.dp)
+                        .constrainAs(referenceIconPhoto) {
                             start.linkTo(parent.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
@@ -428,23 +445,39 @@ class ListPurchaseFragment : BaseFragment() {
                     fontSize = 18.sp,
                     style = textStyle1(),
                     modifier = Modifier
-                        .padding(8.dp)
-                        .constrainAs(TextTitle) {
-                            start.linkTo(IconPhoto.end)
-                            end.linkTo(IconCheck.start)
+                        .padding(horizontal = 8.dp)
+                        .constrainAs(referenceTextTitle) {
+                            start.linkTo(referenceIconPhoto.end)
+                            end.linkTo(referenceIconCheck.start)
                             top.linkTo(parent.top)
+                            bottom.linkTo(referenceTextDescription.top)
+                            width = Dimension.fillToConstraints
+                        }
+                )
+
+                Text(
+                    text = item.count,
+                    fontSize = 14.sp,
+                    style = textStyle1(),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .constrainAs(referenceTextDescription) {
+                            start.linkTo(referenceIconPhoto.end)
+                            end.linkTo(referenceIconCheck.start)
+                            top.linkTo(referenceTextDescription.bottom)
                             bottom.linkTo(parent.bottom)
                             width = Dimension.fillToConstraints
+                            visibility = if (item.count.isNotEmpty()) Visibility.Visible else Visibility.Gone
                         }
                 )
 
                 Box(
                     modifier = Modifier
                         .clickable {
-                            viewModel.onChecked(item)
+                            state.onChecked(item)
                         }
-                        .constrainAs(IconCheck) {
-                            start.linkTo(TextTitle.end)
+                        .constrainAs(referenceIconCheck) {
+                            start.linkTo(referenceTextTitle.end)
                             end.linkTo(parent.end)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
@@ -453,7 +486,7 @@ class ListPurchaseFragment : BaseFragment() {
                     Checkbox(
                         checked = item.check,
                         onCheckedChange = {
-                            viewModel.onChecked(item)
+                            state.onChecked(item)
                         },
                         colors = CheckboxDefaults.colors(
                             checkedColor = Colors.gr,

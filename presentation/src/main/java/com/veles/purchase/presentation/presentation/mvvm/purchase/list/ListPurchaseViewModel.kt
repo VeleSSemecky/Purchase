@@ -22,7 +22,6 @@ import com.veles.purchase.presentation.model.purchase.PurchaseModelUI
 import com.veles.purchase.presentation.model.purchase.toPurchaseCollectionModelUI
 import com.veles.purchase.presentation.model.purchase.toPurchaseModel
 import com.veles.purchase.presentation.model.sort.SortPurchase
-import com.veles.purchase.presentation.model.sort.toPurchaseComparator
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -181,10 +180,6 @@ class ListPurchaseViewModel @Inject constructor(
 
     private fun getSortPurchase() = sharedFlowBus.getSharedFlow(SortPurchaseEvent::class).onEach {
         _flowSortPurchase.emit(it.sortPurchase)
-    }.onEach {
-        _flowListPurchaseModels.emit(
-            flowListPurchaseModels.value.sortedWith(it.sortPurchase.toPurchaseComparator())
-        )
     }.launchIn(viewModelScope)
 
     private fun getSettingsPurchase() = viewModelScope.launchOnError {

@@ -1,7 +1,5 @@
 package com.veles.purchase.presentation.di.module
 
-import android.content.Context
-import androidx.credentials.CredentialManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,7 +9,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.veles.purchase.data.repository.auth.AuthWithGoogleRepositoryImpl
 import com.veles.purchase.data.repository.auth.BiometricRepositoryImpl
-import com.veles.purchase.data.repository.auth.LoginRepositoryImpl
 import com.veles.purchase.data.repository.collection.delete.DeleteCollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.collection.get.GetCollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.collection.set.SetCollectionPurchaseRepositoryImpl
@@ -30,7 +27,6 @@ import com.veles.purchase.data.repository.auth.LogoutRepositoryImpl
 import com.veles.purchase.data.repository.user.token.FirebaseMessageTokenRepositoryImpl
 import com.veles.purchase.domain.repository.auth.AuthWithGoogleRepository
 import com.veles.purchase.domain.repository.auth.BiometricRepository
-import com.veles.purchase.domain.repository.auth.LoginRepository
 import com.veles.purchase.domain.repository.collection.DeleteCollectionPurchaseRepository
 import com.veles.purchase.domain.repository.collection.GetCollectionPurchaseRepository
 import com.veles.purchase.domain.repository.collection.SetCollectionPurchaseRepository
@@ -129,10 +125,6 @@ interface RepositoryModule {
     @Binds
     fun provideDeleteCollectionPurchaseRepository(repository: DeleteCollectionPurchaseRepositoryImpl): DeleteCollectionPurchaseRepository
 
-    @Singleton
-    @Binds
-    fun provideLoginRepository(repository: LoginRepositoryImpl): LoginRepository
-
     companion object {
 
         @Singleton
@@ -146,9 +138,5 @@ interface RepositoryModule {
         @Singleton
         @Provides
         fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
-
-        @Singleton
-        @Provides
-        fun provideCredentialManager(context: Context): CredentialManager = CredentialManager.create(context)
-    }
+   }
 }
