@@ -2,9 +2,9 @@ package com.veles.purchase.data.repository.user.get
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.snapshots
+import com.google.firebase.firestore.toObject
 import com.veles.purchase.config.EnvironmentConfig.UID
-import com.veles.purchase.data.core.extensions.snapshotFlow
 import com.veles.purchase.data.extensions.userPurchase
 import com.veles.purchase.data.networking.entity.user.UserDto
 import com.veles.purchase.data.networking.entity.user.toUserPurchaseModel
@@ -24,7 +24,7 @@ class FirebaseGetUserRepositoryImpl @Inject constructor(
 ) : FirebaseGetUserRepository {
 
     override suspend fun apiFirebaseFirestore(): Flow<List<UserPurchaseModel>> = firebaseFirestore.userPurchase
-        .snapshotFlow()
+        .snapshots()
         .map { snapshot ->
             snapshot.documents.mapNotNull {
                 it.toObject<UserDto>()?.toUserPurchaseModel()

@@ -2,7 +2,6 @@ package com.veles.purchase.data.repository.storage.set
 
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
-import com.veles.purchase.data.core.extensions.toUnit
 import com.veles.purchase.domain.core.suspendCancellableCoroutineWithTimeout
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
 import com.veles.purchase.domain.repository.storage.SetPurchasePhotoRepository
@@ -15,7 +14,7 @@ class SetPurchasePhotoRepositoryImpl @Inject constructor(
     private val storage: FirebaseStorage
 ) : SetPurchasePhotoRepository {
 
-    override suspend fun setPurchasePhotos(list: List<PurchasePhotoModel>) =
+    override suspend fun setPurchasePhotos(list: List<PurchasePhotoModel>): Unit =
         suspendCancellableCoroutineWithTimeout {
             list.map { purchasePhotoModel ->
                 storage.reference
@@ -23,6 +22,6 @@ class SetPurchasePhotoRepositoryImpl @Inject constructor(
                     .child(purchasePhotoModel.purchasePhotoId)
                     .putFile(Uri.parse(purchasePhotoModel.purchasePhotoUri))
                     .await()
-            }.toUnit()
+            }
         }
 }

@@ -51,6 +51,6 @@ class NotificationMessageRepositoryImpl @Inject constructor(
             registrationIds = listUsersMessageToken
         )
 
-//        notificationMessageService.sendNotificationMessage(notificationMessageModel)
+        notificationMessageService.sendNotificationMessage(notificationMessageModel)
     }
 }

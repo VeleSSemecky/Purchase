@@ -1,12 +1,10 @@
 package com.veles.purchase.data.repository.collection.get
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
-import com.veles.purchase.config.EnvironmentConfig
 import com.veles.purchase.config.EnvironmentConfig.LIST_MEMBERS
-import com.veles.purchase.data.core.extensions.snapshotFlow
 import com.veles.purchase.data.extensions.collectionPurchase
 import com.veles.purchase.data.networking.entity.purchase.PurchaseCollectionDto
 import com.veles.purchase.data.networking.entity.purchase.toPurchaseCollectionModel
@@ -29,7 +27,7 @@ class GetCollectionPurchaseRepositoryImpl @Inject constructor(
             ?: throw IllegalArgumentException("FirebaseAuth currentUser is null")
         return firebaseFirestore.collectionPurchase
             .whereArrayContains(LIST_MEMBERS, user.uid)
-            .snapshotFlow()
+            .snapshots()
             .map { snapshot ->
                 snapshot.documents.mapNotNull {
                     it.toObject<PurchaseCollectionDto>()?.toPurchaseCollectionModel()

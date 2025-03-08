@@ -32,7 +32,7 @@ class DeletePurchasePhotoRepositoryImpl @Inject constructor(
         listImage.filter { it.status == PhotoStatus.DOWNLOADED }.map { deleteStoragePhoto(it) }
     }
 
-    private suspend fun deleteStoragePhoto(purchaseModel: PurchasePhotoModel) = try {
+    private suspend fun deleteStoragePhoto(purchaseModel: PurchasePhotoModel): Unit = try {
         storage.reference
             .child(purchaseModel.purchaseId)
             .child(purchaseModel.purchasePhotoId)
@@ -42,7 +42,7 @@ class DeletePurchasePhotoRepositoryImpl @Inject constructor(
         throw e
     }
 
-    private fun deleteLocalPhoto(purchaseModel: PurchasePhotoModel) = try {
+    private fun deleteLocalPhoto(purchaseModel: PurchasePhotoModel): Unit = try {
         val uri = Uri.parse(purchaseModel.purchasePhotoUri)
         when (contentResolver.delete(uri, null, null)) {
             1 -> logger.i(DeletePurchasePhotoRepository::class.java.name, "delete success")

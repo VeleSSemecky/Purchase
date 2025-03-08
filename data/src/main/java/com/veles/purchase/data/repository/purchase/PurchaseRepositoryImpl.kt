@@ -1,10 +1,9 @@
 package com.veles.purchase.data.repository.purchase
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.snapshots
+import com.google.firebase.firestore.toObject
 import com.veles.purchase.config.EnvironmentConfig.PURCHASE
-import com.veles.purchase.data.core.extensions.snapshotFlow
-import com.veles.purchase.data.core.extensions.toUnit
 import com.veles.purchase.data.extensions.collectionPurchase
 import com.veles.purchase.data.extensions.purchase
 import com.veles.purchase.data.networking.entity.purchase.PurchaseDto
@@ -34,7 +33,7 @@ class PurchaseRepositoryImpl @Inject constructor(
     override suspend fun getSearchPurchaseList(
         collectionId: String,
         search: String
-    ) = firebaseFirestore.purchase(collectionId)
+    ): List<PurchaseModel> = firebaseFirestore.purchase(collectionId)
         .whereGreaterThanOrEqualTo("text", search)
         .whereLessThanOrEqualTo("text", search + "\uF7FF").limit(40).get().await()
         .documents.mapNotNull { it.toObject<PurchaseDto>()?.toPurchaseModel() }
@@ -42,7 +41,7 @@ class PurchaseRepositoryImpl @Inject constructor(
     override fun getPurchaseFlow(
         collectionId: String
     ): Flow<List<PurchaseModel>> = firebaseFirestore.purchase(collectionId)
-        .snapshotFlow()
+        .snapshots()
         .map { snapshot ->
             snapshot.documents.mapNotNull { it.toObject<PurchaseDto>()?.toPurchaseModel() }
         }
@@ -50,24 +49,24 @@ class PurchaseRepositoryImpl @Inject constructor(
     override suspend fun deletePurchase(
         purchaseId: String,
         collectionId: String
-    ) = suspendCancellableCoroutineWithTimeout {
+    ): Unit = suspendCancellableCoroutineWithTimeout {
         firebaseFirestore.collectionPurchase
             .document(collectionId)
             .collection(PURCHASE)
             .document(purchaseId)
             .delete()
-            .await().toUnit()
+            .await()
     }
 
     override suspend fun setPurchase(
         purchaseModel: PurchaseModel,
         collectionId: String
-    ) = suspendCancellableCoroutineWithTimeout {
+    ): Unit = suspendCancellableCoroutineWithTimeout {
         firebaseFirestore.collectionPurchase
             .document(collectionId)
             .collection(PURCHASE)
             .document(purchaseModel.createId)
             .set(purchaseModel)
-            .await().toUnit()
+            .await()
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,12 +50,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
@@ -62,6 +65,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
 import androidx.fragment.app.viewModels
+import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.DismissDirection
@@ -72,7 +76,12 @@ import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.search.SearchTopAppBar
 import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.model.progress.Progress
+import com.veles.purchase.presentation.model.purchase.compose.ContentState
+import com.veles.purchase.presentation.model.purchase.compose.CreatePurchaseState
 import com.veles.purchase.presentation.model.purchase.compose.ItemPurchaseState
+import com.veles.purchase.presentation.model.purchase.compose.ProgressState
+import com.veles.purchase.presentation.model.purchase.compose.SortPurchaseState
+import com.veles.purchase.presentation.model.purchase.compose.ToolBarState
 import com.veles.purchase.presentation.model.setting.toShape
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.model.sort.toPurchaseComparator
@@ -95,34 +104,64 @@ class ListPurchaseFragment : BaseFragment() {
             false
         ).apply {
             findViewById<ComposeView>(R.id.composeView).setContent {
-                ComposeContent()
+                val state = ContentState(
+                    flowListPurchaseModels = viewModel.flowListPurchaseModels,
+                    flowSortPurchase = viewModel.flowSortPurchase,
+                    apiFirebaseRemoveRepository = { item -> viewModel.apiFirebaseRemoveRepository(item) },
+                    itemPurchaseState = ItemPurchaseState(
+                        flowPurchaseSetting = viewModel.flowPurchaseSetting,
+                        onItemClicked = { item -> viewModel.onItemClicked(item) },
+                        onLongClicked = { item -> viewModel.onLongClicked(item) },
+                        onChecked = { item -> viewModel.onChecked(item) }
+                    ),
+                    createPurchaseState = CreatePurchaseState(
+                        flowNewNamePurchase = viewModel.flowNewNamePurchase,
+                        onNewNamePurchaseChanged = { item -> viewModel.onNewNamePurchaseChanged(item) },
+                        insertAdd = { item -> viewModel.insertAdd(item) }
+                    ),
+                    sortPurchaseState = SortPurchaseState(
+                        flowSortPurchase = viewModel.flowSortPurchase,
+                        onSortClicked = { viewModel.onSortClicked() }
+                    ),
+                    progressState = ProgressState(
+                        flowProgress = viewModel.flowProgress
+                    ),
+                    toolBarState = ToolBarState(
+                        flowSearchText = viewModel.flowSearchText,
+                        flowCollectionPurchase = viewModel.flowCollectionPurchase,
+                        updateSearchText = { item -> viewModel.updateSearchText(item) },
+                        onBackClicked = { viewModel.onBackClicked() },
+                        onSettingsClicked = { viewModel.onSettingsClicked() }
+                    )
+                )
+                ComposeContent(state)
             }
         }
     }
 
     @Composable
-    fun ComposeContent() {
+    fun ComposeContent(state: ContentState = ContentState.PREVIEW_STATE) {
         Scaffold(
+            modifier = Modifier.navigationBarsPadding(),
             topBar = {
-                ToolBar()
+                ToolBar(state.toolBarState)
             },
             floatingActionButton = {
             },
             bottomBar = {
             },
             floatingActionButtonPosition = FabPosition.End,
-//            isFloatingActionButtonDocked = true,
             content = { innerPadding ->
-                Content(innerPadding)
+                Content(innerPadding, state = state)
             },
             containerColor = Color.Black
         )
-        Progress()
+        Progress(state.progressState)
     }
 
     @Composable
-    fun Progress() {
-        val progress = viewModel.flowProgress.collectAsState()
+    fun Progress(state: ProgressState) {
+        val progress = state.flowProgress.collectAsState()
         if (progress.value != Progress.Start) return
         Box(
             modifier = Modifier
@@ -139,16 +178,17 @@ class ListPurchaseFragment : BaseFragment() {
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun ToolBar(
-        viewModel: ListPurchaseViewModel = viewModel()
+        state: ToolBarState = ToolBarState.PREVIEW_STATE
     ) {
+        val searchText by state.flowSearchText.collectAsState()
         SearchTopAppBar(
-            searchTextState = viewModel.flowSearchText.collectAsState().value,
+            searchTextState = searchText,
             onTextChange = {
-                viewModel.updateSearchText(it)
+                state.updateSearchText(it)
             },
             navigationIcon = {
                 IconButton(
-                    onClick = { viewModel.onBackClicked() },
+                    onClick = { state.onBackClicked() },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
@@ -158,7 +198,7 @@ class ListPurchaseFragment : BaseFragment() {
                 }
             },
             title = {
-                val collectionPurchaseName by viewModel.flowCollectionPurchase.collectAsState()
+                val collectionPurchaseName by state.flowCollectionPurchase.collectAsState()
                 Text(
                     text = collectionPurchaseName.name,
                     textAlign = TextAlign.Center,
@@ -169,9 +209,9 @@ class ListPurchaseFragment : BaseFragment() {
                     overflow = TextOverflow.Ellipsis
                 )
             },
-            actions = { state ->
+            actions = { searchWidgetState ->
                 IconButton(
-                    onClick = { state.value = SearchWidgetState.OPENED },
+                    onClick = { searchWidgetState.value = SearchWidgetState.OPENED },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_search_24),
@@ -180,7 +220,7 @@ class ListPurchaseFragment : BaseFragment() {
                     )
                 }
                 IconButton(
-                    onClick = { viewModel.onSettingsClicked() },
+                    onClick = { state.onSettingsClicked() },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_settings_24),
@@ -192,23 +232,25 @@ class ListPurchaseFragment : BaseFragment() {
         )
     }
 
+    @Preview
     @Composable
     fun Content(
-        paddingValues: PaddingValues = PaddingValues()
+        paddingValues: PaddingValues = PaddingValues(),
+        state: ContentState = ContentState.PREVIEW_STATE
     ) = Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .padding(paddingValues = paddingValues)
     ) {
-        SortPurchase()
+        SortPurchase(state.sortPurchaseState)
 
-        val purchaseModels by viewModel.flowListPurchaseModels.collectAsState()
-        val sortPurchase by viewModel.flowSortPurchase.collectAsState()
+        val purchaseModels by state.flowListPurchaseModels.collectAsState()
+        val sortPurchase by state.flowSortPurchase.collectAsState()
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
         ) {
             itemsIndexed(
                 purchaseModels.sortedWith(sortPurchase.toPurchaseComparator())
@@ -218,7 +260,7 @@ class ListPurchaseFragment : BaseFragment() {
                     dismissState.isDismissed(DismissDirection.StartToEnd)
                 ) {
                     LaunchedEffect(key1 = this@ListPurchaseFragment, block = {
-                        viewModel.apiFirebaseRemoveRepository(item)
+                        state.apiFirebaseRemoveRepository(item)
                         dismissState.snapTo(DismissValue.Default)
                     })
                 }
@@ -236,27 +278,25 @@ class ListPurchaseFragment : BaseFragment() {
                         animateDpAsState(
                             if (dismissState.dismissDirection == null) 0.dp else 4.dp
                         ).value
-                    val state = ItemPurchaseState(
+                    ItemPurchase(
                         elevation = elevation,
                         item = item,
-                        flowPurchaseSetting = viewModel.flowPurchaseSetting,
-                        onItemClicked = { item -> viewModel.onItemClicked(item) },
-                        onLongClicked = { item -> viewModel.onLongClicked(item) },
-                        onChecked = { item -> viewModel.onChecked(item) }
+                        state = state.itemPurchaseState
                     )
-                    ItemPurchase(state = state)
                 }
             }
         }
-        CreatePurchase()
+        CreatePurchase(state = state.createPurchaseState)
     }
 
     @Composable
-    fun SortPurchase() {
-        val state = viewModel.flowSortPurchase.collectAsState()
+    fun SortPurchase(
+        state: SortPurchaseState
+    ) {
+        val sortPurchase = state.flowSortPurchase.collectAsState()
         Text(
-            text = getString(
-                when (state.value) {
+            text = LocalContext.current.getString(
+                when (sortPurchase.value) {
                     SortPurchase.SORTING_A_Z -> R.string.sorting_a_z
                     SortPurchase.SORTING_Z_A -> R.string.sorting_z_a
                     SortPurchase.SORTING_DATA_NEW -> R.string.sorting_data_new
@@ -268,7 +308,7 @@ class ListPurchaseFragment : BaseFragment() {
             color = Colors.gr,
             modifier = Modifier
                 .clickable {
-                    viewModel.onSortClicked()
+                    state.onSortClicked()
                 }
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -276,15 +316,17 @@ class ListPurchaseFragment : BaseFragment() {
     }
 
     @Composable
-    fun CreatePurchase() {
-        val createTextState by viewModel.flowNewNamePurchase.collectAsState()
+    fun CreatePurchase(
+        state: CreatePurchaseState = CreatePurchaseState.PREVIEW_STATE
+    ) {
+        val createTextState by state.flowNewNamePurchase.collectAsState()
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .imePadding(),
             value = createTextState,
             onValueChange = {
-                viewModel.onNewNamePurchaseChanged(it)
+                state.onNewNamePurchaseChanged(it)
             },
             placeholder = {
                 Text(
@@ -303,7 +345,7 @@ class ListPurchaseFragment : BaseFragment() {
                     IconButton(
                         onClick = {
                             if (createTextState.isEmpty()) return@IconButton
-                            viewModel.onNewNamePurchaseChanged()
+                            state.onNewNamePurchaseChanged("")
                         }
                     ) {
                         Icon(
@@ -318,7 +360,7 @@ class ListPurchaseFragment : BaseFragment() {
                     IconButton(
                         onClick = {
                             if (createTextState.isEmpty()) return@IconButton
-                            viewModel.insertAdd(createTextState)
+                            state.insertAdd(createTextState)
                         }
                     ) {
                         Icon(
@@ -338,7 +380,7 @@ class ListPurchaseFragment : BaseFragment() {
             keyboardActions = KeyboardActions(
                 onDone = {
                     if (createTextState.isEmpty()) return@KeyboardActions
-                    viewModel.insertAdd(createTextState)
+                    state.insertAdd(createTextState)
                 }
             ),
 
@@ -379,9 +421,10 @@ class ListPurchaseFragment : BaseFragment() {
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun ItemPurchase(
-        state: ItemPurchaseState = ItemPurchaseState()
+        elevation: Dp = 4.dp,
+        item: PurchaseModel = PurchaseModel.TEST,
+        state: ItemPurchaseState = ItemPurchaseState.PREVIEW_STATE
     ) {
-        val item = state.item
         val purchaseSetting by state.flowPurchaseSetting.collectAsState()
         Card(
             colors = CardDefaults.cardColors().copy(
@@ -389,7 +432,7 @@ class ListPurchaseFragment : BaseFragment() {
             ),
             shape = purchaseSetting.toShape(),
             elevation = CardDefaults.cardElevation(
-                defaultElevation = state.elevation
+                defaultElevation = elevation
             ),
             modifier = Modifier
                 .fillMaxWidth()

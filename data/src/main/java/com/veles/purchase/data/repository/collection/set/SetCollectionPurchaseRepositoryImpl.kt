@@ -2,7 +2,6 @@ package com.veles.purchase.data.repository.collection.set
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.veles.purchase.data.core.extensions.toUnit
 import com.veles.purchase.data.extensions.collectionPurchase
 import com.veles.purchase.data.networking.entity.user.toUserDto
 import com.veles.purchase.data.networking.entity.user.toUserPurchaseModel
@@ -21,7 +20,7 @@ class SetCollectionPurchaseRepositoryImpl @Inject constructor(
 
     override suspend fun setCollectionPurchase(
         purchaseCollection: PurchaseCollectionModel
-    ) = suspendCancellableCoroutineWithTimeout {
+    ): Unit = suspendCancellableCoroutineWithTimeout {
         val user = firebaseAuth.currentUser
             ?: throw IllegalArgumentException("FirebaseAuth currentUser is null")
 
@@ -35,6 +34,6 @@ class SetCollectionPurchaseRepositoryImpl @Inject constructor(
         firebaseFirestore.collectionPurchase
             .document(changePurchaseCollection.id)
             .set(changePurchaseCollection)
-            .await().toUnit()
+            .await()
     }
 }
