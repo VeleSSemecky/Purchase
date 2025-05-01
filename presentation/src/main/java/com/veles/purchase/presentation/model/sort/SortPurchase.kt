@@ -14,17 +14,17 @@ enum class SortPurchase(val resId: Int) {
 
 fun SortPurchase.toPurchaseComparator(): Comparator<PurchaseModel> {
     return when (this) {
-        SortPurchase.SORTING_A_Z -> compareBy(PurchaseModel::check).thenBy(PurchaseModel::text)
-        SortPurchase.SORTING_Z_A -> compareBy(PurchaseModel::check).thenByDescending(
-            PurchaseModel::text
-        )
+        SortPurchase.SORTING_A_Z -> compareBy(PurchaseModel::text)
+            .thenBy(PurchaseModel::check)
+            .thenByDescending(PurchaseModel::createId)
+        SortPurchase.SORTING_Z_A -> compareByDescending(PurchaseModel::text)
+            .thenBy(PurchaseModel::check)
+            .thenByDescending(PurchaseModel::createId)
         SortPurchase.SORTING_DATA_NEW -> compareByDescending(PurchaseModel::createId)
         SortPurchase.SORTING_DATA_OLD -> compareBy(PurchaseModel::createId)
-        SortPurchase.SORTING_CHECK -> compareByDescending(PurchaseModel::check).thenByDescending(
-            PurchaseModel::createId
-        )
-        SortPurchase.SORTING_UNCHECK -> compareBy(PurchaseModel::check).thenByDescending(
-            PurchaseModel::createId
-        )
+        SortPurchase.SORTING_CHECK -> compareByDescending(PurchaseModel::check)
+            .thenByDescending(PurchaseModel::createId)
+        SortPurchase.SORTING_UNCHECK -> compareBy(PurchaseModel::check)
+            .thenByDescending(PurchaseModel::createId)
     }
 }

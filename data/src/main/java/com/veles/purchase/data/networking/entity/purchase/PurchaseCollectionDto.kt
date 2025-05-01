@@ -14,19 +14,22 @@ data class PurchaseCollectionDto(
     val id: String = Calendar.getInstance().timeInMillis.toString(),
     val name: String = emptyString(),
     val creator: UserDto = UserDto(),
-    val listMembers: List<String> = arrayListOf()
+    val listMembers: List<String> = arrayListOf(),
+    val categoryModels: List<PurchaseCategoryDto> = emptyList()
 ) : Parcelable
 
 fun PurchaseCollectionDto.toPurchaseCollectionModel() = PurchaseCollectionModel(
     id = id,
     name = name,
     creator = creator.toUserPurchaseModel(),
-    listMembers = listMembers
+    listMembers = listMembers,
+    categoryModels = categoryModels.map { it.toPurchaseCategoryModel() }
 )
 
-fun PurchaseCollectionModel.toPurchaseCollectionModelData() = PurchaseCollectionDto(
+fun PurchaseCollectionModel.toPurchaseCollectionModelDto() = PurchaseCollectionDto(
     id = id,
     name = name,
     creator = creator.toUserDto(),
-    listMembers = listMembers
+    listMembers = listMembers,
+    categoryModels = categoryModels.map { it.toPurchaseCategoryDto() }
 )

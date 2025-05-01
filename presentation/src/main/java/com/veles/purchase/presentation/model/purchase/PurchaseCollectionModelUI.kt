@@ -15,6 +15,7 @@ data class PurchaseCollectionModelUI(
     val name: String = emptyString(),
     val creator: UserPurchaseModelUI = UserPurchaseModelUI(),
     val listMembers: List<String> = arrayListOf(),
+    val categoryModels: List<PurchaseCategoryModelUI> = PurchaseCategoryModelUI.INIT_LIST,
     val count: Int = 0
 ) : Parcelable
 
@@ -22,12 +23,14 @@ fun PurchaseCollectionModelUI.toPurchaseCollectionModel() = PurchaseCollectionMo
     id = id,
     name = name,
     creator = creator.toUserPurchaseModel(),
-    listMembers = listMembers
+    listMembers = listMembers,
+    categoryModels = categoryModels.map { it.toPurchaseCategoryModel() }
 )
 
 fun PurchaseCollectionModel.toPurchaseCollectionModelUI() = PurchaseCollectionModelUI(
     id = id,
     name = name,
     creator = creator.toUserPurchaseModelUI(),
-    listMembers = listMembers
+    listMembers = listMembers,
+    categoryModels = categoryModels.map { it.toPurchaseCategoryModelUI() }
 )

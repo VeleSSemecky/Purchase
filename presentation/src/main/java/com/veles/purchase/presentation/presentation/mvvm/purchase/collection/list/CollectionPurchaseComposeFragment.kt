@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -234,10 +235,10 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
         val item = itemState.value ?: return
         androidx.compose.material3.AlertDialog(
             title = {
-                Text(text = getString(R.string.are_you_sure), color = Color.White, fontSize = 20.sp)
+                Text(text = LocalContext.current.getString(R.string.are_you_sure), color = Color.White, fontSize = 20.sp)
             },
             text = {
-                Text(text = getString(R.string.delete_plus_param, item.name), color = Color.White)
+                Text(text = LocalContext.current.getString(R.string.delete_plus_param, item.name), color = Color.White)
             },
             onDismissRequest = {},
             confirmButton = {
@@ -245,14 +246,14 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
                     viewModel.apiFirebaseRemovePurchaseCollection(item = item)
                     viewModel.onDeletePurchaseCollections(null)
                 }) {
-                    Text(getString(R.string.yes), color = Color.White)
+                    Text(LocalContext.current.getString(R.string.yes), color = Color.White)
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     viewModel.onDeletePurchaseCollections(null)
                 }) {
-                    Text(getString(R.string.no), color = Color.White)
+                    Text(LocalContext.current.getString(R.string.no), color = Color.White)
                 }
             }
         )

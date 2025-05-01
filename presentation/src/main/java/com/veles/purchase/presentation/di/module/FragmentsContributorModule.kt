@@ -21,6 +21,8 @@ import com.veles.purchase.presentation.presentation.mvvm.purchase.biometric.Biom
 import com.veles.purchase.presentation.presentation.mvvm.purchase.biometric.BiometricComposeModule
 import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.EditCollectionComposeFragment
 import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.EditCollectionComposeModule
+import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.category.CategoryFragment
+import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.category.CategoryModule
 import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.list.CollectionPurchaseComposeFragment
 import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.list.CollectionPurchaseComposeModule
 import com.veles.purchase.presentation.presentation.mvvm.purchase.edit.EditPurchaseFragment
@@ -120,4 +122,8 @@ interface FragmentsContributorModule {
     @FragmentScope
     @ContributesAndroidInjector(modules = [BiometricComposeModule::class])
     fun provideBiometricCompose(): BiometricComposeFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector(modules = [CategoryModule::class])
+    fun provideCategoryFragment(): CategoryFragment
 }

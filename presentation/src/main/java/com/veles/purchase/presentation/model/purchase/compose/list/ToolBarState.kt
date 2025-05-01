@@ -1,4 +1,4 @@
-package com.veles.purchase.presentation.model.purchase.compose
+package com.veles.purchase.presentation.model.purchase.compose.list
 
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
 import com.veles.purchase.domain.utill.emptyString

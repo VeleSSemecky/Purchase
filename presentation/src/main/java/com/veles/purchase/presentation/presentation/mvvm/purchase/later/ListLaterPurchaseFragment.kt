@@ -60,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -336,7 +337,7 @@ class ListLaterPurchaseFragment : BaseFragment() {
     fun SortPurchase() {
         val state = viewModel.flowSortPurchase.collectAsState()
         Text(
-            text = getString(
+            text = LocalContext.current.getString(
                 when (state.value) {
                     SortPurchase.SORTING_A_Z -> R.string.sorting_a_z
                     SortPurchase.SORTING_Z_A -> R.string.sorting_z_a
@@ -370,7 +371,7 @@ class ListLaterPurchaseFragment : BaseFragment() {
                 Text(
                     modifier = Modifier
                         .alpha(alpha = 0.38f),
-                    text = getString(R.string.name_purchase),
+                    text = LocalContext.current.getString(R.string.name_purchase),
                     color = Color.White
                 )
             },

@@ -1,4 +1,4 @@
-package com.veles.purchase.presentation.model.purchase.compose
+package com.veles.purchase.presentation.model.purchase.compose.core
 
 import com.veles.purchase.presentation.model.progress.Progress
 import kotlinx.coroutines.flow.MutableStateFlow

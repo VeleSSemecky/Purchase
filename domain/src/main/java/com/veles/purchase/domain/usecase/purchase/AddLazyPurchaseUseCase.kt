@@ -24,7 +24,7 @@ class AddLazyPurchaseUseCase @Inject constructor(
         purchaseCollectionId: String
     ) = withContext(appCoroutineDispatcher.coroutineDispatcherIO()) {
         sendAsyncOnFirebase(purchaseModel, purchaseCollectionId)
-        sendAsyncNotification(purchaseModel, purchaseCollectionId)
+//        sendAsyncNotification(purchaseModel, purchaseCollectionId)
         addAsyncInHistory(purchaseModel)
     }
 

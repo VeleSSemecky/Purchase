@@ -10,11 +10,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +45,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -52,7 +56,14 @@ import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.model.progress.Progress
+import com.veles.purchase.presentation.model.purchase.compose.collection.edit.CategoryState
+import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ComponentNameState
+import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ContentState
+import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ItemUserState
+import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ToolBarState
+import com.veles.purchase.presentation.model.purchase.compose.core.ProgressState
 import com.veles.purchase.presentation.model.user.UserCheckedUI
+import com.veles.purchase.presentation.model.user.UserPurchaseModelUI
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textFieldColorsMaterial3
@@ -74,26 +85,48 @@ class EditCollectionComposeFragment : BaseFragment() {
             false
         ).apply {
             findViewById<ComposeView>(R.id.composeView).setContent {
+                val state = ContentState(
+                    flowListUserChecked = viewModel.flowListUserChecked,
+                    componentNameState = ComponentNameState(
+                        flowCollectionName = viewModel.flowCollectionName,
+                        setCollectionName = { name -> viewModel.setCollectionName(name) }
+                    ),
+                    itemUserState = ItemUserState(
+                        onUpdateCheck = { index, item -> viewModel.onUpdateCheck(index, item) }
+                    ),
+                    toolBarState = ToolBarState {
+                        viewModel.save()
+                    },
+                    progressState = ProgressState(
+                        flowProgress = viewModel.flowProgress
+                    ),
+                    categoryState = CategoryState {
+                        viewModel.onCategoryClicked()
+                    }
+                )
                 MyTheme {
                     Scaffold(
                         topBar = {
-                            ToolBar()
+                            ToolBar(state.toolBarState)
                         },
-                        content = {
-                            Content(it)
+                        content = { innerPadding ->
+                            Content(paddingValues = innerPadding, state = state)
                         },
                         floatingActionButtonPosition = FabPosition.End,
                         containerColor = Color.Black
                     )
-                    Progress()
+                    Progress(state.progressState)
                 }
             }
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
+    @Preview
     @Composable
-    fun ToolBar() {
+    fun ToolBar(
+        state: ToolBarState = ToolBarState.PREVIEW_STATE
+    ) {
         TopAppBar(
             navigationIcon = {
                 IconButton(
@@ -119,9 +152,7 @@ class EditCollectionComposeFragment : BaseFragment() {
             actions = {
                 IconButton(
                     onClick = {
-                        viewModel.save {
-                            findNavController().popBackStack()
-                        }
+                        state.save()
                     },
                 ) {
                     Icon(
@@ -136,9 +167,12 @@ class EditCollectionComposeFragment : BaseFragment() {
         )
     }
 
+    @Preview
     @Composable
-    fun Progress() {
-        val progress by viewModel.flowProgress.collectAsState()
+    fun Progress(
+        state: ProgressState = ProgressState.PREVIEW_STATE
+    ) {
+        val progress by state.flowProgress.collectAsState()
         if (progress != Progress.Start) return
         Box(
             contentAlignment = Alignment.Center,
@@ -152,9 +186,12 @@ class EditCollectionComposeFragment : BaseFragment() {
         }
     }
 
+    @Preview
     @Composable
-    fun ComponentName() {
-        val text by viewModel.flowCollectionName.collectAsState()
+    fun ComponentName(
+        state: ComponentNameState = ComponentNameState.PREVIEW_STATE
+    ) {
+        val text by state.flowCollectionName.collectAsState()
         OutlinedTextField(
             colors = textFieldColorsMaterial3(),
             textStyle = textStyle(),
@@ -167,7 +204,7 @@ class EditCollectionComposeFragment : BaseFragment() {
             isError = text.isError,
             value = text.model,
             onValueChange = {
-                viewModel.setCollectionName(it)
+                state.setCollectionName(it)
             },
             label = {
                 Text(
@@ -178,9 +215,11 @@ class EditCollectionComposeFragment : BaseFragment() {
         )
     }
 
+    @Preview
     @Composable
     fun Content(
-        paddingValues: PaddingValues = PaddingValues()
+        paddingValues: PaddingValues = PaddingValues(),
+        state: ContentState = ContentState.PREVIEW_STATE
     ) = Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -188,10 +227,12 @@ class EditCollectionComposeFragment : BaseFragment() {
             .padding(paddingValues = paddingValues)
     ) {
         Spacer(modifier = Modifier.padding(16.dp))
-        ComponentName()
+        ComponentName(state.componentNameState)
+        Spacer(modifier = Modifier.padding(8.dp))
+        Component(state.categoryState)
         Spacer(modifier = Modifier.padding(8.dp))
 
-        val skuEntityList by viewModel.flowListUserChecked.collectAsState()
+        val skuEntityList by state.flowListUserChecked.collectAsState()
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f)
@@ -199,15 +240,17 @@ class EditCollectionComposeFragment : BaseFragment() {
             itemsIndexed(
                 skuEntityList
             ) { index, item ->
-                ItemUser(item, index)
+                ItemUser(item, index, state.itemUserState)
             }
         }
     }
 
+    @Preview
     @Composable
     fun ItemUser(
-        item: UserCheckedUI,
-        index: Int
+        item: UserCheckedUI = UserCheckedUI(userPurchase = UserPurchaseModelUI()),
+        index: Int = 0,
+        state: ItemUserState = ItemUserState.PREVIEW_STATE
     ) {
         Card(
             colors = CardDefaults.cardColors().copy(
@@ -224,7 +267,7 @@ class EditCollectionComposeFragment : BaseFragment() {
                     end = 16.dp
                 )
                 .clickable {
-                    viewModel.onUpdateCheck(index, item)
+                    state.onUpdateCheck(index, item)
                 }
 
         ) {
@@ -235,12 +278,11 @@ class EditCollectionComposeFragment : BaseFragment() {
                     IconCheck,
                     TextName,
                     TextEmail
-
                 ) = createRefs()
                 Box(
                     modifier = Modifier
                         .clickable {
-                            viewModel.onUpdateCheck(index, item)
+                            state.onUpdateCheck(index, item)
                         }
                         .padding(16.dp)
                         .constrainAs(IconCheck) {
@@ -252,7 +294,7 @@ class EditCollectionComposeFragment : BaseFragment() {
                     Checkbox(
                         checked = item.isCheck,
                         onCheckedChange = {
-                            viewModel.onUpdateCheck(index, item)
+                            state.onUpdateCheck(index, item)
                         },
                         colors = CheckboxDefaults.colors(
                             checkedColor = Colors.gr,
@@ -292,6 +334,55 @@ class EditCollectionComposeFragment : BaseFragment() {
                             bottom.linkTo(parent.bottom)
                             width = Dimension.fillToConstraints
                         }
+                )
+            }
+        }
+    }
+
+
+    @Preview
+    @Composable
+    fun Component(categoryState: CategoryState = CategoryState.PREVIEW_STATE) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(horizontal = 20.dp)
+                .clickable {
+                    categoryState.onCategoryClicked()
+                },
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors().copy(
+                containerColor = Colors.colorAccent
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    painter = painterResource(R.drawable.ic_category),
+                    contentDescription = "Is Image",
+                    tint = Colors.gr
+                )
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .weight(1f)
+                        .padding(horizontal = 8.dp),
+                    text = "Category settings"
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    painter = painterResource(R.drawable.ic_navigate_next),
+                    contentDescription = "Is Image",
+                    tint = Colors.gr
                 )
             }
         }

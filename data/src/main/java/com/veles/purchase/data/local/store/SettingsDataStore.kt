@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.veles.purchase.domain.model.setting.PurchaseSetting
 import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
@@ -43,6 +42,8 @@ class SettingsDataStore @Inject constructor(
 
     suspend fun saveSettingsPurchase(purchaseSetting: PurchaseSetting) {
         dataStore.edit { preferences ->
+            preferences.toMutablePreferences()
+
             preferences[SIZE_TYPE] = purchaseSetting.sizeType.name
             preferences[SHAPE_TYPE] = purchaseSetting.shapeType.name
             preferences[IS_IMAGE] = purchaseSetting.isImage
@@ -55,6 +56,7 @@ class SettingsDataStore @Inject constructor(
     }
 
     companion object {
+        private val SIZE_TYPE = Preferences.Key<String>("SIZE_TYPE_KEY")
         private val SIZE_TYPE = stringPreferencesKey("SIZE_TYPE_KEY")
         private val SHAPE_TYPE = stringPreferencesKey("SHAPE_TYPE_KEY")
         private val IS_IMAGE = booleanPreferencesKey("IS_IMAGE_KEY")

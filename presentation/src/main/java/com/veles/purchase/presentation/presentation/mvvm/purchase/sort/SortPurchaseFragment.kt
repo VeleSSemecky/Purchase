@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.presentation.R
@@ -61,7 +62,7 @@ class SortPurchaseFragment : BaseBottomSheetDialogFragment() {
     @Composable
     private fun Item(sortPurchase: SortPurchase) {
         Text(
-            text = getString(sortPurchase.resId),
+            text = LocalContext.current.getString(sortPurchase.resId),
             fontSize = 16.sp,
             modifier = Modifier
                 .fillMaxWidth()

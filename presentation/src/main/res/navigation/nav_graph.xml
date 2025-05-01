@@ -129,8 +129,7 @@
 
         <action
             android:id="@+id/fragmentCurrencyChoose"
-            app:destination="@id/fragmentCurrencyChoose">
-        </action>
+            app:destination="@id/fragmentCurrencyChoose"></action>
 
         <action
             android:id="@+id/fragmentPhotoListFragment"
@@ -244,6 +243,10 @@
             app:argType="com.veles.purchase.presentation.model.purchase.PurchaseCollectionModelUI"
             app:nullable="true" />
 
+        <action
+            android:id="@+id/fragmentCategory"
+            app:destination="@id/fragmentCategory" />
+
     </fragment>
 
     <fragment
@@ -265,5 +268,16 @@
     <fragment
         android:id="@+id/fragmentBiometricCompose"
         android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.biometric.BiometricComposeFragment" />
+
+    <fragment
+        android:id="@+id/fragmentCategory"
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.category.CategoryFragment">
+
+        <argument
+            android:name="modelCollectionPurchase"
+            app:argType="com.veles.purchase.presentation.model.purchase.PurchaseCollectionModelUI"
+            app:nullable="false" />
+
+    </fragment>
 
 </navigation>

@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -118,7 +119,7 @@ class HistoryComposeFragment : BaseFragment() {
             },
             title = {
                 Text(
-                    text = requireContext().getString(R.string.history),
+                    text = LocalContext.current.getString(R.string.history),
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
                     color = Color.White,
@@ -234,7 +235,7 @@ class HistoryComposeFragment : BaseFragment() {
                                     .align(alignment = Alignment.CenterVertically)
                             ) {
                                 Text(
-                                    text = requireContext().getString(item.typeHistory.text),
+                                    text = LocalContext.current.getString(item.typeHistory.text),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = Color.White
                                 )

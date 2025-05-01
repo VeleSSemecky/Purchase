@@ -2,12 +2,15 @@ package com.veles.purchase.domain.model.purchase
 
 import com.veles.purchase.domain.model.user.UserPurchaseModel
 import com.veles.purchase.domain.utill.emptyString
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 data class PurchaseCollectionModel(
     val id: String,
     val name: String,
     val creator: UserPurchaseModel,
-    val listMembers: List<String>
+    val listMembers: List<String>,
+    val categoryModels: List<PurchaseCategoryModel>
 ) {
 
     companion object {
@@ -16,14 +19,26 @@ data class PurchaseCollectionModel(
             id = emptyString(),
             name = emptyString(),
             creator = UserPurchaseModel.EMPTY,
-            listMembers = emptyList()
+            listMembers = emptyList(),
+            categoryModels = emptyList()
         )
 
+        @OptIn(ExperimentalUuidApi::class)
         val TEST = PurchaseCollectionModel(
             id = emptyString(),
             name = "Collection Name",
             creator = UserPurchaseModel.EMPTY,
-            listMembers = listOf("TEst,TEST")
+            listMembers = listOf("TEst,TEST"),
+            categoryModels = listOf(
+                PurchaseCategoryModel(
+                    id = Uuid.random().toString(),
+                    name = "Bread"
+                ),
+                PurchaseCategoryModel(
+                    id = Uuid.random().toString(),
+                    name = "Meat"
+                ),
+            )
         )
     }
 }
