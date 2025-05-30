@@ -61,7 +61,6 @@ import com.veles.purchase.presentation.model.purchase.compose.collection.edit.Co
 import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ContentState
 import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ItemUserState
 import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ToolBarState
-import com.veles.purchase.presentation.model.purchase.compose.core.ProgressState
 import com.veles.purchase.presentation.model.user.UserCheckedUI
 import com.veles.purchase.presentation.model.user.UserPurchaseModelUI
 import com.veles.purchase.presentation.presentation.compose.Colors
@@ -85,10 +84,13 @@ class EditCollectionComposeFragment : BaseFragment() {
             false
         ).apply {
             findViewById<ComposeView>(R.id.composeView).setContent {
+                val uiState by viewModel.uiState.collectAsState()
+
                 val state = ContentState(
-                    flowListUserChecked = viewModel.flowListUserChecked,
+                    listUserChecked = uiState.listUserChecked,
                     componentNameState = ComponentNameState(
-                        flowCollectionName = viewModel.flowCollectionName,
+                        collectionName = uiState.purchaseCollectionModelUI.name,
+                        isError = uiState.isCollectionNameError,
                         setCollectionName = { name -> viewModel.setCollectionName(name) }
                     ),
                     itemUserState = ItemUserState(
@@ -97,13 +99,11 @@ class EditCollectionComposeFragment : BaseFragment() {
                     toolBarState = ToolBarState {
                         viewModel.save()
                     },
-                    progressState = ProgressState(
-                        flowProgress = viewModel.flowProgress
-                    ),
                     categoryState = CategoryState {
                         viewModel.onCategoryClicked()
                     }
                 )
+
                 MyTheme {
                     Scaffold(
                         topBar = {
@@ -115,7 +115,7 @@ class EditCollectionComposeFragment : BaseFragment() {
                         floatingActionButtonPosition = FabPosition.End,
                         containerColor = Color.Black
                     )
-                    Progress(state.progressState)
+                    Progress(uiState.progress)
                 }
             }
         }
@@ -170,9 +170,8 @@ class EditCollectionComposeFragment : BaseFragment() {
     @Preview
     @Composable
     fun Progress(
-        state: ProgressState = ProgressState.PREVIEW_STATE
+        progress: Progress = Progress.Start
     ) {
-        val progress by state.flowProgress.collectAsState()
         if (progress != Progress.Start) return
         Box(
             contentAlignment = Alignment.Center,
@@ -191,7 +190,6 @@ class EditCollectionComposeFragment : BaseFragment() {
     fun ComponentName(
         state: ComponentNameState = ComponentNameState.PREVIEW_STATE
     ) {
-        val text by state.flowCollectionName.collectAsState()
         OutlinedTextField(
             colors = textFieldColorsMaterial3(),
             textStyle = textStyle(),
@@ -201,8 +199,8 @@ class EditCollectionComposeFragment : BaseFragment() {
                     start = 20.dp,
                     end = 20.dp
                 ),
-            isError = text.isError,
-            value = text.model,
+            isError = state.isError,
+            value = state.collectionName,
             onValueChange = {
                 state.setCollectionName(it)
             },
@@ -232,13 +230,12 @@ class EditCollectionComposeFragment : BaseFragment() {
         Component(state.categoryState)
         Spacer(modifier = Modifier.padding(8.dp))
 
-        val skuEntityList by state.flowListUserChecked.collectAsState()
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f)
         ) {
             itemsIndexed(
-                skuEntityList
+                state.listUserChecked
             ) { index, item ->
                 ItemUser(item, index, state.itemUserState)
             }
@@ -275,9 +272,9 @@ class EditCollectionComposeFragment : BaseFragment() {
                 modifier = Modifier.fillMaxSize()
             ) {
                 val (
-                    IconCheck,
-                    TextName,
-                    TextEmail
+                    referenceIconCheck,
+                    referenceTextName,
+                    referenceTextEmail
                 ) = createRefs()
                 Box(
                     modifier = Modifier
@@ -285,7 +282,7 @@ class EditCollectionComposeFragment : BaseFragment() {
                             state.onUpdateCheck(index, item)
                         }
                         .padding(16.dp)
-                        .constrainAs(IconCheck) {
+                        .constrainAs(referenceIconCheck) {
                             start.linkTo(parent.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
@@ -313,11 +310,11 @@ class EditCollectionComposeFragment : BaseFragment() {
                             end = 8.dp,
                             top = 8.dp
                         )
-                        .constrainAs(TextName) {
-                            start.linkTo(IconCheck.end)
+                        .constrainAs(referenceTextName) {
+                            start.linkTo(referenceIconCheck.end)
                             end.linkTo(parent.end)
                             top.linkTo(parent.top)
-                            bottom.linkTo(TextEmail.top)
+                            bottom.linkTo(referenceTextEmail.top)
                             width = Dimension.fillToConstraints
                         }
                 )
@@ -327,10 +324,10 @@ class EditCollectionComposeFragment : BaseFragment() {
                     style = textStyle1(),
                     modifier = Modifier
                         .padding(8.dp)
-                        .constrainAs(TextEmail) {
-                            start.linkTo(IconCheck.end)
+                        .constrainAs(referenceTextEmail) {
+                            start.linkTo(referenceIconCheck.end)
                             end.linkTo(parent.end)
-                            top.linkTo(TextName.bottom)
+                            top.linkTo(referenceTextName.bottom)
                             bottom.linkTo(parent.bottom)
                             width = Dimension.fillToConstraints
                         }
