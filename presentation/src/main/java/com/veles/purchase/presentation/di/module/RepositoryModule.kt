@@ -11,7 +11,7 @@ import com.veles.purchase.data.repository.auth.AuthWithGoogleRepositoryImpl
 import com.veles.purchase.data.repository.auth.BiometricRepositoryImpl
 import com.veles.purchase.data.repository.collection.delete.DeleteCollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.collection.get.GetCollectionPurchaseRepositoryImpl
-import com.veles.purchase.data.repository.collection.set.SetCollectionPurchaseRepositoryImpl
+import com.veles.purchase.data.repository.collection.set.CollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.history.HistoryRepositoryImpl
 import com.veles.purchase.data.repository.later.PurchaseLaterRepositoryImpl
 import com.veles.purchase.data.repository.message.NotificationMessageRepositoryImpl
@@ -30,7 +30,7 @@ import com.veles.purchase.domain.repository.auth.AuthWithGoogleRepository
 import com.veles.purchase.domain.repository.auth.BiometricRepository
 import com.veles.purchase.domain.repository.collection.DeleteCollectionPurchaseRepository
 import com.veles.purchase.domain.repository.collection.GetCollectionPurchaseRepository
-import com.veles.purchase.domain.repository.collection.SetCollectionPurchaseRepository
+import com.veles.purchase.domain.repository.collection.CollectionPurchaseRepository
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.message.NotificationMessageRepository
 import com.veles.purchase.domain.repository.purchase.GetPurchasePhotoRepository
@@ -71,7 +71,7 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun provideSetCollectionPurchaseRepository(repository: SetCollectionPurchaseRepositoryImpl): SetCollectionPurchaseRepository
+    fun provideSetCollectionPurchaseRepository(repository: CollectionPurchaseRepositoryImpl): CollectionPurchaseRepository
 
     @Singleton
     @Binds

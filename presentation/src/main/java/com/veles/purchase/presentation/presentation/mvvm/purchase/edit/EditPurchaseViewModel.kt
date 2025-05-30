@@ -7,8 +7,10 @@ import com.veles.purchase.domain.core.extensions.add
 import com.veles.purchase.domain.core.extensions.change
 import com.veles.purchase.domain.core.extensions.emitNotNull
 import com.veles.purchase.domain.core.extensions.invoke
+import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
+import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseCategoryUseCase
 import com.veles.purchase.domain.usecase.purchase.GetPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import com.veles.purchase.domain.usecase.storage.GetPhotoUseCase
@@ -24,9 +26,11 @@ import java.time.LocalDateTime
 import java.util.Currency
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class EditPurchaseViewModel @Inject constructor(
@@ -35,6 +39,7 @@ class EditPurchaseViewModel @Inject constructor(
     private val getPurchaseUseCase: GetPurchaseUseCase,
     private val getPhotoUseCase: GetPhotoUseCase,
     private val savePurchaseUseCase: SavePurchaseUseCase,
+    private val getCollectionPurchaseCategoryUseCase: GetCollectionPurchaseCategoryUseCase,
     private val router: Router
 ) : ViewModel() {
 
@@ -63,6 +68,16 @@ class EditPurchaseViewModel @Inject constructor(
 
     val flowPurchaseIsChecked: StateFlow<Boolean>
         get() = flowPurchaseModel.mapStateIn(viewModelScope) { it.check }
+
+    val flowCollectionPurchaseCategoryList: StateFlow<List<PurchaseCategoryModel>> by lazy {
+        getCollectionPurchaseCategoryUseCase(args.purchaseCollectionId).stateIn(
+            viewModelScope,
+            started = WhileSubscribed(),
+            initialValue = emptyList()
+        )
+    }
+
+    val flowPurchaseCategoryModel: MutableStateFlow<PurchaseCategoryModel> = MutableStateFlow(PurchaseCategoryModel.EMPTY)
 
     val flowProgress: MutableStateFlow<Progress> = MutableStateFlow(Progress.End)
 
@@ -142,4 +157,8 @@ class EditPurchaseViewModel @Inject constructor(
                 value.add(deletePhoto)
             }
         }.launchIn(viewModelScope)
+
+    fun onCategorySelected(purchaseCategoryModel: PurchaseCategoryModel) = viewModelScope.launch {
+        flowPurchaseCategoryModel.emit(purchaseCategoryModel)
+    }
 }

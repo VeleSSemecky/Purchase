@@ -265,7 +265,7 @@ class ListLaterPurchaseFragment : BaseFragment() {
                 SwipeToDismiss(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateItemPlacement(),
+                        .animateItem(),
                     state = dismissState,
                     background = {},
                     dismissThresholds = { FractionalThreshold(0.7f) }

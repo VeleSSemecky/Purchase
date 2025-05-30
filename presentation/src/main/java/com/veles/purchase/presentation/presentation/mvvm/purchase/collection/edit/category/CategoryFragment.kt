@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -70,19 +69,7 @@ import androidx.fragment.app.viewModels
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.IconSquare
-import com.veles.purchase.presentation.model.progress.Progress
 import com.veles.purchase.presentation.model.purchase.PurchaseCategoryModelUI
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.ConfirmLeaveDialogState
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.ConfirmLeaveDialogType
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.ContentState
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.CreateCategoryDialogState
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.CreateCategoryDialogType
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.CreateCategoryState
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.EditDialogState
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.EditDialogType
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.FabState
-import com.veles.purchase.presentation.model.purchase.compose.collection.edit.category.ToolBarState
-import com.veles.purchase.presentation.model.purchase.compose.core.ProgressState
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 
@@ -102,95 +89,92 @@ class CategoryFragment : BaseFragment() {
             false
         ).apply {
             findViewById<ComposeView>(R.id.composeView).setContent {
-                val state = ContentState(
-                    flowListCategory = viewModel.flowListPurchaseCategoryModel,
-                    toolBarState = ToolBarState(
-                        onBackClicked = {
-                            viewModel.onBackClicked()
-                        },
-                        onSaveClicked = {
-                            viewModel.onSaveClicked()
-                        }
-                    ),
-                    progressState = ProgressState(
-                        flowProgress = viewModel.flowProgress
-                    ),
-                    createCategoryState = CreateCategoryState(
-                        onItemClicked = { position, item ->
-                            viewModel.onItemClicked(position, item)
-                        },
-                        onRemoveCategory = { item ->
-                            viewModel.onRemoveCategory(item)
-                        }
-                    ),
-                    fabState = FabState {
-                        viewModel.onCreateCategoryDialogClicked()
-                    },
-                    editDialogState = EditDialogState(
-                        flowEditDialogType = viewModel.flowEditDialogType,
-                        onTextUpdated = { position, text ->
-                            viewModel.onTextUpdated(position, text)
-                        },
-                        onEditDismissed = {
-                            viewModel.onEditDismissed()
-                        }
-                    ),
-                    createCategoryDialogState = CreateCategoryDialogState(
-                        flowCreateCategoryDialogType = viewModel.flowCreateCategoryDialogType,
-                        onCreateCategoryClicked = { text ->
-                            viewModel.onCreateCategoryClicked(text)
-                        },
-                        onCreateCategoryDismiss = {
-                            viewModel.onCreateCategoryDismiss()
-                        }
-                    ),
-                    confirmLeaveDialogState = ConfirmLeaveDialogState(
-                        flowConfirmLeaveDialogType = viewModel.flowConfirmLeaveDialogType,
-                        onConfirmLeaveClicked = {
-                            viewModel.onConfirmLeaveClicked()
-                        },
-                        onConfirmLeaveDismiss = {
-                            viewModel.onConfirmLeaveDismiss()
-                        }
-                    )
+                val uiState by viewModel.uiState.collectAsState()
+                ComposeContent(
+                    uiState = uiState,
+                    onBackClicked = { viewModel.onBackClicked() },
+                    onSaveClicked = { viewModel.onSaveClicked() },
+                    onItemClicked = { position, item -> viewModel.onItemClicked(position, item) },
+                    onRemoveCategory = { viewModel.onRemoveCategory(it) },
+                    onCreateCategoryDialogClicked = { viewModel.onCreateCategoryDialogClicked() },
+                    onTextUpdated = { position, text -> viewModel.onTextUpdated(position, text) },
+                    onDialogDismissed = { viewModel.onDialogDismissed() },
+                    onCreateCategoryClicked = { viewModel.onCreateCategoryClicked(it) },
+                    onConfirmLeaveClicked = { viewModel.onConfirmLeaveClicked() }
                 )
-                ComposeContent(state)
             }
         }
     }
 
     @Preview(showSystemUi = true)
     @Composable
-    fun ComposeContent(state: ContentState = ContentState.PREVIEW_STATE) {
+    fun ComposeContent(
+        uiState: CategoryScreenState = CategoryScreenState.PREVIEW_STATE,
+        onBackClicked: () -> Unit = {},
+        onSaveClicked: () -> Unit = {},
+        onItemClicked: (Int, PurchaseCategoryModelUI) -> Unit = { _, _ -> },
+        onRemoveCategory: (PurchaseCategoryModelUI) -> Unit = {},
+        onCreateCategoryDialogClicked: () -> Unit = {},
+        onTextUpdated: (Int, String) -> Unit = { _, _ -> },
+        onDialogDismissed: () -> Unit = {},
+        onCreateCategoryClicked: (String) -> Unit = {},
+        onConfirmLeaveClicked: () -> Unit = {}
+    ) {
         Scaffold(
             modifier = Modifier.navigationBarsPadding(),
             topBar = {
-                ToolBar(state.toolBarState)
+                ToolBar(
+                    onBackClicked = onBackClicked,
+                    onSaveClicked = onSaveClicked
+                )
             },
             floatingActionButton = {
-                FAB(state.fabState)
+                FAB(onCreateCategoryDialogClicked = onCreateCategoryDialogClicked)
             },
-            bottomBar = {
-            },
+            bottomBar = {},
             floatingActionButtonPosition = FabPosition.End,
             content = { innerPadding ->
-                Content(innerPadding, state = state)
+                Content(
+                    paddingValues = innerPadding,
+                    categories = uiState.categories,
+                    onItemClicked = onItemClicked,
+                    onRemoveCategory = onRemoveCategory
+                )
             },
             containerColor = Color.Black
         )
-        Progress(state.progressState)
-        EditDialog(state.editDialogState)
-        CreateCategoryDialog(state.createCategoryDialogState)
-        ConfirmLeaveDialog(state.confirmLeaveDialogState)
+
+        if (uiState.isLoading) {
+            ProgressIndicator()
+        }
+
+        when (val dialogState = uiState.dialogState) {
+            is DialogState.EditCategoryDialog -> EditDialog(
+                position = dialogState.position,
+                item = dialogState.item,
+                onTextUpdated = onTextUpdated,
+                onDismissed = onDialogDismissed
+            )
+
+            is DialogState.CreateCategoryDialog -> CreateCategoryDialog(
+                onCreateCategoryClicked = onCreateCategoryClicked,
+                onDismissed = onDialogDismissed
+            )
+
+            is DialogState.ConfirmLeaveDialog -> ConfirmLeaveDialog(
+                onConfirmLeaveClicked = onConfirmLeaveClicked,
+                onDismissed = onDialogDismissed
+            )
+
+            DialogState.NoDialog -> Unit
+        }
     }
 
     @Composable
-    fun FAB(state: FabState) {
+    fun FAB(onCreateCategoryDialogClicked: () -> Unit) {
         FloatingActionButton(
             modifier = Modifier,
-            onClick = {
-                state.onCreateCategoryDialogClicked()
-            }
+            onClick = onCreateCategoryDialogClicked
         ) {
             Icon(
                 Icons.Filled.Add,
@@ -200,27 +184,24 @@ class CategoryFragment : BaseFragment() {
     }
 
     @Composable
-    fun Progress(state: ProgressState) {
-        val progress = state.flowProgress.collectAsState()
-        if (progress.value != Progress.Start) return
+    fun ProgressIndicator() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Colors.progress)
-                .clickable(false) {
-                },
+                .clickable(false) {},
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(color = Colors.gr)
         }
     }
 
-    @Preview(showSystemUi = true, showBackground = true)
     @OptIn(ExperimentalMaterial3Api::class)
-    @Preview
+    @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun ToolBar(
-        toolBarState: ToolBarState = ToolBarState.PREVIEW_STATE
+        onBackClicked: () -> Unit = {},
+        onSaveClicked: () -> Unit = {}
     ) {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors().copy(
@@ -237,9 +218,7 @@ class CategoryFragment : BaseFragment() {
                     ) = createRefs()
                     IconSquare(
                         id = R.drawable.ic_baseline_arrow_back_24,
-                        onClick = {
-                            toolBarState.onBackClicked()
-                        },
+                        onClick = onBackClicked,
                         modifier = Modifier
                             .constrainAs(referenceIconBack) {
                                 start.linkTo(parent.start)
@@ -263,9 +242,7 @@ class CategoryFragment : BaseFragment() {
                     )
                     IconSquare(
                         id = R.drawable.ic_done_black_24dp,
-                        onClick = {
-                            toolBarState.onSaveClicked()
-                        },
+                        onClick = onSaveClicked,
                         modifier = Modifier
                             .constrainAs(referenceIconSave) {
                                 end.linkTo(parent.end, margin = 16.dp)
@@ -282,39 +259,41 @@ class CategoryFragment : BaseFragment() {
     @Composable
     fun Content(
         paddingValues: PaddingValues = PaddingValues(),
-        state: ContentState = ContentState.PREVIEW_STATE
+        categories: List<PurchaseCategoryModelUI> = CategoryScreenState.PREVIEW_STATE.categories,
+        onItemClicked: (Int, PurchaseCategoryModelUI) -> Unit = { _, _ -> },
+        onRemoveCategory: (PurchaseCategoryModelUI) -> Unit = {}
     ) = Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .padding(paddingValues = paddingValues)
     ) {
-        val listCategory by state.flowListCategory.collectAsState()
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp),
             modifier = Modifier.weight(1f)
         ) {
             itemsIndexed(
-                listCategory
+                categories
             ) { position, item ->
                 ItemCategory(
                     item = item,
                     position = position,
-                    state = state.createCategoryState
+                    onItemClicked = onItemClicked,
+                    onRemoveCategory = onRemoveCategory
                 )
             }
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun ItemCategory(
         elevation: Dp = 4.dp,
         item: PurchaseCategoryModelUI = PurchaseCategoryModelUI.EMPTY,
         position: Int = 0,
-        state: CreateCategoryState = CreateCategoryState.PREVIEW_STATE
+        onItemClicked: (Int, PurchaseCategoryModelUI) -> Unit = { _, _ -> },
+        onRemoveCategory: (PurchaseCategoryModelUI) -> Unit = {}
     ) {
         Card(
             colors = CardDefaults.cardColors().copy(
@@ -330,7 +309,7 @@ class CategoryFragment : BaseFragment() {
                     end = 16.dp
                 )
                 .combinedClickable(
-                    onClick = { state.onItemClicked(position, item) },
+                    onClick = { onItemClicked(position, item) },
                 )
         ) {
             ConstraintLayout(
@@ -364,9 +343,7 @@ class CategoryFragment : BaseFragment() {
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                         },
-                    onClick = {
-                        state.onRemoveCategory(item)
-                    }
+                    onClick = { onRemoveCategory(item) }
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_delete_black_24dp),
@@ -378,169 +355,146 @@ class CategoryFragment : BaseFragment() {
         }
     }
 
+    @Composable
+    fun CategoryNameTextField(
+        value: String,
+        onValueChange: (String) -> Unit,
+        onImeActionDone: () -> Unit,
+        modifier: Modifier = Modifier,
+        isError: Boolean = value.isEmpty(),
+        placeholderText: String
+    ) {
+        TextField(
+            modifier = modifier
+                .fillMaxWidth()
+                .imePadding(),
+            value = value,
+            onValueChange = onValueChange,
+            isError = isError,
+            placeholder = {
+                Text(
+                    modifier = Modifier.alpha(0.60f),
+                    text = placeholderText,
+                    color = Color.White
+                )
+            },
+            textStyle = TextStyle(
+                fontSize = MaterialTheme.typography.titleMedium.fontSize
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onImeActionDone() }
+            ),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
+                cursorColor = Color.White.copy(alpha = 0.60f),
+                focusedIndicatorColor = Colors.gr.copy(alpha = 0.87f),
+                focusedLabelColor = Colors.gr.copy(alpha = 0.87f)
+            )
+        )
+    }
+
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun EditDialog(
-        state: EditDialogState = EditDialogState.PREVIEW_STATE,
+        position: Int = 0,
+        item: PurchaseCategoryModelUI = PurchaseCategoryModelUI.EMPTY,
+        onTextUpdated: (Int, String) -> Unit = { _, _ -> },
+        onDismissed: () -> Unit = {}
     ) {
-        val editDialogType by state.flowEditDialogType.collectAsState()
-        (editDialogType as? EditDialogType.Open)?.let { openEditDialogType ->
-            var namePurchaseCategory by rememberSaveable { mutableStateOf(openEditDialogType.itemPurchaseCategoryModel.name) }
-            AlertDialog(
-                onDismissRequest = { state.onEditDismissed() },
-                title = {
-                    Text(text = "Edit Category", style = MaterialTheme.typography.titleLarge)
-                },
-                text = {
-                    Column {
-                        Text(text = "Find the product category you need.", style = MaterialTheme.typography.bodyMedium)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .imePadding(),
-                            value = namePurchaseCategory,
-                            onValueChange = { value ->
-                                namePurchaseCategory = value
-                            },
-                            isError = namePurchaseCategory.isEmpty(),
-                            placeholder = {
-                                Text(
-                                    modifier = Modifier
-                                        .alpha(0.60f),
-                                    text = LocalContext.current.getString(R.string.name_purchase),
-                                    color = Color.White
-                                )
-                            },
-                            textStyle = TextStyle(
-                                fontSize = MaterialTheme.typography.titleMedium.fontSize
-                            ),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    if (namePurchaseCategory.isNotEmpty()) {
-                                        state.onTextUpdated(
-                                            openEditDialogType.position,
-                                            namePurchaseCategory
-                                        )
-                                    }
-                                }
-                            ),
-
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                errorContainerColor = Color.Transparent,
-                                cursorColor = Color.White.copy(alpha = 0.60f),
-                                focusedIndicatorColor = Colors.gr.copy(alpha = 0.87f),
-                                focusedLabelColor = Colors.gr.copy(alpha = 0.87f)
-                            )
-                        )
-                    }
-                },
-                confirmButton = {
-                    TextButton(
-                        enabled = namePurchaseCategory.isNotEmpty(),
-                        onClick = {
-                            state.onTextUpdated(
-                                openEditDialogType.position,
-                                namePurchaseCategory
-                            )
-                        }
-                    ) {
-                        Text(text = "Confirm", fontWeight = FontWeight.Bold)
-                    }
+        var namePurchaseCategory by rememberSaveable(item.id) { mutableStateOf(item.name) }
+        val context = LocalContext.current
+        AlertDialog(
+            onDismissRequest = onDismissed,
+            title = {
+                Text(text = "Edit Category", style = MaterialTheme.typography.titleLarge)
+            },
+            text = {
+                Column {
+                    Text(text = "Find the product category you need.", style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CategoryNameTextField(
+                        value = namePurchaseCategory,
+                        onValueChange = { namePurchaseCategory = it },
+                        onImeActionDone = {
+                            if (namePurchaseCategory.isNotEmpty()) {
+                                onTextUpdated(position, namePurchaseCategory)
+                            }
+                        },
+                        isError = namePurchaseCategory.isEmpty(),
+                        placeholderText = context.getString(R.string.name_purchase)
+                    )
                 }
-            )
-        }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = namePurchaseCategory.isNotEmpty(),
+                    onClick = {
+                        onTextUpdated(position, namePurchaseCategory)
+                    }
+                ) {
+                    Text(text = "Confirm", fontWeight = FontWeight.Bold)
+                }
+            }
+        )
     }
 
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun CreateCategoryDialog(
-        state: CreateCategoryDialogState = CreateCategoryDialogState.PREVIEW_STATE,
+        onCreateCategoryClicked: (String) -> Unit = {},
+        onDismissed: () -> Unit = {}
     ) {
-        val createCategoryDialogType by state.flowCreateCategoryDialogType.collectAsState()
-        (createCategoryDialogType as? CreateCategoryDialogType.Open)?.let { openEditDialogType ->
-            var namePurchaseCategory by rememberSaveable { mutableStateOf("") }
-            AlertDialog(
-                onDismissRequest = { state.onCreateCategoryDismiss() },
-                title = {
-                    Text(text = "Create Category", style = MaterialTheme.typography.titleLarge)
-                },
-                text = {
-                    Column {
-                        Text(text = "Find the product category you need.", style = MaterialTheme.typography.bodyMedium)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .imePadding(),
-                            value = namePurchaseCategory,
-                            onValueChange = { value ->
-                                namePurchaseCategory = value
-                            },
-                            isError = namePurchaseCategory.isEmpty(),
-                            placeholder = {
-                                Text(
-                                    modifier = Modifier
-                                        .alpha(0.60f),
-                                    text = LocalContext.current.getString(R.string.name_purchase),
-                                    color = Color.White
-                                )
-                            },
-                            textStyle = TextStyle(
-                                fontSize = MaterialTheme.typography.titleMedium.fontSize
-                            ),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    if (namePurchaseCategory.isNotEmpty()) {
-                                        state.onCreateCategoryClicked(namePurchaseCategory)
-                                    }
-                                }
-                            ),
-
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                errorContainerColor = Color.Transparent,
-                                cursorColor = Color.White.copy(alpha = 0.60f),
-                                focusedIndicatorColor = Colors.gr.copy(alpha = 0.87f),
-                                focusedLabelColor = Colors.gr.copy(alpha = 0.87f)
-                            )
-                        )
-                    }
-                },
-                confirmButton = {
-                    TextButton(
-                        enabled = namePurchaseCategory.isNotEmpty(),
-                        onClick = {
-                            state.onCreateCategoryClicked(namePurchaseCategory)
-                        }
-                    ) {
-                        Text(text = "Create", fontWeight = FontWeight.Bold)
-                    }
+        var namePurchaseCategory by rememberSaveable { mutableStateOf("") }
+        val context = LocalContext.current
+        AlertDialog(
+            onDismissRequest = onDismissed,
+            title = {
+                Text(text = "Create Category", style = MaterialTheme.typography.titleLarge)
+            },
+            text = {
+                Column {
+                    Text(text = "Find the product category you need.", style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CategoryNameTextField(
+                        value = namePurchaseCategory,
+                        onValueChange = { namePurchaseCategory = it },
+                        onImeActionDone = {
+                            if (namePurchaseCategory.isNotEmpty()) {
+                                onCreateCategoryClicked(namePurchaseCategory)
+                            }
+                        },
+                        isError = namePurchaseCategory.isEmpty(),
+                        placeholderText = context.getString(R.string.name_purchase)
+                    )
                 }
-            )
-        }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = namePurchaseCategory.isNotEmpty(),
+                    onClick = {
+                        onCreateCategoryClicked(namePurchaseCategory)
+                    }
+                ) {
+                    Text(text = "Create", fontWeight = FontWeight.Bold)
+                }
+            }
+        )
     }
 
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun ConfirmLeaveDialog(
-        state: ConfirmLeaveDialogState = ConfirmLeaveDialogState.PREVIEW_STATE,
+        onConfirmLeaveClicked: () -> Unit = {},
+        onDismissed: () -> Unit = {}
     ) {
-        val createCategoryDialogType by state.flowConfirmLeaveDialogType.collectAsState()
-        if (createCategoryDialogType !is ConfirmLeaveDialogType.Open) return
         AlertDialog(
-            onDismissRequest = { state.onConfirmLeaveDismiss() },
+            onDismissRequest = onDismissed,
             title = {
                 Text(text = "Leave Category", style = MaterialTheme.typography.titleLarge)
             },
@@ -549,9 +503,17 @@ class CategoryFragment : BaseFragment() {
             },
             confirmButton = {
                 TextButton(
-                    onClick = { state.onConfirmLeaveClicked() }
+                    onClick = {
+                        onConfirmLeaveClicked()
+                        onDismissed() // Also dismiss after confirm
+                    }
                 ) {
                     Text(text = "Confirm", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissed) {
+                    Text(text = "Cancel", fontWeight = FontWeight.Bold)
                 }
             }
         )

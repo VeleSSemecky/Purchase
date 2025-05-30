@@ -23,10 +23,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -59,6 +61,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.skydoves.landscapist.glide.GlideImage
+import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
@@ -141,6 +144,8 @@ class EditPurchaseFragment : BaseFragment() {
             ComponentDate()
             Spacer(modifier = Modifier.padding(8.dp))
             ComponentSwitch()
+            Spacer(modifier = Modifier.padding(8.dp))
+            ComponentCategoryPicker()
             Spacer(modifier = Modifier.padding(8.dp))
             ComponentPhoto()
             Spacer(modifier = Modifier.padding(8.dp))
@@ -362,6 +367,62 @@ class EditPurchaseFragment : BaseFragment() {
                 onCheckedChange = { isChecked ->
                     viewModel.onCheckedChange(isChecked)
                 }
+            )
+        }
+    }
+
+    @Composable
+    fun ComponentCategoryPicker(
+        viewModel: EditPurchaseViewModel = viewModel()
+    ) {
+        val categories by viewModel.flowCollectionPurchaseCategoryList.collectAsState()
+        val selectedCategory by viewModel.flowPurchaseCategoryModel.collectAsState()
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        ) {
+            Text(
+                text = "Category",
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(vertical = 4.dp)
+            ) {
+                items(categories) { category ->
+                    CategoryChip(
+                        category = category,
+                        isSelected = category.id == selectedCategory?.id,
+                        onClick = { viewModel.onCategorySelected(category) }
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun CategoryChip(
+        category: PurchaseCategoryModel,
+        isSelected: Boolean,
+        onClick: () -> Unit
+    ) {
+        Card(
+            modifier = Modifier
+                .clickable(onClick = onClick),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isSelected) Colors.colorPrimary else Colors.colorAccent.copy(alpha = 0.5f)
+            ),
+            border = BorderStroke(1.dp, if (isSelected) Colors.colorPrimaryDark else Color.White.copy(alpha = 0.38f))
+        ) {
+            Text(
+                text = category.name,
+                color = Color.White,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                fontSize = 14.sp
             )
         }
     }
