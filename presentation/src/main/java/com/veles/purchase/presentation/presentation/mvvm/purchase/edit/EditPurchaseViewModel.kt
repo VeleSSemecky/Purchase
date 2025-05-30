@@ -77,7 +77,8 @@ class EditPurchaseViewModel @Inject constructor(
         )
     }
 
-    val flowPurchaseCategoryModel: MutableStateFlow<PurchaseCategoryModel> = MutableStateFlow(PurchaseCategoryModel.EMPTY)
+    val flowPurchaseCategoryModel: StateFlow<PurchaseCategoryModel?>
+        get() = flowPurchaseModel.mapStateIn(viewModelScope) { it.purchaseCategoryModel }
 
     val flowProgress: MutableStateFlow<Progress> = MutableStateFlow(Progress.End)
 
@@ -158,7 +159,7 @@ class EditPurchaseViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
 
-    fun onCategorySelected(purchaseCategoryModel: PurchaseCategoryModel) = viewModelScope.launch {
-        flowPurchaseCategoryModel.emit(purchaseCategoryModel)
+    fun onCategorySelected(purchaseCategoryModel: PurchaseCategoryModel) = flowPurchaseModel.change(viewModelScope) { value ->
+        value.copy(purchaseCategoryModel = purchaseCategoryModel)
     }
 }

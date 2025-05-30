@@ -8,6 +8,7 @@ import com.veles.purchase.data.extensions.collectionPurchase
 import com.veles.purchase.data.extensions.purchase
 import com.veles.purchase.data.networking.entity.purchase.PurchaseDto
 import com.veles.purchase.data.networking.entity.purchase.toPurchaseModel
+import com.veles.purchase.data.networking.entity.purchase.toPurchaseModelData
 import com.veles.purchase.domain.core.suspendCancellableCoroutineWithTimeout
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
@@ -66,7 +67,7 @@ class PurchaseRepositoryImpl @Inject constructor(
             .document(collectionId)
             .collection(PURCHASE)
             .document(purchaseModel.createId)
-            .set(purchaseModel)
+            .set(purchaseModel.toPurchaseModelData())
             .await()
     }
 }

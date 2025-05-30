@@ -14,7 +14,8 @@ data class PurchaseModelUI(
     val check: Boolean = false,
     val price: String = emptyString(),
     val userList: List<String> = emptyList(),
-    val listImage: List<PurchasePhotoModelUI> = emptyList()
+    val listImage: List<PurchasePhotoModelUI> = emptyList(),
+    val purchaseCategoryModelUI: PurchaseCategoryModelUI? = null
 ) : Parcelable
 
 fun PurchaseModelUI.toPurchaseModel() = PurchaseModel(
@@ -24,7 +25,8 @@ fun PurchaseModelUI.toPurchaseModel() = PurchaseModel(
     check = check,
     price = price,
     userList = userList,
-    listImage = listImage.map { it.toPurchasePhotoModel() }
+    listImage = listImage.map { it.toPurchasePhotoModel() },
+    purchaseCategoryModel = purchaseCategoryModelUI?.toPurchaseCategoryModel()
 )
 
 fun PurchaseModel.toPurchaseModelUI() = PurchaseModelUI(
@@ -34,5 +36,6 @@ fun PurchaseModel.toPurchaseModelUI() = PurchaseModelUI(
     check = check,
     price = price,
     userList = userList,
-    listImage = listImage.map { it.toPurchasePhotoModelUI() }
+    listImage = listImage.map { it.toPurchasePhotoModelUI() },
+    purchaseCategoryModelUI = purchaseCategoryModel?.toPurchaseCategoryModelUI()
 )

@@ -11,7 +11,8 @@ data class PurchaseModel(
     val check: Boolean,
     val price: String,
     val userList: List<String>,
-    val listImage: List<PurchasePhotoModel>
+    val listImage: List<PurchasePhotoModel>,
+    val purchaseCategoryModel: PurchaseCategoryModel?
 ) {
     fun getLocalListPurchasePhotoModel(): List<PurchasePhotoModel> =
         listImage.filter { it.status == PhotoStatus.LOCAL }
@@ -29,7 +30,8 @@ data class PurchaseModel(
             check = false,
             price = "45",
             userList = emptyList(),
-            listImage = emptyList()
+            listImage = emptyList(),
+            purchaseCategoryModel = PurchaseCategoryModel.EMPTY
         )
 
         val EMPTY = PurchaseModel(
@@ -39,7 +41,8 @@ data class PurchaseModel(
             check = false,
             price = zeroString(),
             userList = emptyList(),
-            listImage = emptyList()
+            listImage = emptyList(),
+            purchaseCategoryModel = null
         )
     }
 }

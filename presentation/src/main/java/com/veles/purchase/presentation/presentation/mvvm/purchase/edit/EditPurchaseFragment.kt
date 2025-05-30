@@ -23,13 +23,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,6 +47,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -145,7 +151,9 @@ class EditPurchaseFragment : BaseFragment() {
             Spacer(modifier = Modifier.padding(8.dp))
             ComponentSwitch()
             Spacer(modifier = Modifier.padding(8.dp))
-            ComponentCategoryPicker()
+            ComponentCategoryPicker(
+                onCategorySelected = { viewModel.onCategorySelected(it) }
+            )
             Spacer(modifier = Modifier.padding(8.dp))
             ComponentPhoto()
             Spacer(modifier = Modifier.padding(8.dp))
@@ -373,57 +381,64 @@ class EditPurchaseFragment : BaseFragment() {
 
     @Composable
     fun ComponentCategoryPicker(
-        viewModel: EditPurchaseViewModel = viewModel()
+        onCategorySelected: (PurchaseCategoryModel) -> Unit
     ) {
         val categories by viewModel.flowCollectionPurchaseCategoryList.collectAsState()
         val selectedCategory by viewModel.flowPurchaseCategoryModel.collectAsState()
+        var expanded by remember { mutableStateOf(false) }
+
+        val icon = if (expanded)
+            Icons.Filled.KeyboardArrowUp
+        else
+            Icons.Filled.KeyboardArrowDown
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
         ) {
-            Text(
-                text = "Category",
-                color = Color.White,
-                modifier = Modifier.padding(bottom = 8.dp)
+            OutlinedTextField(
+                colors = textFieldColorsMaterial3().copy(
+                    disabledIndicatorColor = Color.White.copy(alpha = 0.38f)
+                ),
+                textStyle = textStyle(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        expanded = !expanded
+                    },
+                enabled = false,
+                readOnly = true,
+                value = selectedCategory?.name ?: "",
+                onValueChange = {},
+                label = { Text("Category", color = Color.White) },
+                trailingIcon = {
+                    Icon(icon, "contentDescription")
+                }
             )
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 4.dp)
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                items(categories) { category ->
-                    CategoryChip(
-                        category = category,
-                        isSelected = category.id == selectedCategory?.id,
-                        onClick = { viewModel.onCategorySelected(category) }
+                categories.forEach { category ->
+                    DropdownMenuItem(
+                        text = { Text(category.name, color = Color.White) },
+                        onClick = {
+                            onCategorySelected(category)
+                            expanded = false
+                        }
+                    )
+                }
+                if (categories.isEmpty()) {
+                    DropdownMenuItem(
+                        text = { Text("No categories available", color = Color.Gray) },
+                        onClick = { expanded = false },
+                        enabled = false
                     )
                 }
             }
-        }
-    }
-
-    @Composable
-    fun CategoryChip(
-        category: PurchaseCategoryModel,
-        isSelected: Boolean,
-        onClick: () -> Unit
-    ) {
-        Card(
-            modifier = Modifier
-                .clickable(onClick = onClick),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = if (isSelected) Colors.colorPrimary else Colors.colorAccent.copy(alpha = 0.5f)
-            ),
-            border = BorderStroke(1.dp, if (isSelected) Colors.colorPrimaryDark else Color.White.copy(alpha = 0.38f))
-        ) {
-            Text(
-                text = category.name,
-                color = Color.White,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                fontSize = 14.sp
-            )
         }
     }
 

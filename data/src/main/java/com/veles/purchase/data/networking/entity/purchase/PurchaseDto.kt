@@ -11,28 +11,31 @@ data class PurchaseDto(
     val createId: String = Calendar.getInstance().timeInMillis.toString(),
     val text: String = emptyString(),
     val count: String = emptyString(),
-    val check: Boolean = false,
+    val isChecked: Boolean = false,
     val price: String = emptyString(),
     val userList: List<String> = emptyList(),
-    val listImage: List<PurchasePhotoDto> = emptyList()
+    val listImage: List<PurchasePhotoDto> = emptyList(),
+    val purchaseCategoryDto: PurchaseCategoryDto? = null
 ) : Parcelable
 
 fun PurchaseDto.toPurchaseModel() = PurchaseModel(
     createId = createId,
     text = text,
     count = count,
-    check = check,
+    check = isChecked,
     price = price,
     userList = userList,
-    listImage = listImage.map { it.toPurchasePhotoModel() }
+    listImage = listImage.map { it.toPurchasePhotoModel() },
+    purchaseCategoryModel = purchaseCategoryDto?.toPurchaseCategoryModel()
 )
 
 fun PurchaseModel.toPurchaseModelData() = PurchaseDto(
     createId = createId,
     text = text,
     count = count,
-    check = check,
+    isChecked = check,
     price = price,
     userList = userList,
-    listImage = listImage.map { it.toPurchasePhotoModelData() }
+    listImage = listImage.map { it.toPurchasePhotoModelData() },
+    purchaseCategoryDto = purchaseCategoryModel?.toPurchaseCategoryDto()
 )
