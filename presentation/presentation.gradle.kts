@@ -1,6 +1,6 @@
 import java.util.Locale
 
-    plugins {
+plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
@@ -50,19 +50,19 @@ android {
 
                 val kspTask =
                     project.tasks.findByName(ksp)
-                        as? org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>
+                            as? org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>
                 val viewBindingTask =
                     project.tasks.findByName(viewBinding)
-                        as? com.android.build.gradle.internal.tasks.databinding.DataBindingGenBaseClassesTask
+                            as? com.android.build.gradle.internal.tasks.databinding.DataBindingGenBaseClassesTask
                 val buildConfigTask =
                     project.tasks.findByName(buildConfig)
-                        as? com.android.build.gradle.tasks.GenerateBuildConfig
+                            as? com.android.build.gradle.tasks.GenerateBuildConfig
                 val aidlTask =
                     project.tasks.findByName(aidl)
-                        as? com.android.build.gradle.tasks.AidlCompile
+                            as? com.android.build.gradle.tasks.AidlCompile
                 val safeArgsTask =
                     project.tasks.findByName(safeArgs)
-                        as? androidx.navigation.safeargs.gradle.ArgumentsGenerationTask
+                            as? androidx.navigation.safeargs.gradle.ArgumentsGenerationTask
 
                 kspTask?.run {
                     viewBindingTask?.let { setSource(it.sourceOutFolder) }
@@ -250,5 +250,5 @@ dependencies {
     // Test
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
-    testImplementation(libs.core.testing )
+    testImplementation(libs.core.testing)
 }

@@ -1,6 +1,7 @@
 package com.veles.purchase.data.repository.purchase
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
 import com.veles.purchase.config.EnvironmentConfig.PURCHASE
@@ -67,7 +68,7 @@ class PurchaseRepositoryImpl @Inject constructor(
             .document(collectionId)
             .collection(PURCHASE)
             .document(purchaseModel.createId)
-            .set(purchaseModel.toPurchaseModelData())
+            .set(purchaseModel.toPurchaseModelData(), SetOptions.merge())
             .await()
     }
 }

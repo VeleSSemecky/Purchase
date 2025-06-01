@@ -71,6 +71,7 @@ import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.IconSquare
 import com.veles.purchase.presentation.model.purchase.PurchaseCategoryModelUI
 import com.veles.purchase.presentation.presentation.compose.Colors
+import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 
 class CategoryFragment : BaseFragment() {
@@ -90,18 +91,20 @@ class CategoryFragment : BaseFragment() {
         ).apply {
             findViewById<ComposeView>(R.id.composeView).setContent {
                 val uiState by viewModel.uiState.collectAsState()
-                ComposeContent(
-                    uiState = uiState,
-                    onBackClicked = { viewModel.onBackClicked() },
-                    onSaveClicked = { viewModel.onSaveClicked() },
-                    onItemClicked = { position, item -> viewModel.onItemClicked(position, item) },
-                    onRemoveCategory = { viewModel.onRemoveCategory(it) },
-                    onCreateCategoryDialogClicked = { viewModel.onCreateCategoryDialogClicked() },
-                    onTextUpdated = { position, text -> viewModel.onTextUpdated(position, text) },
-                    onDialogDismissed = { viewModel.onDialogDismissed() },
-                    onCreateCategoryClicked = { viewModel.onCreateCategoryClicked(it) },
-                    onConfirmLeaveClicked = { viewModel.onConfirmLeaveClicked() }
-                )
+                MyTheme {
+                    ComposeContent(
+                        uiState = uiState,
+                        onBackClicked = { viewModel.onBackClicked() },
+                        onSaveClicked = { viewModel.onSaveClicked() },
+                        onItemClicked = { position, item -> viewModel.onItemClicked(position, item) },
+                        onRemoveCategory = { viewModel.onRemoveCategory(it) },
+                        onCreateCategoryDialogClicked = { viewModel.onCreateCategoryDialogClicked() },
+                        onTextUpdated = { position, text -> viewModel.onTextUpdated(position, text) },
+                        onDialogDismissed = { viewModel.onDialogDismissed() },
+                        onCreateCategoryClicked = { viewModel.onCreateCategoryClicked(it) },
+                        onConfirmLeaveClicked = { viewModel.onConfirmLeaveClicked() }
+                    )
+                }
             }
         }
     }

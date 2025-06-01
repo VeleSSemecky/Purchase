@@ -32,7 +32,7 @@ object DataBaseModule {
 
     private fun Context.createDB() =
         Room.databaseBuilder(this, AppDatabase::class.java, EnvironmentConfig.DB_KEY)
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .addMigrations(*migrationList())
             .build()
 }

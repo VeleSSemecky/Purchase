@@ -1,7 +1,7 @@
 [versions]
 
 #Plugins
-androidGradle = "8.9.2"
+androidGradle = "8.10.1"
 kotlin = "2.1.0"
 dokka = "1.9.20"
 ksp = "2.1.0-1.0.29"
@@ -34,15 +34,15 @@ inject = "1"
 dagger = "2.50"
 
 #Coroutines
-coroutines = "1.8.1"
+coroutines = "1.10.2"
 
 #Room
 room = "2.7.1"
 
 #Network
-gson = "2.11.0"
+gson = "2.13.1"
 okHttp = "4.12.0"
-retrofit = "2.11.0"
+retrofit = "3.0.0"
 flipper = "0.238.0"
 
 #Logger
@@ -62,13 +62,13 @@ paging = "3.3.6"
 workRuntime = "2.10.1"
 
 #Compose
-composeBom = "2025.04.01"
+composeBom = "2025.05.01"
 composeActivity = "1.10.1"
 composeFragment = "1.8.6"
 composeLifecycleViewmodel = "2.8.7"
 composeConstraintlayout = "1.1.1"
-composeAccompanistPager = "0.16.1"
-composeAccompanistFlowlayout = "0.24.6-alpha"
+composeAccompanistPager = "0.36.0"
+composeAccompanistFlowlayout = "0.36.0"
 
 #Image
 glide = "4.16.0"

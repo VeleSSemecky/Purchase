@@ -2,6 +2,7 @@ package com.veles.purchase.presentation.di.module
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.Strictness
 import com.veles.purchase.config.EnvironmentConfig
 import com.veles.purchase.data.networking.errorhandling.ErrorsCallAdapterFactory
 import com.veles.purchase.data.networking.errorhandling.ExceptionFactory
@@ -29,7 +30,7 @@ object NetworkModule {
     fun provideMapperGson(): Gson = GsonBuilder()
         .setPrettyPrinting()
         .serializeNulls()
-        .setLenient()
+        .setStrictness(Strictness.LENIENT)
         .create()
 
     @Singleton

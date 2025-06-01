@@ -8,7 +8,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.AnchoredDraggableDefaults.PositionalThreshold
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +24,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -45,13 +44,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -81,15 +77,23 @@ import androidx.fragment.app.viewModels
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
+import com.veles.purchase.presentation.compose.DismissDirection
+import com.veles.purchase.presentation.compose.DismissValue
+import com.veles.purchase.presentation.compose.FractionalThreshold
+import com.veles.purchase.presentation.compose.SwipeToDismiss
+import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.search.SearchTopAppBar
 import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.model.progress.Progress
+import com.veles.purchase.presentation.model.purchase.PurchaseModelUI
 import com.veles.purchase.presentation.model.purchase.compose.core.ProgressState
 import com.veles.purchase.presentation.model.purchase.compose.list.ContentState
 import com.veles.purchase.presentation.model.purchase.compose.list.CreatePurchaseState
 import com.veles.purchase.presentation.model.purchase.compose.list.ItemPurchaseState
 import com.veles.purchase.presentation.model.purchase.compose.list.SortPurchaseState
 import com.veles.purchase.presentation.model.purchase.compose.list.ToolBarState
+import com.veles.purchase.presentation.model.purchase.toPurchaseModel
+import com.veles.purchase.presentation.model.purchase.toPurchaseModelUI
 import com.veles.purchase.presentation.model.setting.toShape
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.model.sort.toPurchaseComparator
@@ -259,36 +263,34 @@ class ListPurchaseFragment : BaseFragment() {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f),
         ) {
-            itemsIndexed(
-                purchaseModels.sortedWith(sortPurchase.toPurchaseComparator()),
-                key = { _, item -> item.createId }
-            ) { _, item ->
-                val dismissState = rememberSwipeToDismissBoxState(
-                    positionalThreshold = { totalDistance ->
-                        totalDistance / 1.2f
-                    },
-                )
-
-                if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
-                    dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd
+            items(
+                items = purchaseModels.sortedWith(sortPurchase.toPurchaseComparator()).map {
+                    it.toPurchaseModelUI()
+                },
+                key = { item -> item }
+            ) { item ->
+                val dismissState = rememberDismissState()
+                if (dismissState.isDismissed(DismissDirection.EndToStart) ||
+                    dismissState.isDismissed(DismissDirection.StartToEnd)
                 ) {
                     LaunchedEffect(key1 = this@ListPurchaseFragment, block = {
-                        state.apiFirebaseRemoveRepository(item)
-                        dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+                        state.apiFirebaseRemoveRepository(item.toPurchaseModel())
+                        dismissState.snapTo(DismissValue.Default)
                     })
                 }
-
-                SwipeToDismissBox(
+                Modifier
+                    .fillMaxWidth()
+                SwipeToDismiss(
                     modifier = Modifier
-                        .animateItem(
-
-                        ),
+                        .fillMaxWidth()
+                        .animateItem(),
                     state = dismissState,
-                    backgroundContent = {},
+                    background = {},
+                    dismissThresholds = { FractionalThreshold(0.7f) }
                 ) {
                     val elevation =
                         animateDpAsState(
-                            if (dismissState.dismissDirection == SwipeToDismissBoxValue.Settled) 0.dp else 4.dp
+                            if (dismissState.dismissDirection == null) 0.dp else 4.dp
                         ).value
 
                     ItemPurchase(
@@ -445,7 +447,7 @@ class ListPurchaseFragment : BaseFragment() {
     @Composable
     fun ItemPurchase(
         elevation: Dp = 4.dp,
-        item: PurchaseModel = PurchaseModel.TEST,
+        item: PurchaseModelUI = PurchaseModel.TEST.toPurchaseModelUI(),
         state: ItemPurchaseState = ItemPurchaseState.PREVIEW_STATE
     ) {
         val purchaseSetting by state.flowPurchaseSetting.collectAsState()
@@ -464,8 +466,8 @@ class ListPurchaseFragment : BaseFragment() {
                     end = 16.dp
                 )
                 .combinedClickable(
-                    onClick = { state.onItemClicked(item) },
-                    onLongClick = { state.onLongClicked(item) }
+                    onClick = { state.onItemClicked(item.toPurchaseModel()) },
+                    onLongClick = { state.onLongClicked(item.toPurchaseModel()) }
                 )
         ) {
             ConstraintLayout(
@@ -530,14 +532,14 @@ class ListPurchaseFragment : BaseFragment() {
                         },
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    CategoryChip(item = item)
-                    PhotoChip(item = item)
+                    CategoryChip(item = item.toPurchaseModel())
+                    PhotoChip(item = item.toPurchaseModel())
                 }
 
                 Box(
                     modifier = Modifier
                         .clickable {
-                            state.onChecked(item)
+                            state.onChecked(item.toPurchaseModel())
                         }
                         .constrainAs(referenceIconCheck) {
                             start.linkTo(referenceTextTitle.end)
@@ -547,9 +549,9 @@ class ListPurchaseFragment : BaseFragment() {
                         }
                 ) {
                     Checkbox(
-                        checked = item.isChecked,
+                        checked = item.check,
                         onCheckedChange = {
-                            state.onChecked(item)
+                            state.onChecked(item.toPurchaseModel())
                         },
                         colors = CheckboxDefaults.colors(
                             checkedColor = Colors.gr,

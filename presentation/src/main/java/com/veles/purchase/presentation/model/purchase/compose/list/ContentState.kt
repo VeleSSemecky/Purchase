@@ -1,7 +1,9 @@
 package com.veles.purchase.presentation.model.purchase.compose.list
 
 import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.presentation.model.purchase.PurchaseModelUI
 import com.veles.purchase.presentation.model.purchase.compose.core.ProgressState
+import com.veles.purchase.presentation.model.purchase.toPurchaseModelUI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
