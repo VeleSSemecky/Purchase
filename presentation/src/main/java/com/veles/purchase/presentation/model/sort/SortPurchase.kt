@@ -15,16 +15,16 @@ enum class SortPurchase(val resId: Int) {
 fun SortPurchase.toPurchaseComparator(): Comparator<PurchaseModel> {
     return when (this) {
         SortPurchase.SORTING_A_Z -> compareBy(PurchaseModel::text)
-            .thenBy(PurchaseModel::check)
+            .thenBy(PurchaseModel::isChecked)
             .thenByDescending(PurchaseModel::createId)
         SortPurchase.SORTING_Z_A -> compareByDescending(PurchaseModel::text)
-            .thenBy(PurchaseModel::check)
+            .thenBy(PurchaseModel::isChecked)
             .thenByDescending(PurchaseModel::createId)
         SortPurchase.SORTING_DATA_NEW -> compareByDescending(PurchaseModel::createId)
         SortPurchase.SORTING_DATA_OLD -> compareBy(PurchaseModel::createId)
-        SortPurchase.SORTING_CHECK -> compareByDescending(PurchaseModel::check)
+        SortPurchase.SORTING_CHECK -> compareByDescending(PurchaseModel::isChecked)
             .thenByDescending(PurchaseModel::createId)
-        SortPurchase.SORTING_UNCHECK -> compareBy(PurchaseModel::check)
+        SortPurchase.SORTING_UNCHECK -> compareBy(PurchaseModel::isChecked)
             .thenByDescending(PurchaseModel::createId)
     }
 }

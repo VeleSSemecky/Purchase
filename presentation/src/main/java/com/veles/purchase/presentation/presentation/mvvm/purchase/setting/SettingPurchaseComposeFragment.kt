@@ -115,9 +115,9 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     val (
-                        IconBack,
-                        TextTitle,
-                        IconSave
+                        referenceIconBack,
+                        referenceTextTitle,
+                        referenceIconSave
                     ) = createRefs()
                     IconSquare(
                         id = R.drawable.ic_baseline_arrow_back_24,
@@ -125,7 +125,7 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                             findNavController().popBackStack()
                         },
                         modifier = Modifier
-                            .constrainAs(IconBack) {
+                            .constrainAs(referenceIconBack) {
                                 start.linkTo(parent.start)
                                 top.linkTo(parent.top)
                                 bottom.linkTo(parent.bottom)
@@ -137,9 +137,9 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                         fontSize = 20.sp,
                         color = Color.White,
                         modifier = Modifier
-                            .constrainAs(TextTitle) {
-                                start.linkTo(IconBack.end, margin = 8.dp)
-                                end.linkTo(IconSave.start, margin = 8.dp)
+                            .constrainAs(referenceTextTitle) {
+                                start.linkTo(referenceIconBack.end, margin = 8.dp)
+                                end.linkTo(referenceIconSave.start, margin = 8.dp)
                                 top.linkTo(parent.top)
                                 bottom.linkTo(parent.bottom)
                             }
@@ -150,7 +150,7 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                             viewModel.onSaveSettingsPurchaseChanged()
                         },
                         modifier = Modifier
-                            .constrainAs(IconSave) {
+                            .constrainAs(referenceIconSave) {
                                 end.linkTo(parent.end)
                                 top.linkTo(parent.top)
                                 bottom.linkTo(parent.bottom)
@@ -429,14 +429,14 @@ class SettingPurchaseComposeFragment : BaseFragment() {
         ) {
             ConstraintLayout {
                 val (
-                    IconPhoto,
-                    TextTitle,
-                    IconCheck
+                    referenceIconPhoto,
+                    referenceTextTitle,
+                    referenceIconCheck
                 ) = createRefs()
                 Box(
                     modifier = Modifier
                         .padding(16.dp)
-                        .constrainAs(IconPhoto) {
+                        .constrainAs(referenceIconPhoto) {
                             start.linkTo(parent.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
@@ -465,9 +465,9 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                     style = textStyle1(),
                     modifier = Modifier
                         .padding(8.dp)
-                        .constrainAs(TextTitle) {
-                            start.linkTo(IconPhoto.end)
-                            end.linkTo(IconCheck.start)
+                        .constrainAs(referenceTextTitle) {
+                            start.linkTo(referenceIconPhoto.end)
+                            end.linkTo(referenceIconCheck.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             width = Dimension.fillToConstraints
@@ -477,15 +477,15 @@ class SettingPurchaseComposeFragment : BaseFragment() {
                     modifier = Modifier
                         .clickable {
                         }
-                        .constrainAs(IconCheck) {
-                            start.linkTo(TextTitle.end)
+                        .constrainAs(referenceIconCheck) {
+                            start.linkTo(referenceTextTitle.end)
                             end.linkTo(parent.end)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                         }
                 ) {
                     Checkbox(
-                        checked = item.check,
+                        checked = item.isChecked,
                         onCheckedChange = {
                         },
                         colors = CheckboxDefaults.colors(

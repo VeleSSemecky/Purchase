@@ -11,7 +11,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -225,7 +224,6 @@ class ListLaterPurchaseFragment : BaseFragment() {
         )
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Content(
         paddingValues: PaddingValues = PaddingValues()
@@ -459,15 +457,15 @@ class ListLaterPurchaseFragment : BaseFragment() {
                 modifier = Modifier.fillMaxSize()
             ) {
                 val (
-                    IconPhoto,
-                    TextTitle,
-                    IconCheck
+                    referenceIconPhoto,
+                    referenceTextTitle,
+                    referenceIconCheck
                 ) = createRefs()
 
                 Box(
                     modifier = Modifier
                         .padding(16.dp)
-                        .constrainAs(IconPhoto) {
+                        .constrainAs(referenceIconPhoto) {
                             start.linkTo(parent.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
@@ -496,9 +494,9 @@ class ListLaterPurchaseFragment : BaseFragment() {
                     style = textStyle1(),
                     modifier = Modifier
                         .padding(8.dp)
-                        .constrainAs(TextTitle) {
-                            start.linkTo(IconPhoto.end)
-                            end.linkTo(IconCheck.start)
+                        .constrainAs(referenceTextTitle) {
+                            start.linkTo(referenceIconPhoto.end)
+                            end.linkTo(referenceIconCheck.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             width = Dimension.fillToConstraints
@@ -510,15 +508,15 @@ class ListLaterPurchaseFragment : BaseFragment() {
                         .clickable {
                             viewModel.onChecked(item)
                         }
-                        .constrainAs(IconCheck) {
-                            start.linkTo(TextTitle.end)
+                        .constrainAs(referenceIconCheck) {
+                            start.linkTo(referenceTextTitle.end)
                             end.linkTo(parent.end)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                         }
                 ) {
                     Checkbox(
-                        checked = item.check,
+                        checked = item.isChecked,
                         onCheckedChange = {
                             viewModel.onChecked(item)
                         },

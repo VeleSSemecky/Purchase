@@ -8,7 +8,7 @@ data class PurchaseModel(
     val createId: String,
     val text: String,
     val count: String,
-    val check: Boolean,
+    val isChecked: Boolean,
     val price: String,
     val userList: List<String>,
     val listImage: List<PurchasePhotoModel>,
@@ -25,20 +25,20 @@ data class PurchaseModel(
     companion object {
         val TEST = PurchaseModel(
             createId = "",
-            text = "TEST",
+            text = "TEST dsfsf asdf aasdf  aefasdf a af",
             count = "1",
-            check = false,
+            isChecked = false,
             price = "45",
             userList = emptyList(),
             listImage = emptyList(),
-            purchaseCategoryModel = PurchaseCategoryModel.EMPTY
+            purchaseCategoryModel = PurchaseCategoryModel.TEST
         )
 
         val EMPTY = PurchaseModel(
             createId = Calendar.getInstance().timeInMillis.toString(),
             text = emptyString(),
             count = emptyString(),
-            check = false,
+            isChecked = false,
             price = zeroString(),
             userList = emptyList(),
             listImage = emptyList(),

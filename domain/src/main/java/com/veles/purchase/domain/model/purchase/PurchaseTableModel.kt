@@ -20,7 +20,7 @@ fun PurchaseModel.createPurchaseTable(typeHistory: HistoryType): PurchaseTableMo
     PurchaseTableModel(
         text = text,
         count = count,
-        check = check,
+        check = isChecked,
         typeHistory = typeHistory,
         time = Calendar.getInstance().timeInMillis,
         price = price

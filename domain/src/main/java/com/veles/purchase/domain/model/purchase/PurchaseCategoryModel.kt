@@ -9,5 +9,9 @@ data class PurchaseCategoryModel(
             id = "",
             name = ""
         )
+        val TEST = PurchaseCategoryModel(
+            id = "test_id",
+            name = "Test Category"
+        )
     }
 }

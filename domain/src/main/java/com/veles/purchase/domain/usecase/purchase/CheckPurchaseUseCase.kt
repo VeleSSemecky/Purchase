@@ -25,7 +25,7 @@ class CheckPurchaseUseCase @Inject constructor(
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {
             if (purchaseCollectionId.isEmpty()) return@withContext
             firebasePurchaseSendUseCase(
-                purchaseModel.copy(check = purchaseModel.check.not()),
+                purchaseModel.copy(isChecked = purchaseModel.isChecked.not()),
                 purchaseCollectionId
             )
         }

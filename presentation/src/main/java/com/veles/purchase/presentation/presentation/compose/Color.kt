@@ -35,6 +35,7 @@ fun MyTheme(
 
 fun textStyle() = TextStyle(color = Color.White, fontWeight = FontWeight.Bold)
 fun textStyle1() = TextStyle(color = Color.White)
+fun textStyle2() = TextStyle(color = Color.White.copy(alpha = 0.5f))
 
 //@Composable
 //fun textFieldColors() = TextFieldDefaults.outlinedTextFieldColors(

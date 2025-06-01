@@ -81,6 +81,7 @@
 -keep public class com.veles.purchase.presentation.model.** {*;}
 -keep public class com.veles.purchase.domain.model.** {*;}
 -keep public class com.veles.purchase.data.entity.** {*;}
+-keep public class com.veles.purchase.data.networking.entity.** {*;}
 -keep enum * { *; }
 #####################
 ### Credential Manager

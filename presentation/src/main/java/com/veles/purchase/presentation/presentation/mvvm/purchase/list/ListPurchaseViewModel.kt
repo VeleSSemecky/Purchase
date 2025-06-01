@@ -132,7 +132,7 @@ class ListPurchaseViewModel @Inject constructor(
             args.purchaseCollectionId
         )
 
-        getPurchase(purchaseName)
+        getPurchase(emptyString())
 
         _flowProgress.emit(Progress.End)
     }

@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.AnchoredDraggableDefaults.PositionalThreshold
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,44 +23,39 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -85,11 +81,6 @@ import androidx.fragment.app.viewModels
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
-import com.veles.purchase.presentation.compose.DismissDirection
-import com.veles.purchase.presentation.compose.DismissValue
-import com.veles.purchase.presentation.compose.FractionalThreshold
-import com.veles.purchase.presentation.compose.SwipeToDismiss
-import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.search.SearchTopAppBar
 import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.model.progress.Progress
@@ -104,6 +95,7 @@ import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.model.sort.toPurchaseComparator
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.textStyle1
+import com.veles.purchase.presentation.presentation.compose.textStyle2
 
 class ListPurchaseFragment : BaseFragment() {
 
@@ -268,31 +260,37 @@ class ListPurchaseFragment : BaseFragment() {
             modifier = Modifier.weight(1f),
         ) {
             itemsIndexed(
-                purchaseModels.sortedWith(sortPurchase.toPurchaseComparator())
+                purchaseModels.sortedWith(sortPurchase.toPurchaseComparator()),
+                key = { _, item -> item.createId }
             ) { _, item ->
-                val dismissState = rememberDismissState()
-                if (dismissState.isDismissed(DismissDirection.EndToStart) ||
-                    dismissState.isDismissed(DismissDirection.StartToEnd)
+                val dismissState = rememberSwipeToDismissBoxState(
+                    positionalThreshold = { totalDistance ->
+                        totalDistance / 1.2f
+                    },
+                )
+
+                if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
+                    dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd
                 ) {
                     LaunchedEffect(key1 = this@ListPurchaseFragment, block = {
                         state.apiFirebaseRemoveRepository(item)
-                        dismissState.snapTo(DismissValue.Default)
+                        dismissState.snapTo(SwipeToDismissBoxValue.Settled)
                     })
                 }
-                Modifier
-                    .fillMaxWidth()
-                SwipeToDismiss(
+
+                SwipeToDismissBox(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .animateItem(fadeInSpec = null, fadeOutSpec = null),
+                        .animateItem(
+
+                        ),
                     state = dismissState,
-                    background = {},
-                    dismissThresholds = { FractionalThreshold(0.7f) }
+                    backgroundContent = {},
                 ) {
                     val elevation =
                         animateDpAsState(
-                            if (dismissState.dismissDirection == null) 0.dp else 4.dp
+                            if (dismissState.dismissDirection == SwipeToDismissBoxValue.Settled) 0.dp else 4.dp
                         ).value
+
                     ItemPurchase(
                         elevation = elevation,
                         item = item,
@@ -335,6 +333,16 @@ class ListPurchaseFragment : BaseFragment() {
         state: CreatePurchaseState = CreatePurchaseState.PREVIEW_STATE
     ) {
         val createTextState by state.flowNewNamePurchase.collectAsState()
+
+        val label = @Composable {
+            Text(
+                modifier = Modifier
+                    .alpha(0.60f),
+                text = "Search or create purchase",
+                color = Color.White.copy(alpha = 0.87f)
+            )
+        }
+
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -343,6 +351,7 @@ class ListPurchaseFragment : BaseFragment() {
             onValueChange = {
                 state.onNewNamePurchaseChanged(it)
             },
+            label = if (createTextState.isNotEmpty()) label else null,
             placeholder = {
                 Text(
                     modifier = Modifier
@@ -432,7 +441,6 @@ class ListPurchaseFragment : BaseFragment() {
         )
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Preview(showSystemUi = true, showBackground = true)
     @Composable
     fun ItemPurchase(
@@ -466,46 +474,23 @@ class ListPurchaseFragment : BaseFragment() {
                     .padding(8.dp)
             ) {
                 val (
-                    referenceIconPhoto,
                     referenceTextTitle,
                     referenceTextDescription,
-                    referenceIconCheck
+                    referenceIconCheck,
+                    referenceChipCategory,
                 ) = createRefs()
-                createVerticalChain(referenceTextTitle, referenceTextDescription, chainStyle = ChainStyle.Packed)
-                Box(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .constrainAs(referenceIconPhoto) {
-                            start.linkTo(parent.start)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }
-                ) {
-                    if (purchaseSetting.isImage) {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .align(Alignment.Center),
-                            painter = painterResource(
-                                if (item.listImage.isNotEmpty()) {
-                                    R.drawable.image
-                                } else {
-                                    R.drawable.no_image
-                                }
-                            ),
-                            contentDescription = "Is Image",
-                            tint = Colors.gr
-                        )
-                    }
-                }
+                createVerticalChain(referenceTextTitle, referenceTextDescription, referenceChipCategory, chainStyle = ChainStyle.Packed)
+
                 Text(
                     text = item.text,
                     fontSize = 18.sp,
                     style = textStyle1(),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                         .constrainAs(referenceTextTitle) {
-                            start.linkTo(referenceIconPhoto.end)
+                            start.linkTo(parent.start)
                             end.linkTo(referenceIconCheck.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(referenceTextDescription.top)
@@ -516,11 +501,11 @@ class ListPurchaseFragment : BaseFragment() {
                 Text(
                     text = item.count,
                     fontSize = 14.sp,
-                    style = textStyle1(),
+                    style = textStyle2(),
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                         .constrainAs(referenceTextDescription) {
-                            start.linkTo(referenceIconPhoto.end)
+                            start.linkTo(parent.start)
                             end.linkTo(referenceIconCheck.start)
                             top.linkTo(referenceTextDescription.bottom)
                             bottom.linkTo(parent.bottom)
@@ -528,6 +513,26 @@ class ListPurchaseFragment : BaseFragment() {
                             visibility = if (item.count.isNotEmpty()) Visibility.Visible else Visibility.Gone
                         }
                 )
+
+                FlowRow(
+                    modifier = Modifier
+                        .padding(
+                            start = 8.dp,
+                            end = 8.dp
+                        )
+                        .constrainAs(referenceChipCategory) {
+                            start.linkTo(parent.start)
+                            end.linkTo(referenceIconCheck.start)
+                            top.linkTo(referenceChipCategory.bottom)
+                            bottom.linkTo(parent.bottom)
+                            width = Dimension.wrapContent
+                            horizontalBias = 0f
+                        },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CategoryChip(item = item)
+                    PhotoChip(item = item)
+                }
 
                 Box(
                     modifier = Modifier
@@ -542,7 +547,7 @@ class ListPurchaseFragment : BaseFragment() {
                         }
                 ) {
                     Checkbox(
-                        checked = item.check,
+                        checked = item.isChecked,
                         onCheckedChange = {
                             state.onChecked(item)
                         },
@@ -554,6 +559,67 @@ class ListPurchaseFragment : BaseFragment() {
                     )
                 }
             }
+        }
+    }
+
+    @Preview
+    @Composable
+    fun PhotoChip(
+        item: PurchaseModel = PurchaseModel.TEST,
+    ) {
+        if (item.listImage.isEmpty()) return
+        Box(
+            modifier = Modifier
+                .padding(top = 6.dp)
+                .background(
+                    color = Colors.gr.copy(alpha = 0.1f),
+                    shape = CircleShape
+                )
+                .height(20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 2.dp)
+                    .align(Alignment.Center),
+                painter = painterResource(
+                    if (item.listImage.isNotEmpty()) {
+                        R.drawable.image
+                    } else {
+                        R.drawable.no_image
+                    }
+                ),
+                contentDescription = "Is Image",
+                tint = Colors.gr
+            )
+        }
+    }
+
+    @Preview
+    @Composable
+    fun CategoryChip(
+        item: PurchaseModel = PurchaseModel.TEST,
+    ) {
+        if (item.purchaseCategoryModel == null) return
+        Box(
+            modifier = Modifier
+                .padding(top = 6.dp)
+                .background(
+                    color = Colors.gr.copy(alpha = 0.1f),
+                    shape = CircleShape
+                )
+                .height(20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = item.purchaseCategoryModel?.name ?: "Uncategorized",
+                fontSize = 12.sp,
+                style = TextStyle(
+                    color = Colors.gr,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+            )
         }
     }
 

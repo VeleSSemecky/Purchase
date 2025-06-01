@@ -10,4 +10,4 @@ enum class HistoryType {
     UNCHECK
 }
 
-fun PurchaseModel.toHistoryType() = if (check) HistoryType.CHECK else HistoryType.UNCHECK
+fun PurchaseModel.toHistoryType() = if (isChecked) HistoryType.CHECK else HistoryType.UNCHECK

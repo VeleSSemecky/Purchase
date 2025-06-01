@@ -67,7 +67,7 @@ class EditPurchaseViewModel @Inject constructor(
         get() = flowPurchaseModel.mapStateIn(viewModelScope) { it.listImage }
 
     val flowPurchaseIsChecked: StateFlow<Boolean>
-        get() = flowPurchaseModel.mapStateIn(viewModelScope) { it.check }
+        get() = flowPurchaseModel.mapStateIn(viewModelScope) { it.isChecked }
 
     val flowCollectionPurchaseCategoryList: StateFlow<List<PurchaseCategoryModel>> by lazy {
         getCollectionPurchaseCategoryUseCase(args.purchaseCollectionId).stateIn(
@@ -88,7 +88,7 @@ class EditPurchaseViewModel @Inject constructor(
     }
 
     fun onCheckedChange(isChecked: Boolean) = flowPurchaseModel.change(viewModelScope) { value ->
-        value.copy(check = isChecked)
+        value.copy(isChecked = isChecked)
     }
 
     fun setPurchaseLocalData(data: Long) = viewModelScope.launch {
