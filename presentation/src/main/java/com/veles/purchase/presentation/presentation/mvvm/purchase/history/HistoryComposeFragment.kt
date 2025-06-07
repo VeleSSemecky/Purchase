@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -54,12 +53,15 @@ import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.compose.IconSquare
 import com.veles.purchase.presentation.model.purchase.PurchaseTableModelUI
+import com.veles.purchase.presentation.model.purchase.compose.history.HistoryComposeContentState
+import com.veles.purchase.presentation.model.purchase.compose.history.HistoryToolBarState
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.flow.StateFlow
 
 class HistoryComposeFragment : BaseFragment() {
 
@@ -77,18 +79,24 @@ class HistoryComposeFragment : BaseFragment() {
         ).apply {
             findViewById<ComposeView>(R.id.composeView).setContent {
                 MyTheme {
-                    ComposeContent()
+                    val state = HistoryComposeContentState(
+                        flowListPurchaseTableModelUI = viewModel.stateFlowListHistory,
+                        toolBarState = HistoryToolBarState {
+                            findNavController().popBackStack()
+                        }
+                    )
+                    ComposeContent(state)
                 }
             }
         }
     }
 
-    @Preview
+    @Preview(showSystemUi = true, showBackground = true)
     @Composable
-    fun ComposeContent() {
+    fun ComposeContent(state: HistoryComposeContentState = HistoryComposeContentState.PREVIEW_STATE) {
         Scaffold(
             topBar = {
-                ToolBar()
+                ToolBar(state.toolBarState)
             },
             floatingActionButton = {
             },
@@ -96,7 +104,10 @@ class HistoryComposeFragment : BaseFragment() {
             },
             floatingActionButtonPosition = FabPosition.End,
             content = {
-                Content(it)
+                Content(
+                    paddingValues = it,
+                    flowListPurchaseTableModelUI = state.flowListPurchaseTableModelUI
+                )
             },
             contentColor = Color.Black
         )
@@ -105,15 +116,18 @@ class HistoryComposeFragment : BaseFragment() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Preview
     @Composable
-    fun ToolBar() {
+    fun ToolBar(
+        toolBarState: HistoryToolBarState = HistoryToolBarState.PREVIEW_STATE
+    ) {
         TopAppBar(
             navigationIcon = {
                 IconButton(
-                    onClick = { findNavController().popBackStack() },
+                    onClick = { toolBarState.onBackClicked() },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        contentDescription = "Localized description"
+                        contentDescription = "Localized description",
+                        tint = Color.White
                     )
                 }
             },
@@ -135,14 +149,15 @@ class HistoryComposeFragment : BaseFragment() {
 
     @Composable
     fun Content(
-        paddingValues: PaddingValues = PaddingValues()
+        paddingValues: PaddingValues = PaddingValues(),
+        flowListPurchaseTableModelUI: StateFlow<List<PurchaseTableModelUI>> = HistoryComposeContentState.PREVIEW_STATE.flowListPurchaseTableModelUI
     ) = Column(
         modifier = Modifier
             .padding(paddingValues)
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
-        val purchaseModels by viewModel.stateFlowListHistory.collectAsState(emptyList())
+        val purchaseModels by flowListPurchaseTableModelUI.collectAsState()
         LazyColumn(
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -156,10 +171,10 @@ class HistoryComposeFragment : BaseFragment() {
         }
     }
 
-    @OptIn(ExperimentalLayoutApi::class)
+    @Preview
     @Composable
     fun ItemPurchase(
-        item: PurchaseTableModelUI
+        item: PurchaseTableModelUI = PurchaseTableModelUI.PREVIEW_STATE
     ) {
         Card(
             colors = CardDefaults.cardColors().copy(
