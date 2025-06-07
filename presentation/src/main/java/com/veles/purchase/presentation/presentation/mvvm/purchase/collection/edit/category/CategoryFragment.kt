@@ -59,6 +59,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -68,7 +69,6 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.fragment.app.viewModels
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
-import com.veles.purchase.presentation.compose.IconSquare
 import com.veles.purchase.presentation.model.purchase.PurchaseCategoryModelUI
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
@@ -200,61 +200,49 @@ class CategoryFragment : BaseFragment() {
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
-    @Preview(showSystemUi = true, showBackground = true)
+    @Preview
     @Composable
     fun ToolBar(
         onBackClicked: () -> Unit = {},
         onSaveClicked: () -> Unit = {}
     ) {
         TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors().copy(
-                containerColor = Colors.colorPrimary
-            ),
-            title = {
-                ConstraintLayout(
-                    modifier = Modifier.fillMaxSize()
+            navigationIcon = {
+                IconButton(
+                    onClick = { onBackClicked() },
                 ) {
-                    val (
-                        referenceIconBack,
-                        referenceTextTitle,
-                        referenceIconSave
-                    ) = createRefs()
-                    IconSquare(
-                        id = R.drawable.ic_baseline_arrow_back_24,
-                        onClick = onBackClicked,
-                        modifier = Modifier
-                            .constrainAs(referenceIconBack) {
-                                start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
-                    )
-                    Text(
-                        text = "Category settings",
-                        textAlign = TextAlign.Start,
-                        fontSize = 20.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .constrainAs(referenceTextTitle) {
-                                start.linkTo(referenceIconBack.end, margin = 8.dp)
-                                end.linkTo(referenceIconSave.start, margin = 8.dp)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                                width = Dimension.fillToConstraints
-                            }
-                    )
-                    IconSquare(
-                        id = R.drawable.ic_done_black_24dp,
-                        onClick = onSaveClicked,
-                        modifier = Modifier
-                            .constrainAs(referenceIconSave) {
-                                end.linkTo(parent.end, margin = 16.dp)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                        contentDescription = "Localized description"
                     )
                 }
-            }
+            },
+            title = {
+                Text(
+                    text = "Category settings",
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            actions = {
+                IconButton(
+                    onClick = {
+                        onSaveClicked()
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_done_black_24dp),
+                        contentDescription = "Localized description"
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors().copy(
+                containerColor = Colors.colorPrimary
+            )
         )
     }
 
@@ -454,7 +442,6 @@ class CategoryFragment : BaseFragment() {
         onDismissed: () -> Unit = {}
     ) {
         var namePurchaseCategory by rememberSaveable { mutableStateOf("") }
-        val context = LocalContext.current
         AlertDialog(
             onDismissRequest = onDismissed,
             title = {
@@ -462,7 +449,7 @@ class CategoryFragment : BaseFragment() {
             },
             text = {
                 Column {
-                    Text(text = "Find the product category you need.", style = MaterialTheme.typography.bodyMedium)
+                    Text(text = "Add the product category you need.", style = MaterialTheme.typography.bodyMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     CategoryNameTextField(
                         value = namePurchaseCategory,
@@ -473,7 +460,7 @@ class CategoryFragment : BaseFragment() {
                             }
                         },
                         isError = namePurchaseCategory.isEmpty(),
-                        placeholderText = context.getString(R.string.name_purchase)
+                        placeholderText = "Category"
                     )
                 }
             },
@@ -484,7 +471,7 @@ class CategoryFragment : BaseFragment() {
                         onCreateCategoryClicked(namePurchaseCategory)
                     }
                 ) {
-                    Text(text = "Create", fontWeight = FontWeight.Bold)
+                    Text(text = "Create", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
                 }
             }
         )

@@ -7,6 +7,7 @@ data class ContentState(
     val listUserChecked: List<UserCheckedUI>,
     val componentNameState: ComponentNameState,
     val categoryState: CategoryState,
+    val historyState: HistoryState,
     val itemUserState: ItemUserState,
     val toolBarState: ToolBarState,
 ) {
@@ -24,6 +25,7 @@ data class ContentState(
             ),
             componentNameState = ComponentNameState.PREVIEW_STATE,
             categoryState = CategoryState.PREVIEW_STATE,
+            historyState = HistoryState.PREVIEW_STATE,
             itemUserState = ItemUserState.PREVIEW_STATE,
             toolBarState = ToolBarState.PREVIEW_STATE
         )

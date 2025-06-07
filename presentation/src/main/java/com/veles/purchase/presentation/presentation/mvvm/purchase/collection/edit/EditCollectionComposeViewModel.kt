@@ -109,6 +109,11 @@ class EditCollectionComposeViewModel @Inject constructor(
         router().navigate(EditCollectionComposeFragmentDirections.fragmentCategory(purchaseCollectionModel))
     }
 
+    fun onHistoryClicked() {
+        val purchaseCollectionModel = _uiState.value.purchaseCollectionModelUI
+        router().navigate(EditCollectionComposeFragmentDirections.fragmentHistory(purchaseCollectionModel))
+    }
+
     private fun apiFirebaseUser() = viewModelScope.launchOnError {
         _uiState.emit(
             _uiState.value.copy(progress = Progress.Start)

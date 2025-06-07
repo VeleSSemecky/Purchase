@@ -7,7 +7,6 @@ import com.veles.purchase.domain.model.purchase.createPurchaseTable
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.message.NotificationMessageRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
-import com.veles.purchase.domain.repository.purchase.SetPurchaseRepository
 import javax.inject.Inject
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.withContext
@@ -25,7 +24,7 @@ class AddLazyPurchaseUseCase @Inject constructor(
     ) = withContext(appCoroutineDispatcher.coroutineDispatcherIO()) {
         sendAsyncOnFirebase(purchaseModel, purchaseCollectionId)
 //        sendAsyncNotification(purchaseModel, purchaseCollectionId)
-        addAsyncInHistory(purchaseModel)
+        addAsyncInHistory(purchaseModel, purchaseCollectionId)
     }
 
     private suspend fun sendAsyncOnFirebase(
@@ -49,8 +48,12 @@ class AddLazyPurchaseUseCase @Inject constructor(
     }
 
     private suspend fun addAsyncInHistory(
-        purchaseModel: PurchaseModel
+        purchaseModel: PurchaseModel,
+        purchaseCollectionId: String
     ) = withContext(currentCoroutineContext()) {
-        historyRepository.insert(purchaseModel.createPurchaseTable(HistoryType.ADD))
+        historyRepository.insert(purchaseModel.createPurchaseTable(
+            typeHistory = HistoryType.ADD,
+            purchaseCollectionId = purchaseCollectionId
+        ))
     }
 }

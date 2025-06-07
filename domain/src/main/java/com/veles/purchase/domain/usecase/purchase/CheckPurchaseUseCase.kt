@@ -19,7 +19,10 @@ class CheckPurchaseUseCase @Inject constructor(
     ) {
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {
             setPurchaseHistoryUseCase(
-                purchaseModel.createPurchaseTable(purchaseModel.toHistoryType())
+                purchaseModel.createPurchaseTable(
+                    purchaseModel.toHistoryType(),
+                    purchaseCollectionId
+                )
             )
         }
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {

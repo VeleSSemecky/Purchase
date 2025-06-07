@@ -6,7 +6,6 @@ import com.veles.purchase.domain.model.purchase.createPurchaseTable
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import com.veles.purchase.domain.repository.storage.DeletePurchasePhotoRepository
-import com.veles.purchase.domain.repository.storage.DeletePurchaseRepository
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -24,7 +23,7 @@ class DeletePurchaseUseCase @Inject constructor(
     ): Boolean = withContext(Dispatchers.IO) {
         removeAsyncPurchase(purchaseModel, purchaseCollectionId)
         removeAsyncFirebaseStorage(purchaseModel)
-        removeAsyncPurchase(purchaseModel)
+        addToHistory(purchaseModel, purchaseCollectionId)
         true
     }
 
@@ -44,9 +43,13 @@ class DeletePurchaseUseCase @Inject constructor(
         deletePurchasePhotoRepository.deletePhotos(purchaseModel.createId, purchaseModel.listImage)
     }
 
-    private suspend fun removeAsyncPurchase(
-        purchaseModel: PurchaseModel
+    private suspend fun addToHistory(
+        purchaseModel: PurchaseModel,
+        purchaseCollectionId: String
     ) = withContext(currentCoroutineContext()) {
-        historyRepository.insert(purchaseModel.createPurchaseTable(HistoryType.DELETE))
+        historyRepository.insert(purchaseModel.createPurchaseTable(
+            HistoryType.DELETE,
+            purchaseCollectionId
+        ))
     }
 }

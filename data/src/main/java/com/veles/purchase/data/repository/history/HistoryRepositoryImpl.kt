@@ -7,6 +7,8 @@ import com.veles.purchase.domain.model.purchase.PurchaseTableModel
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class HistoryRepositoryImpl @Inject constructor(
@@ -19,4 +21,9 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun getHistory(): List<PurchaseTableModel> =
         purchaseDAO.getListPurchaseTables().map { it.toPurchaseTableModel() }
+
+    override fun getHistoryFlow(collectionId: String): Flow<List<PurchaseTableModel>> =
+        purchaseDAO.getListPurchaseTablesFlow(collectionId).map { list ->
+            list.map { it.toPurchaseTableModel() }
+        }
 }

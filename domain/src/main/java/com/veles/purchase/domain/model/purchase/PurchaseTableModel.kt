@@ -16,12 +16,15 @@ class PurchaseTableModel(
     val collectionId: String = emptyString()
 )
 
-fun PurchaseModel.createPurchaseTable(typeHistory: HistoryType): PurchaseTableModel =
-    PurchaseTableModel(
-        text = text,
-        count = count,
-        check = isChecked,
-        typeHistory = typeHistory,
-        time = Calendar.getInstance().timeInMillis,
-        price = price
-    )
+fun PurchaseModel.createPurchaseTable(
+    typeHistory: HistoryType,
+    purchaseCollectionId: String
+): PurchaseTableModel = PurchaseTableModel(
+    text = text,
+    count = count,
+    check = isChecked,
+    typeHistory = typeHistory,
+    time = Calendar.getInstance().timeInMillis,
+    price = price,
+    collectionId = purchaseCollectionId
+)

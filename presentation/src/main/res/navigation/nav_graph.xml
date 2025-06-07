@@ -121,7 +121,14 @@
 
     <fragment
         android:id="@+id/fragmentHistory"
-        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.history.HistoryComposeFragment" />
+        android:name="com.veles.purchase.presentation.presentation.mvvm.purchase.history.HistoryComposeFragment" >
+
+        <argument
+            android:name="modelCollectionPurchase"
+            app:argType="com.veles.purchase.presentation.model.purchase.PurchaseCollectionModelUI"
+            app:nullable="false" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/fragmentSkuEdit"
@@ -129,7 +136,7 @@
 
         <action
             android:id="@+id/fragmentCurrencyChoose"
-            app:destination="@id/fragmentCurrencyChoose"></action>
+            app:destination="@id/fragmentCurrencyChoose" />
 
         <action
             android:id="@+id/fragmentPhotoListFragment"
@@ -246,6 +253,10 @@
         <action
             android:id="@+id/fragmentCategory"
             app:destination="@id/fragmentCategory" />
+
+        <action
+            android:id="@+id/fragmentHistory"
+            app:destination="@id/fragmentHistory" />
 
     </fragment>
 

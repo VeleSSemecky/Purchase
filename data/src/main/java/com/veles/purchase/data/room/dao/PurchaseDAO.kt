@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.veles.purchase.data.room.table.PurchaseTable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PurchaseDAO {
@@ -21,6 +22,9 @@ interface PurchaseDAO {
 
     @Query("SELECT * FROM PurchaseTable ORDER BY time DESC")
     suspend fun getListPurchaseTables(): List<PurchaseTable>
+
+    @Query("SELECT * FROM PurchaseTable WHERE collectionId=:collectionId ORDER BY time DESC")
+    fun getListPurchaseTablesFlow(collectionId: String): Flow<List<PurchaseTable>>
 
     @Update
     suspend fun update(purchaseTable: PurchaseTable)

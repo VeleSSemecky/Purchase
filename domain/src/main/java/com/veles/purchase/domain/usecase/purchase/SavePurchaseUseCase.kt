@@ -35,7 +35,10 @@ class SavePurchaseUseCase @Inject constructor(
         )
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {
             val historyType = if (isNewPurchase) HistoryType.ADD else HistoryType.CHANGE
-            setPurchaseHistoryUseCase(purchaseModel.createPurchaseTable(historyType))
+            setPurchaseHistoryUseCase(purchaseModel.createPurchaseTable(
+                historyType,
+                purchaseCollectionId
+            ))
         }
 
         withContext(coroutineDispatcher.coroutineDispatcherIO()) {

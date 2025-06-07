@@ -59,6 +59,7 @@ import com.veles.purchase.presentation.model.progress.Progress
 import com.veles.purchase.presentation.model.purchase.compose.collection.edit.CategoryState
 import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ComponentNameState
 import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ContentState
+import com.veles.purchase.presentation.model.purchase.compose.collection.edit.HistoryState
 import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ItemUserState
 import com.veles.purchase.presentation.model.purchase.compose.collection.edit.ToolBarState
 import com.veles.purchase.presentation.model.user.UserCheckedUI
@@ -101,6 +102,9 @@ class EditCollectionComposeFragment : BaseFragment() {
                     },
                     categoryState = CategoryState {
                         viewModel.onCategoryClicked()
+                    },
+                    historyState = HistoryState {
+                        viewModel.onHistoryClicked()
                     }
                 )
 
@@ -134,7 +138,8 @@ class EditCollectionComposeFragment : BaseFragment() {
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        contentDescription = "Localized description"
+                        contentDescription = "Localized description",
+                        tint = Color.White
                     )
                 }
             },
@@ -157,7 +162,8 @@ class EditCollectionComposeFragment : BaseFragment() {
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_done_black_24dp),
-                        contentDescription = "Localized description"
+                        contentDescription = "Localized description",
+                        tint = Color.White
                     )
                 }
             },
@@ -227,7 +233,9 @@ class EditCollectionComposeFragment : BaseFragment() {
         Spacer(modifier = Modifier.padding(16.dp))
         ComponentName(state.componentNameState)
         Spacer(modifier = Modifier.padding(8.dp))
-        Component(state.categoryState)
+        ComponentCategory(state.categoryState)
+        Spacer(modifier = Modifier.padding(8.dp))
+        ComponentHistory(state.historyState)
         Spacer(modifier = Modifier.padding(8.dp))
 
         LazyColumn(
@@ -336,10 +344,9 @@ class EditCollectionComposeFragment : BaseFragment() {
         }
     }
 
-
     @Preview
     @Composable
-    fun Component(categoryState: CategoryState = CategoryState.PREVIEW_STATE) {
+    fun ComponentCategory(categoryState: CategoryState = CategoryState.PREVIEW_STATE) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -372,6 +379,54 @@ class EditCollectionComposeFragment : BaseFragment() {
                         .weight(1f)
                         .padding(horizontal = 8.dp),
                     text = "Category settings"
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    painter = painterResource(R.drawable.ic_navigate_next),
+                    contentDescription = "Is Image",
+                    tint = Colors.gr
+                )
+            }
+        }
+    }
+
+    @Preview
+    @Composable
+    fun ComponentHistory(historyState: HistoryState = HistoryState.PREVIEW_STATE) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(horizontal = 20.dp)
+                .clickable {
+                    historyState.onHistoryClicked()
+                },
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors().copy(
+                containerColor = Colors.colorAccent
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    painter = painterResource(R.drawable.ic_baseline_history_24),
+                    contentDescription = "Is Image",
+                    tint = Colors.gr
+                )
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .weight(1f)
+                        .padding(horizontal = 8.dp),
+                    text = "History"
                 )
                 Icon(
                     modifier = Modifier

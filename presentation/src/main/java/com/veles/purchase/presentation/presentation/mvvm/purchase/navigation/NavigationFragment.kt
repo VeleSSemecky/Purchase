@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -68,7 +69,6 @@ import com.veles.purchase.presentation.model.progress.Progress
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.mvvm.pip.PIP
 import com.veles.purchase.presentation.update.AppUpdateHandler
-import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -82,7 +82,7 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
         if (result.resultCode == AppUpdateHandler.REQUEST_CODE_UPDATE &&
-            result.resultCode != DaggerAppCompatActivity.RESULT_OK
+            result.resultCode != AppCompatActivity.RESULT_OK
         ) {
             requireActivity().finish()
         }
@@ -231,7 +231,6 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
                 modifier = Modifier
                     .clickable {
                         when (it) {
-                            DrawerItem.HISTORY -> viewModel.onHistoryClicked()
                             DrawerItem.SKU_LIST -> viewModel.onSkuListClicked()
                             DrawerItem.PIP -> startActivity(
                                 Intent(

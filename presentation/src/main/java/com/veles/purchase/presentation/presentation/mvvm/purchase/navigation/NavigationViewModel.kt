@@ -38,7 +38,9 @@ class NavigationViewModel @Inject constructor(
         onLogoutClicked()
     }
 
-    fun onHistoryClicked() = router().navigate(NavigationFragmentDirections.fragmentHistory())
+    fun onHistoryClicked() {
+//        router().navigate(NavigationFragmentDirections.fragmentHistory())
+    }
 
     fun onSkuListClicked() = router().navigate(NavigationFragmentDirections.fragmentSkuList())
     fun onSettingPurchaseClicked() =
