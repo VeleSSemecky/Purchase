@@ -20,6 +20,7 @@ fun PurchaseModel.createPurchaseTable(
     typeHistory: HistoryType,
     purchaseCollectionId: String
 ): PurchaseTableModel = PurchaseTableModel(
+    id = createId,
     text = text,
     count = count,
     check = isChecked,

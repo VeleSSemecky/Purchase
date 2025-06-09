@@ -1,6 +1,5 @@
 package com.veles.purchase.data.repository.storage.set
 
-import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
 import com.veles.purchase.domain.core.suspendCancellableCoroutineWithTimeout
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
@@ -8,6 +7,7 @@ import com.veles.purchase.domain.repository.storage.SetPurchasePhotoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.tasks.await
+import androidx.core.net.toUri
 
 @Singleton
 class SetPurchasePhotoRepositoryImpl @Inject constructor(
@@ -20,7 +20,7 @@ class SetPurchasePhotoRepositoryImpl @Inject constructor(
                 storage.reference
                     .child(purchasePhotoModel.purchaseId)
                     .child(purchasePhotoModel.purchasePhotoId)
-                    .putFile(Uri.parse(purchasePhotoModel.purchasePhotoUri))
+                    .putFile(purchasePhotoModel.purchasePhotoUri.toUri())
                     .await()
             }
         }

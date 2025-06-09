@@ -4,9 +4,6 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.core.extensions.add
-import com.veles.purchase.domain.core.extensions.change
-import com.veles.purchase.domain.core.extensions.emitNotNull
-import com.veles.purchase.domain.core.extensions.invoke
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
@@ -31,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class EditPurchaseViewModel @Inject constructor(
@@ -87,7 +85,7 @@ class EditPurchaseViewModel @Inject constructor(
         onPhotoDeleteEvent()
     }
 
-    fun onCheckedChange(isChecked: Boolean) = flowPurchaseModel.change(viewModelScope) { value ->
+    fun onCheckedChange(isChecked: Boolean) = flowPurchaseModel.update { value ->
         value.copy(isChecked = isChecked)
     }
 
@@ -95,21 +93,21 @@ class EditPurchaseViewModel @Inject constructor(
         flowPurchaseLocalData.emit(data.toLocalDateTime())
     }
 
-    fun onTitleChange(name: String) = flowPurchaseModel.change(viewModelScope) { value ->
+    fun onTitleChange(name: String) = flowPurchaseModel.update { value ->
         value.copy(text = name)
     }
 
-    fun onPriceChange(price: String) = flowPurchaseModel.change(viewModelScope) { value ->
+    fun onPriceChange(price: String) = flowPurchaseModel.update { value ->
         value.copy(price = price)
     }
 
-    fun onCommentChange(comment: String) = flowPurchaseModel.change(viewModelScope) { value ->
+    fun onCommentChange(comment: String) = flowPurchaseModel.update { value ->
         value.copy(count = comment)
     }
 
-    fun setPurchasePhotoModel(photoUri: Uri) = flowPurchaseModel.change(viewModelScope) { value ->
+    fun setPurchasePhotoModel(photoUri: Uri) = flowPurchaseModel.update { value ->
         val purchasePhotoModel = PurchasePhotoModel(
-            purchaseId = flowPurchaseModel().createId,
+            purchaseId = flowPurchaseModel.value.createId,
             purchasePhotoUri = photoUri.toString()
         )
         val listImage = value.listImage.toMutableList()
@@ -118,15 +116,15 @@ class EditPurchaseViewModel @Inject constructor(
     }
 
     fun onSaveClicked() = viewModelScope.launch {
-        if (flowPurchaseName().isBlank()) return@launch
+        if (flowPurchaseName.value.isBlank()) return@launch
 
         flowProgress.emit(Progress.Start)
 
         savePurchaseUseCase(
             purchaseCollectionId = args.purchaseCollectionId,
-            editPurchaseModel = flowPurchaseModel(),
+            editPurchaseModel = flowPurchaseModel.value,
             isNewPurchase = args.purchaseId.isEmpty(),
-            listPurchasePhotoModel = flowDeletePurchasePhotoModelList()
+            listPurchasePhotoModel = flowDeletePurchasePhotoModelList.value
         )
 
         flowProgress.emit(Progress.End)
@@ -141,25 +139,25 @@ class EditPurchaseViewModel @Inject constructor(
         val purchaseModel = getPurchaseUseCase(
             args.purchaseCollectionId,
             args.purchaseId
-        )
-        flowPurchaseModel.emitNotNull(purchaseModel)
+        ) ?: flowPurchaseModel.value
+        flowPurchaseModel.emit(purchaseModel)
         flowProgress.emit(Progress.End)
     }
 
     private fun onPhotoDeleteEvent() = sharedFlowBus.getSharedFlow(PurchasePhotoDeleteEvent::class)
         .onEach { purchasePhotoDeleteEvent ->
-            val deletePhoto = flowPurchaseModel().listImage.find {
+            val deletePhoto = flowPurchaseModel.value.listImage.find {
                 it.purchasePhotoId == purchasePhotoDeleteEvent.purchasePhotoModel.purchasePhotoId
             } ?: return@onEach
-            flowPurchaseModel.change { value ->
+            flowPurchaseModel.update { value ->
                 value.copy(listImage = value.dropImage(deletePhoto))
             }
-            flowDeletePurchasePhotoModelList.change { value ->
+            flowDeletePurchasePhotoModelList.update { value ->
                 value.add(deletePhoto)
             }
         }.launchIn(viewModelScope)
 
-    fun onCategorySelected(purchaseCategoryModel: PurchaseCategoryModel) = flowPurchaseModel.change(viewModelScope) { value ->
+    fun onCategorySelected(purchaseCategoryModel: PurchaseCategoryModel) = flowPurchaseModel.update { value ->
         value.copy(purchaseCategoryModel = purchaseCategoryModel)
     }
 }

@@ -510,8 +510,8 @@ class EditPurchaseFragment : BaseFragment() {
                 modifier = Modifier.fillMaxSize()
             ) {
                 val (
-                    IconPhoto,
-                    IconCalendar
+                    referenceIconPhoto,
+                    referenceIconCalendar
                 ) = createRefs()
                 IconSquare(
                     id = R.drawable.ic_baseline_add_a_photo_24,
@@ -519,7 +519,7 @@ class EditPurchaseFragment : BaseFragment() {
                         requestPermissionCameraContract.launch()
                     },
                     modifier = Modifier
-                        .constrainAs(IconPhoto) {
+                        .constrainAs(referenceIconPhoto) {
                             end.linkTo(parent.end)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
@@ -531,8 +531,8 @@ class EditPurchaseFragment : BaseFragment() {
                         showDatePicker()
                     },
                     modifier = Modifier
-                        .constrainAs(IconCalendar) {
-                            end.linkTo(IconPhoto.start, margin = 8.dp)
+                        .constrainAs(referenceIconCalendar) {
+                            end.linkTo(referenceIconPhoto.start, margin = 8.dp)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                         }

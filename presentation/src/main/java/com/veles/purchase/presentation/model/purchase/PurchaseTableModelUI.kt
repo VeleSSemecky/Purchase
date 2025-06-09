@@ -5,8 +5,6 @@ import com.veles.purchase.domain.utill.createPrimaryIDKey
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.model.history.HistoryTypeUI
 import com.veles.purchase.presentation.model.history.toHistoryTypeUI
-import com.veles.purchase.presentation.model.purchase.compose.history.HistoryComposeContentState
-import com.veles.purchase.presentation.model.purchase.compose.history.HistoryToolBarState
 
 data class PurchaseTableModelUI(
     val id: String = createPrimaryIDKey(),

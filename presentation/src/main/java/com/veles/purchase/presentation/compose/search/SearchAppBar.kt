@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -53,8 +52,7 @@ fun SearchAppBar(
         navigationIcon = {
             if (navigationSearchIcon == null)
                 IconButton(
-                    modifier = Modifier
-                        .alpha(0.60f),
+                    modifier = Modifier,
                     onClick = {
                         onCloseClicked()
                         onTextChange("")
@@ -79,8 +77,7 @@ fun SearchAppBar(
                 },
                 placeholder = {
                     Text(
-                        modifier = Modifier
-                            .alpha(0.60f),
+                        modifier = Modifier,
                         text = "Search here...",
                         color = Color.White
                     )
@@ -111,11 +108,6 @@ fun SearchAppBar(
                         onSearchClicked(text)
                     }
                 ),
-//            colors = TextFieldDefaults.textFieldColors(
-//                textColor = Color.White,
-//                backgroundColor = Color.Transparent,
-//                cursorColor = Color.White.copy(alpha = ContentAlpha.medium)
-//            )
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedTextColor = Color.White,
                     focusedTextColor = Color.White,
@@ -126,38 +118,10 @@ fun SearchAppBar(
                 )
             )
         },
-//        navigationIcon = {
-//            IconButton(
-//                modifier = Modifier
-//                    .alpha(0.60f),
-//                onClick = {
-//                    onCloseClicked()
-//                    onTextChange("")
-//                }
-//            ) {
-//                Icon(
-//                    painter = painterResource(R.drawable.ic_baseline_arrow_back_24),
-//                    contentDescription = "Search Icon",
-//                    tint = Color.White
-//                )
-//            }
-//        },
-//        actions = {
-//
-//        },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Colors.colorPrimary
         )
     )
-//    Surface(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(56.dp),
-////        elevation = AppBarDefaults.TopAppBarElevation,
-//        color = Colors.colorPrimary
-//    ) {
-//
-//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
