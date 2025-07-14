@@ -21,6 +21,9 @@ plugins {
     alias(libs.plugins.google.firebase.crashlytics) apply false
     alias(libs.plugins.google.firebase.appdistribution) apply false
     alias(libs.plugins.compose.compiler) apply false
+    // Add Kotlin Multiplatform plugin
+//    alias(libs.plugins.jetbrains.kotlin.multiplatform) apply false
+
 //    id("com.android.application") version "7.3.0" apply false
 //
 //    // Make sure that you have the Google services Gradle plugin dependency

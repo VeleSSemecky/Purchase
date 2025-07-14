@@ -73,10 +73,11 @@ import com.veles.purchase.presentation.model.purchase.PurchaseCategoryModelUI
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textStyle1
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CategoryFragment : BaseFragment() {
 
-    private val viewModel: CategoryViewModel by viewModels { viewModelFactory }
+    private val viewModel: CategoryViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

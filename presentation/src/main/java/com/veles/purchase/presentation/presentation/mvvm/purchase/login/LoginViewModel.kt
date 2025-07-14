@@ -8,14 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.usecase.auth.LoginUseCase
 import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.data.result.GoogleSignIn
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel @Inject constructor(
+class LoginViewModel(
     private val router: Router,
     private val loginUseCase: LoginUseCase
 ) : ViewModel() {

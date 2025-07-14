@@ -45,102 +45,103 @@ import com.veles.purchase.domain.repository.user.FirebaseGetUserRepository
 import com.veles.purchase.domain.repository.user.FirebaseMessageTokenRepository
 import com.veles.purchase.domain.repository.auth.LogoutRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseCategoryRepository
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
-@Module
-interface RepositoryModule {
+/**
+ * Koin module for repositories
+ * Converted from Dagger RepositoryModule
+ */
+val repositoryModule = module {
 
-    @Singleton
-    @Binds
-    fun provideNotificationMessageRepository(repository: NotificationMessageRepositoryImpl): NotificationMessageRepository
+    // Firebase services
+    single<FirebaseStorage> { Firebase.storage }
+    single<FirebaseFirestore> { Firebase.firestore }
+    single<FirebaseAuth> { Firebase.auth }
 
-    @Singleton
-    @Binds
-    fun provideGetPurchasePhotoRepository(repository: GetPurchasePhotoRepositoryImpl): GetPurchasePhotoRepository
-
-    @Singleton
-    @Binds
-    fun provideHistoryRepository(repository: HistoryRepositoryImpl): HistoryRepository
-
-    @Singleton
-    @Binds
-    fun provideGetCollectionPurchaseRepository(repository: GetCollectionPurchaseRepositoryImpl): GetCollectionPurchaseRepository
-
-    @Singleton
-    @Binds
-    fun provideSetCollectionPurchaseRepository(repository: CollectionPurchaseRepositoryImpl): CollectionPurchaseRepository
-
-    @Singleton
-    @Binds
-    fun provideFirebaseGetUserRepository(repository: FirebaseGetUserRepositoryImpl): FirebaseGetUserRepository
-
-    @Singleton
-    @Binds
-    fun provideFirebaseSetFcmTokenUserRepository(repository: FirebaseMessageTokenRepositoryImpl): FirebaseMessageTokenRepository
-
-    @Singleton
-    @Binds
-    fun provideSkuPhotoRepository(repository: SkuPhotoRepositoryImpl): SkuPhotoRepository
-
-    @Singleton
-    @Binds
-    fun provideSkuRepository(repository: SkuRepositoryImpl): SkuRepository
-
-    @Singleton
-    @Binds
-    fun provideUserLogoutRepository(repository: LogoutRepositoryImpl): LogoutRepository
-
-    @Singleton
-    @Binds
-    fun provideAuthWithGoogle(repository: AuthWithGoogleRepositoryImpl): AuthWithGoogleRepository
-
-    @Singleton
-    @Binds
-    fun provideDeletePurchasePhotoRepository(repository: DeletePurchasePhotoRepositoryImpl): DeletePurchasePhotoRepository
-
-    @Singleton
-    @Binds
-    fun provideBiometricRepository(repository: BiometricRepositoryImpl): BiometricRepository
-
-    @Singleton
-    @Binds
-    fun providePurchaseRepository(repository: PurchaseRepositoryImpl): PurchaseRepository
-
-    @Singleton
-    @Binds
-    fun provideSettingRepository(repository: SettingRepositoryImpl): SettingRepository
-
-    @Singleton
-    @Binds
-    fun providePurchaseLaterRepository(repository: PurchaseLaterRepositoryImpl): PurchaseLaterRepository
-
-    @Singleton
-    @Binds
-    fun provideSetPurchasePhotoRepository(repository: SetPurchasePhotoRepositoryImpl): SetPurchasePhotoRepository
-
-    @Singleton
-    @Binds
-    fun provideDeleteCollectionPurchaseRepository(repository: DeleteCollectionPurchaseRepositoryImpl): DeleteCollectionPurchaseRepository
-
-    @Singleton
-    @Binds
-    fun providePurchaseCategoryRepository(repository: PurchaseCategoryRepositoryImpl): PurchaseCategoryRepository
-
-    companion object {
-
-        @Singleton
-        @Provides
-        fun provideFirebaseStorage(): FirebaseStorage = Firebase.storage
-
-        @Singleton
-        @Provides
-        fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
-
-        @Singleton
-        @Provides
-        fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
-   }
+    // Repository implementations
+    single<NotificationMessageRepository> {
+        NotificationMessageRepositoryImpl(
+            notificationMessageService = get(),
+            firebaseFirestore = get<FirebaseFirestore>(),
+            dataStore = get()
+        )
+    }
+    single<GetPurchasePhotoRepository> {
+        GetPurchasePhotoRepositoryImpl(get<FirebaseStorage>())
+    }
+    single<HistoryRepository> {
+        HistoryRepositoryImpl(get())
+    }
+    single<GetCollectionPurchaseRepository> {
+        GetCollectionPurchaseRepositoryImpl(
+            firebaseFirestore = get<FirebaseFirestore>(),
+            firebaseAuth = get<FirebaseAuth>()
+        )
+    }
+    single<CollectionPurchaseRepository> {
+        CollectionPurchaseRepositoryImpl(
+            firebaseFirestore = get<FirebaseFirestore>(),
+            firebaseAuth = get<FirebaseAuth>()
+        )
+    }
+    single<FirebaseGetUserRepository> {
+        FirebaseGetUserRepositoryImpl(
+            firebaseFirestore = get<FirebaseFirestore>(),
+            firebaseAuth = get<FirebaseAuth>()
+        )
+    }
+    single<FirebaseMessageTokenRepository> {
+        FirebaseMessageTokenRepositoryImpl(get<FirebaseFirestore>())
+    }
+    single<SkuPhotoRepository> {
+        SkuPhotoRepositoryImpl(get())
+    }
+    single<SkuRepository> {
+        SkuRepositoryImpl(get())
+    }
+    single<LogoutRepository> {
+        LogoutRepositoryImpl(androidContext(), get())
+    }
+    single<AuthWithGoogleRepository> {
+        AuthWithGoogleRepositoryImpl(
+            firebaseAuth = get<FirebaseAuth>(),
+            firebaseFirestore = get<FirebaseFirestore>(),
+            dataStore = get()
+        )
+    }
+    single<DeletePurchasePhotoRepository> {
+        DeletePurchasePhotoRepositoryImpl(
+            contentResolver = get(),
+            storage = get(),
+            logger = get()
+        )
+    }
+    single<BiometricRepository> {
+        BiometricRepositoryImpl(
+            cryptographyManager = get()
+        )
+    }
+    single<PurchaseRepository> {
+        PurchaseRepositoryImpl(get())
+    }
+    single<SettingRepository> {
+        SettingRepositoryImpl(get())
+    }
+    single<PurchaseLaterRepository> {
+        PurchaseLaterRepositoryImpl(get<FirebaseFirestore>())
+    }
+    single<SetPurchasePhotoRepository> {
+        SetPurchasePhotoRepositoryImpl(get())
+    }
+    single<DeleteCollectionPurchaseRepository> {
+        DeleteCollectionPurchaseRepositoryImpl(
+            firebaseFirestore = get<FirebaseFirestore>(),
+            firebaseAuth = get<FirebaseAuth>(),
+            logger = get()
+        )
+    }
+    single<PurchaseCategoryRepository> {
+        PurchaseCategoryRepositoryImpl(get<FirebaseFirestore>())
+    }
 }

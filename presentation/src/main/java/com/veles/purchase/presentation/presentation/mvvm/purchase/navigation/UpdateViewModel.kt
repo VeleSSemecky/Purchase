@@ -7,12 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.veles.purchase.presentation.extensions.launchOnError
 import com.veles.purchase.presentation.model.progress.Progress
 import com.veles.purchase.presentation.update.AppUpdateHandler
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class UpdateViewModel @Inject constructor(
+class UpdateViewModel(
     private val appUpdateHandler: AppUpdateHandler
 ) : ViewModel() {
 

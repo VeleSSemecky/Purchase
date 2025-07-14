@@ -16,8 +16,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class GetCollectionPurchaseRepositoryImpl @Inject constructor(
+class GetCollectionPurchaseRepositoryImpl(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
 ) : GetCollectionPurchaseRepository {

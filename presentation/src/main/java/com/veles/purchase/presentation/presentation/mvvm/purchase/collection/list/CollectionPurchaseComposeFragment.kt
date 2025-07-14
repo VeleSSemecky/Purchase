@@ -60,10 +60,11 @@ import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 import com.veles.purchase.presentation.presentation.mvvm.purchase.navigation.NavigationFragmentDirections
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CollectionPurchaseComposeFragment : BaseFragment() {
 
-    private val viewModel: CollectionPurchaseComposeViewModel by viewModels { viewModelFactory }
+    private val viewModel: CollectionPurchaseComposeViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -168,7 +169,6 @@ class CollectionPurchaseComposeFragment : BaseFragment() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Preview(showBackground = true, showSystemUi = true)
     @Composable
     fun ItemPurchaseCollections(

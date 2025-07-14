@@ -16,8 +16,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.tasks.await
 
-@Singleton
-class NotificationMessageRepositoryImpl @Inject constructor(
+class NotificationMessageRepositoryImpl(
     private val notificationMessageService: NotificationMessageService,
     private val firebaseFirestore: FirebaseFirestore,
     private val dataStore: DataStore

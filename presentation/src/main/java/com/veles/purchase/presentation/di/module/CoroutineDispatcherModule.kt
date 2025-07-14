@@ -2,14 +2,13 @@ package com.veles.purchase.presentation.di.module
 
 import com.veles.purchase.domain.core.dispatcher.AppCoroutineDispatcher
 import com.veles.purchase.domain.core.dispatcher.AppCoroutineDispatcherImpl
-import dagger.Binds
-import dagger.Module
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-interface CoroutineDispatcherModule {
+/**
+ * Koin module for coroutine dispatcher dependencies
+ * Converted from Dagger CoroutineDispatcherModule
+ */
+val coroutineDispatcherModule = module {
 
-    @Singleton
-    @Binds
-    fun bindCoroutineDispatcher(coroutineDispatcher: AppCoroutineDispatcherImpl): AppCoroutineDispatcher
+    single<AppCoroutineDispatcher> { AppCoroutineDispatcherImpl() }
 }

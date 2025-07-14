@@ -5,22 +5,15 @@ import com.google.firebase.messaging.RemoteMessage
 import com.veles.purchase.data.local.data.DataStore
 import com.veles.purchase.domain.repository.user.FirebaseMessageTokenRepository
 import com.veles.purchase.presentation.base.mvvm.service.BaseFirebaseMessagingService
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
+import org.koin.android.ext.android.inject
 
 class FirebaseMessagingService : BaseFirebaseMessagingService() {
 
-    @Inject
-    lateinit var dataStore: DataStore
-
-    @Inject
-    lateinit var firebaseAuth: FirebaseAuth
-
-    @Inject
-    lateinit var firebaseMessageNotification: FirebaseMessageNotification
-
-    @Inject
-    lateinit var firebaseMessageTokenRepository: FirebaseMessageTokenRepository
+    private val dataStore: DataStore by inject()
+    private val firebaseAuth: FirebaseAuth by inject()
+    private val firebaseMessageNotification: FirebaseMessageNotification by inject()
+    private val firebaseMessageTokenRepository: FirebaseMessageTokenRepository by inject()
 
     private val handler = CoroutineExceptionHandler { _, exception ->
     }

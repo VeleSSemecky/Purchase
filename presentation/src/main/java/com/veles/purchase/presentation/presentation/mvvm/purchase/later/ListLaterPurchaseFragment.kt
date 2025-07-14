@@ -83,10 +83,13 @@ import com.veles.purchase.presentation.model.setting.toShape
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.textStyle1
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class ListLaterPurchaseFragment : BaseFragment() {
 
-    private val viewModel: ListLaterPurchaseViewModel by viewModels { viewModelFactory }
+    private val viewModel: ListLaterPurchaseViewModel by viewModel()
+//    private val viewModel: ListLaterPurchaseViewModel by viewModel { parametersOf(args) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -145,7 +148,7 @@ class ListLaterPurchaseFragment : BaseFragment() {
 
     @Composable
     fun ToolBar(
-        viewModel: ListLaterPurchaseViewModel = viewModel()
+        viewModel: ListLaterPurchaseViewModel = fragmentViewModel()
     ) {
         SearchTopAppBar(
             searchTextState = viewModel.flowSearchText.collectAsState().value,

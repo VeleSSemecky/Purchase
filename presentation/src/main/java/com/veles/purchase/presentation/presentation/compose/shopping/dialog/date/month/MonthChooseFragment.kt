@@ -27,13 +27,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseBottomSheetDialogFragment
 import com.veles.purchase.presentation.presentation.compose.Colors
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class MonthChooseFragment : BaseBottomSheetDialogFragment() {
 
-    private val viewModel: MonthChooseViewModel by viewModels { viewModelFactory }
+    private val viewModel: MonthChooseViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

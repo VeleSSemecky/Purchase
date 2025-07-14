@@ -52,10 +52,11 @@ import java.time.Month
 import java.time.format.TextStyle
 import java.util.Currency
 import java.util.Locale
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class OutlayGraphFragment : BaseFragment() {
 
-    private val viewModel: OutlayGraphViewModel by viewModels { viewModelFactory }
+    private val viewModel: OutlayGraphViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

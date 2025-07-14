@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.presentation.mvvm.purchase.later
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
@@ -23,7 +24,6 @@ import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.model.sort.toPurchaseComparator
 import com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseFragmentArgs
 import com.veles.purchase.presentation.presentation.mvvm.purchase.list.ListPurchaseFragmentDirections
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,8 +31,8 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class ListLaterPurchaseViewModel @Inject constructor(
-    private val args: ListPurchaseFragmentArgs,
+class ListLaterPurchaseViewModel(
+    savedStateHandle: SavedStateHandle,
     private val sharedFlowBus: SharedFlowBus,
     private val deletePurchaseUseCase: DeletePurchaseUseCase,
     private val addLazyPurchaseUseCase: AddLazyPurchaseUseCase,
@@ -41,6 +41,8 @@ class ListLaterPurchaseViewModel @Inject constructor(
     private val getSettingUseCase: GetSettingUseCase,
     private val router: Router
 ) : ViewModel() {
+
+    private val args: ListPurchaseFragmentArgs = ListPurchaseFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     private val _flowProgress: MutableStateFlow<Progress> = MutableStateFlow(Progress.End)
     val flowProgress: StateFlow<Progress>

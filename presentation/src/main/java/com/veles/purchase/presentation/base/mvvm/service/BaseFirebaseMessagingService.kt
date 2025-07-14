@@ -1,6 +1,6 @@
 package com.veles.purchase.presentation.base.mvvm.service
 
-import dagger.android.AndroidInjection
+import com.google.firebase.messaging.FirebaseMessagingService
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CancellationException
@@ -10,16 +10,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-abstract class BaseFirebaseMessagingService : DaggerFirebaseMessagingService() {
+abstract class BaseFirebaseMessagingService : FirebaseMessagingService() {
 
     private val serviceJob = Job()
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
-    override fun onCreate() {
-        AndroidInjection.inject(this)
-        super.onCreate()
-    }
 
     protected open fun BaseFirebaseMessagingService.launch(
         context: CoroutineContext = EmptyCoroutineContext,

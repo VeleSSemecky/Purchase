@@ -1,19 +1,21 @@
 package com.veles.purchase.presentation.presentation.compose.shopping.dialog.currency.choose
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.extensions.toCurrency
 import com.veles.purchase.presentation.model.event.CurrencyEvent
 import java.util.Currency
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class CurrencyChooseViewModel @Inject constructor(
+class CurrencyChooseViewModel(
+    savedStateHandle: SavedStateHandle,
     private val sharedFlowBus: SharedFlowBus,
-    args: CurrencyChooseFragmentArgs
 ) : ViewModel() {
+
+    private val args: CurrencyChooseFragmentArgs = CurrencyChooseFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     val flowCurrency: MutableStateFlow<Currency> = MutableStateFlow(args.currencyCode.toCurrency())
 

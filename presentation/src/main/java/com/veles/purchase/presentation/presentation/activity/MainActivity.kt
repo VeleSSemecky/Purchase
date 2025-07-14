@@ -1,6 +1,6 @@
 package com.veles.purchase.presentation.presentation.activity
 
+import androidx.appcompat.app.AppCompatActivity
 import com.veles.purchase.presentation.R
-import dagger.android.support.DaggerAppCompatActivity
 
-class MainActivity : DaggerAppCompatActivity(R.layout.main_activity)
+class MainActivity : AppCompatActivity(R.layout.main_activity)

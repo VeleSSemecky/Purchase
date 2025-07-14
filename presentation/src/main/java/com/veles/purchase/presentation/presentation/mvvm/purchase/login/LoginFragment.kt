@@ -41,10 +41,11 @@ import com.veles.purchase.presentation.compose.GoogleButton
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.shopping.dialog.error.ErrorAlertDialog
 import com.veles.purchase.presentation.presentation.compose.textStyle1
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LoginFragment : BaseFragment() {
 
-    private val viewModel: LoginViewModel by viewModels { viewModelFactory }
+    private val viewModel: LoginViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

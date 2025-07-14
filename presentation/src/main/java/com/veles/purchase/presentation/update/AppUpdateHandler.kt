@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.update
 
+import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -9,13 +10,12 @@ import com.google.android.play.core.common.IntentSenderForResultStarter
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.veles.purchase.presentation.presentation.activity.MainActivity
-import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
-class AppUpdateHandler @Inject constructor(private val activity: MainActivity) {
+class AppUpdateHandler(private val context: Context) {
 
-    private val appUpdateManager by lazy { AppUpdateManagerFactory.create(activity) }
+    private val appUpdateManager by lazy { AppUpdateManagerFactory.create(context) }
 
     suspend fun onUpdateApp(
         updateFlowResultLauncher: ActivityResultLauncher<IntentSenderRequest>

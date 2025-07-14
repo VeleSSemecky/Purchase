@@ -41,10 +41,11 @@ import com.veles.purchase.presentation.base.mvvm.fragment.BaseBottomSheetDialogF
 import com.veles.purchase.presentation.extensions.launchRepeatOnLifecycle
 import com.veles.purchase.presentation.model.currency.currencyModelList
 import com.veles.purchase.presentation.presentation.compose.Colors
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CurrencyChooseFragment : BaseBottomSheetDialogFragment() {
 
-    private val viewModel: CurrencyChooseViewModel by viewModels { viewModelFactory }
+    private val viewModel: CurrencyChooseViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

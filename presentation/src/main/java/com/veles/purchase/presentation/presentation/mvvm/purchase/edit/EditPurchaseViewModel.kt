@@ -1,6 +1,7 @@
 package com.veles.purchase.presentation.presentation.mvvm.purchase.edit
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.core.extensions.add
@@ -21,7 +22,6 @@ import com.veles.purchase.presentation.model.event.PurchasePhotoDeleteEvent
 import com.veles.purchase.presentation.model.progress.Progress
 import java.time.LocalDateTime
 import java.util.Currency
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
@@ -31,8 +31,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class EditPurchaseViewModel @Inject constructor(
-    private val args: EditPurchaseFragmentArgs,
+class EditPurchaseViewModel(
+    savedStateHandle: SavedStateHandle,
     private val sharedFlowBus: SharedFlowBus,
     private val getPurchaseUseCase: GetPurchaseUseCase,
     private val getPhotoUseCase: GetPhotoUseCase,
@@ -40,6 +40,8 @@ class EditPurchaseViewModel @Inject constructor(
     private val getCollectionPurchaseCategoryUseCase: GetCollectionPurchaseCategoryUseCase,
     private val router: Router
 ) : ViewModel() {
+
+    private val args: EditPurchaseFragmentArgs = EditPurchaseFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     private val flowPurchaseModel: MutableStateFlow<PurchaseModel> =
         MutableStateFlow(PurchaseModel.EMPTY)

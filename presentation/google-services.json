@@ -55,6 +55,14 @@
           }
         },
         {
+          "client_id": "76128650518-qiq0v7330bcimoe6mgd5cpl65dhildh6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm",
+            "certificate_hash": "21fdc09e5e5aef0edef5cabcf2ee3b514229623f"
+          }
+        },
+        {
           "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -124,6 +132,14 @@
           }
         },
         {
+          "client_id": "76128650518-pigp2ivmq7s6rq6g4jiv4si4en8lr824.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configProduction",
+            "certificate_hash": "21fdc09e5e5aef0edef5cabcf2ee3b514229623f"
+          }
+        },
+        {
           "client_id": "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -158,6 +174,14 @@
           "android_info": {
             "package_name": "com.veles.kotlinmvvm.configTest",
             "certificate_hash": "3cb317a29f6c8997ca61b04ff7eb062a6121ed6a"
+          }
+        },
+        {
+          "client_id": "76128650518-2n2a96pke3ile3en137fbks2gieh341h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veles.kotlinmvvm.configTest",
+            "certificate_hash": "21fdc09e5e5aef0edef5cabcf2ee3b514229623f"
           }
         },
         {

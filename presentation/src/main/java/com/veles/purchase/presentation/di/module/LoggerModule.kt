@@ -5,23 +5,15 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.veles.purchase.domain.core.loger.Logger
 import com.veles.purchase.presentation.data.loger.LoggerImpl
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-interface LoggerModule {
+/**
+ * Koin module for logger dependencies
+ * Converted from Dagger LoggerModule
+ */
+val loggerModule = module {
 
-    @Binds
-    @Singleton
-    fun bindLogger(logger: LoggerImpl): Logger
+    single<FirebaseCrashlytics> { Firebase.crashlytics }
 
-    companion object {
-        @Provides
-        @Singleton
-        fun provideFirebaseCrashlytics(): FirebaseCrashlytics {
-            return Firebase.crashlytics
-        }
-    }
+    single<Logger> { LoggerImpl(get()) }
 }

@@ -20,11 +20,10 @@ import com.veles.purchase.presentation.data.broadcast.RemoteActionBroadcastRecei
 import com.veles.purchase.presentation.extensions.launchOnError
 import java.text.SimpleDateFormat
 import java.util.Locale
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class PIPViewModel @Inject constructor(
+class PIPViewModel(
     private val logger: Logger,
     private val contentResolver: ContentResolver,
     remoteActionBroadcastReceiver: RemoteActionBroadcastReceiver

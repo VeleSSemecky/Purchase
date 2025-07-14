@@ -5,16 +5,17 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.veles.purchase.presentation.BuildConfig
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import org.koin.dsl.module
+import org.koin.android.ext.koin.androidContext
 
-@Module
-object PersistenceModule {
+/**
+ * Koin module for persistence dependencies
+ * Converted from Dagger PersistenceModule
+ */
+val persistenceModule = module {
 
-    @Provides
-    @Singleton
-    fun provideSharedPreferences(context: Context): SharedPreferences =
+    single<SharedPreferences> {
+        val context = androidContext()
         when {
             BuildConfig.DEBUG -> context.getSharedPreferences("${BuildConfig.FLAVOR}_preferences", Context.MODE_PRIVATE)
             else -> EncryptedSharedPreferences.create(
@@ -25,4 +26,5 @@ object PersistenceModule {
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
         }
+    }
 }

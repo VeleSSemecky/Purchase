@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
@@ -45,10 +46,12 @@ import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.textFieldColorsMaterial3
 import com.veles.purchase.presentation.presentation.compose.textStyle
 import com.veles.purchase.presentation.presentation.compose.textStyle1
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class CurrencySearchFragment : BaseFragment() {
 
-    private val viewModel: CurrencySearchViewModel by viewModels { viewModelFactory }
+    private val viewModel: CurrencySearchViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

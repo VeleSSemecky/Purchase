@@ -84,10 +84,11 @@ import com.veles.purchase.presentation.presentation.compose.textFieldColorsMater
 import com.veles.purchase.presentation.presentation.compose.textStyle
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EditPurchaseFragment : BaseFragment() {
 
-    private val viewModel: EditPurchaseViewModel by viewModels { viewModelFactory }
+    private val viewModel: EditPurchaseViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -162,9 +163,7 @@ class EditPurchaseFragment : BaseFragment() {
 
     @Composable
     fun ComponentName(
-        viewModel: EditPurchaseViewModel = viewModel(
-            factory = viewModelFactory
-        )
+
     ) {
         val text by viewModel.flowPurchaseName.collectAsState()
         OutlinedTextField(
@@ -193,7 +192,6 @@ class EditPurchaseFragment : BaseFragment() {
     @Preview
     @Composable
     fun ComponentPrice(
-        viewModel: EditPurchaseViewModel = viewModel()
     ) {
         val price by viewModel.flowPurchasePrice.collectAsState()
         val currency by viewModel.flowPurchaseCurrency.collectAsState()
@@ -253,9 +251,7 @@ class EditPurchaseFragment : BaseFragment() {
 
     @Composable
     fun ComponentComment(
-        viewModel: EditPurchaseViewModel = viewModel(
-            factory = viewModelFactory
-        )
+
     ) {
         val text by viewModel.flowPurchaseComment.collectAsState()
 
@@ -276,7 +272,6 @@ class EditPurchaseFragment : BaseFragment() {
 
     @Composable
     fun ComponentDate(
-        viewModel: EditPurchaseViewModel = viewModel()
     ) {
         val data by viewModel.flowPurchaseLocalData.collectAsState()
         OutlinedTextField(
@@ -303,7 +298,6 @@ class EditPurchaseFragment : BaseFragment() {
 
     @Composable
     fun ComponentPhoto(
-        viewModel: EditPurchaseViewModel = viewModel()
     ) {
         val purchasePhotoModelList by viewModel.flowPurchasePhotoModelList.collectAsState()
 
@@ -344,7 +338,6 @@ class EditPurchaseFragment : BaseFragment() {
 
     @Composable
     fun ComponentSwitch(
-        viewModel: EditPurchaseViewModel = viewModel()
     ) {
         val purchaseIsChecked by viewModel.flowPurchaseIsChecked.collectAsState()
         Row(

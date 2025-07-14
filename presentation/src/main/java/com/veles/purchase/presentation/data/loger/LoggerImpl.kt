@@ -3,11 +3,8 @@ package com.veles.purchase.presentation.data.loger
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.veles.purchase.domain.core.loger.Logger
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class LoggerImpl @Inject constructor(
+class LoggerImpl(
     private val firebaseCrashlytics: FirebaseCrashlytics
 ) : Logger {
 

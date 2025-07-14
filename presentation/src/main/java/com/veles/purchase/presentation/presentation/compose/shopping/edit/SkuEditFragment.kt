@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.skydoves.landscapist.glide.GlideImage
 import com.veles.purchase.data.room.table.toSkuPhotoEntity
@@ -59,12 +60,14 @@ import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textFieldColorsMaterial3
 import com.veles.purchase.presentation.presentation.compose.textStyle
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class SkuEditFragment : BaseFragment() {
 
-    private val viewModel: SkuEditViewModel by viewModels { viewModelFactory }
+    private val viewModel: SkuEditViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -124,8 +127,7 @@ class SkuEditFragment : BaseFragment() {
 
     @Composable
     fun ComponentName(
-        viewModel: SkuEditViewModel = viewModel(
-            factory = viewModelFactory
+        viewModel: SkuEditViewModel = fragmentViewModel(
         )
     ) {
         val text by viewModel.flowSkuName.collectAsState()
@@ -155,7 +157,7 @@ class SkuEditFragment : BaseFragment() {
     @Preview
     @Composable
     fun ComponentPrice(
-        viewModel: SkuEditViewModel = viewModel()
+        viewModel: SkuEditViewModel = fragmentViewModel()
     ) {
         val price by viewModel.flowSkuPrice.collectAsState()
         val currency by viewModel.flowSkuCurrency.collectAsState()
@@ -216,8 +218,7 @@ class SkuEditFragment : BaseFragment() {
 
     @Composable
     fun ComponentComment(
-        viewModel: SkuEditViewModel = viewModel(
-            factory = viewModelFactory
+        viewModel: SkuEditViewModel = fragmentViewModel(
         )
     ) {
         val text by viewModel.flowSkuComment.collectAsState().apply {
@@ -239,7 +240,7 @@ class SkuEditFragment : BaseFragment() {
 
     @Composable
     fun ComponentDate(
-        viewModel: SkuEditViewModel = viewModel()
+        viewModel: SkuEditViewModel = fragmentViewModel()
     ) {
         val data by viewModel.flowSkuLocalData.collectAsState()
         OutlinedTextField(
@@ -269,7 +270,7 @@ class SkuEditFragment : BaseFragment() {
 
     @Composable
     fun ComponentPhoto(
-        viewModel: SkuEditViewModel = viewModel()
+        viewModel: SkuEditViewModel = fragmentViewModel()
     ) {
         val skuPhotoEntityList by viewModel.flowSkuPhotoEntityList.collectAsState()
 

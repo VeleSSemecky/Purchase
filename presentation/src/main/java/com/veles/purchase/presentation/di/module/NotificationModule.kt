@@ -1,12 +1,13 @@
 package com.veles.purchase.presentation.di.module
 
 import com.veles.purchase.presentation.data.notification.fcm.FirebaseMessagingService
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
+import org.koin.dsl.module
 
-@Module
-interface NotificationModule {
+/**
+ * Koin module for notification dependencies
+ * Converted from Dagger NotificationModule
+ */
+val notificationModule = module {
 
-    @ContributesAndroidInjector
-    fun notificationFirebaseMessagingService(): FirebaseMessagingService
+    single { FirebaseMessagingService() }
 }

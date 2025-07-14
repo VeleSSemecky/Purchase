@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.presentation.compose.shopping.dialog.currency.search
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.utill.emptyString
@@ -9,14 +10,16 @@ import com.veles.purchase.presentation.model.currency.CurrencyModel
 import com.veles.purchase.presentation.model.currency.currencyModelList
 import com.veles.purchase.presentation.model.event.CurrencyEvent
 import java.util.Currency
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class CurrencySearchViewModel @Inject constructor(
+class CurrencySearchViewModel(
     private val sharedFlowBus: SharedFlowBus,
-    args: CurrencySearchFragmentArgs
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val args: CurrencySearchFragmentArgs =
+        CurrencySearchFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     private val flowCurrency: MutableStateFlow<Currency> =
         MutableStateFlow(args.currencyCode.toCurrency())

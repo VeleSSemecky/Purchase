@@ -7,13 +7,12 @@ import com.veles.purchase.domain.usecase.logout.LogoutUseCase
 import com.veles.purchase.domain.usecase.user.UserUseCase
 import com.veles.purchase.presentation.base.mvvm.navigation.Router
 import com.veles.purchase.presentation.extensions.launchOnError
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class NavigationViewModel @Inject constructor(
+class NavigationViewModel(
     private val userUseCase: UserUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val router: Router

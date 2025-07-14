@@ -7,11 +7,10 @@ import com.veles.purchase.domain.utill.zeroString
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.model.event.YearEvent
 import java.time.LocalDateTime
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class YearChooseViewModel @Inject constructor(
+class YearChooseViewModel(
     private val sharedFlowBus: SharedFlowBus,
     args: YearChooseFragmentArgs
 ) : ViewModel() {

@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.presentation.mvvm.purchase.photo
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
@@ -9,16 +10,18 @@ import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.model.event.PurchasePhotoDeleteEvent
 import com.veles.purchase.presentation.model.progress.Progress
 import com.veles.purchase.presentation.model.purchase.toPurchasePhotoModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class PhotoPurchaseComposeViewModel @Inject constructor(
-    private val args: PhotoPurchaseComposeFragmentArgs,
+class PhotoPurchaseComposeViewModel(
+    savedStateHandle: SavedStateHandle,
     private val router: Router,
     private val sharedFlowBus: SharedFlowBus,
     private val getPhotoUseCase: GetPhotoUseCase
 ) : ViewModel() {
+
+    private val args: PhotoPurchaseComposeFragmentArgs =
+        PhotoPurchaseComposeFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     val flowPurchasePhotoModel: MutableStateFlow<PurchasePhotoModel?> =
         MutableStateFlow(args.modelPurchasePhoto?.toPurchasePhotoModel())

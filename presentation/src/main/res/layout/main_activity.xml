@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragment_container"
-        android:name="com.veles.purchase.presentation.base.mvvm.navigation.DaggerNavHostFragment"
+        android:name="com.veles.purchase.presentation.base.mvvm.navigation.KoinNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"

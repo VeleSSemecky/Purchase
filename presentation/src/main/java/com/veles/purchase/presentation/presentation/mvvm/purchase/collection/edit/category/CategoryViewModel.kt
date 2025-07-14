@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.category
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.usecase.collection.SavePurchaseCategoryUseCase
@@ -8,7 +9,6 @@ import com.veles.purchase.presentation.model.purchase.PurchaseCategoryModelUI
 import com.veles.purchase.presentation.model.purchase.toPurchaseCategoryModel
 import com.veles.purchase.presentation.model.purchase.toPurchaseCollectionModel
 import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.CATEGORY_MODELS_KEY
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,11 +17,13 @@ import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class CategoryViewModel @Inject constructor(
-    private val args: CategoryFragmentArgs,
+class CategoryViewModel(
+    savedStateHandle: SavedStateHandle,
     private val savePurchaseCategoryUseCase: SavePurchaseCategoryUseCase,
     private val router: Router
 ) : ViewModel() {
+
+    private val args: CategoryFragmentArgs = CategoryFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     private val _uiState = MutableStateFlow(CategoryScreenState(categories = args.modelCollectionPurchase.categoryModels))
     val uiState: StateFlow<CategoryScreenState> = _uiState.asStateFlow()

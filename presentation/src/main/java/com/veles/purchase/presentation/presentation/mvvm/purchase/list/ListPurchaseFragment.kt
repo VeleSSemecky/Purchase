@@ -101,10 +101,12 @@ import com.veles.purchase.presentation.model.sort.toPurchaseComparator
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.textStyle1
 import com.veles.purchase.presentation.presentation.compose.textStyle2
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class ListPurchaseFragment : BaseFragment() {
 
-    private val viewModel: ListPurchaseViewModel by viewModels { viewModelFactory }
+    private val viewModel: ListPurchaseViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

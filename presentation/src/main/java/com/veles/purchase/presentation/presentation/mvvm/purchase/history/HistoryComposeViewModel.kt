@@ -1,20 +1,23 @@
 package com.veles.purchase.presentation.presentation.mvvm.purchase.history
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.usecase.purchase.GetPurchaseHistoryUseCase
 import com.veles.purchase.presentation.model.purchase.PurchaseTableModelUI
 import com.veles.purchase.presentation.model.purchase.toPurchaseTableModelUI
-import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class HistoryComposeViewModel @Inject constructor(
-    private val args: HistoryComposeFragmentArgs,
+class HistoryComposeViewModel(
+    val savedStateHandle: SavedStateHandle,
     private val getPurchaseHistoryUseCase: GetPurchaseHistoryUseCase
 ) : ViewModel() {
+
+    private val args: HistoryComposeFragmentArgs =
+        HistoryComposeFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     val stateFlowListHistory: StateFlow<List<PurchaseTableModelUI>> by lazy {
         getPurchaseHistory()

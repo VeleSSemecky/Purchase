@@ -60,10 +60,11 @@ import com.veles.purchase.presentation.model.setting.toShape
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textStyle1
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingPurchaseComposeFragment : BaseFragment() {
 
-    private val viewModel: SettingPurchaseComposeViewModel by viewModels { viewModelFactory }
+    private val viewModel: SettingPurchaseComposeViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

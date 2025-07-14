@@ -5,10 +5,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
-import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class SharedFlowBusImpl @Inject constructor() : SharedFlowBus {
+class SharedFlowBusImpl : SharedFlowBus {
 
     private val sharedFlow = MutableSharedFlow<Event>()
 

@@ -71,12 +71,14 @@ import com.veles.purchase.presentation.presentation.mvvm.pip.PIP
 import com.veles.purchase.presentation.update.AppUpdateHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class NavigationFragment : BaseFragment(), MenuItemSelected {
 
-    private val viewModel: NavigationViewModel by viewModels { viewModelFactory }
+    private val viewModel: NavigationViewModel by viewModel()
 
-    private val updateViewModel: UpdateViewModel by viewModels { viewModelFactory }
+    private val updateViewModel: UpdateViewModel by viewModel()
 
     private val updateFlowResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()

@@ -30,10 +30,11 @@ import androidx.navigation.fragment.findNavController
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseBottomSheetDialogFragment
 import com.veles.purchase.presentation.presentation.compose.Colors
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class YearChooseFragment : BaseBottomSheetDialogFragment() {
 
-    private val viewModel: YearChooseViewModel by viewModels { viewModelFactory }
+    private val viewModel: YearChooseViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

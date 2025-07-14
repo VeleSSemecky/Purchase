@@ -9,13 +9,12 @@ import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.model.event.MonthEvent
 import com.veles.purchase.presentation.model.event.YearEvent
 import java.time.LocalDateTime
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class OutlayGraphViewModel @Inject constructor(
+class OutlayGraphViewModel(
     private val getSkuSumMontUseCase: GetSkuSumMontUseCase,
     private val sharedFlowBus: SharedFlowBus
 ) : ViewModel() {

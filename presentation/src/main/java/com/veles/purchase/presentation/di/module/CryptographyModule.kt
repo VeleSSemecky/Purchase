@@ -1,30 +1,25 @@
 package com.veles.purchase.presentation.di.module
 
-import android.content.Context
 import androidx.biometric.BiometricManager
 import com.veles.purchase.config.EnvironmentConfig.ENCRYPTION_ALGORITHM
 import com.veles.purchase.config.EnvironmentConfig.ENCRYPTION_BLOCK_MODE
 import com.veles.purchase.config.EnvironmentConfig.ENCRYPTION_PADDING
-import dagger.Module
-import dagger.Provides
+import org.koin.dsl.module
+import org.koin.android.ext.koin.androidContext
 import javax.crypto.Cipher
-import javax.inject.Singleton
 
-@Module(includes = [
-    SecurityModule::class
-])
-object CryptographyModule {
+/**
+ * Koin module for cryptography dependencies
+ * Converted from Dagger CryptographyModule
+ */
+val cryptographyModule = module {
 
-    @Provides
-    @Singleton
-    fun provideCipher(): Cipher {
+    single<Cipher> {
         val transformation = "$ENCRYPTION_ALGORITHM/$ENCRYPTION_BLOCK_MODE/$ENCRYPTION_PADDING"
-        return Cipher.getInstance(transformation)
+        Cipher.getInstance(transformation)
     }
 
-    @Provides
-    @Singleton
-    fun provideBiometricManager(context: Context): BiometricManager {
-        return BiometricManager.from(context)
+    single<BiometricManager> {
+        BiometricManager.from(androidContext())
     }
 }

@@ -7,13 +7,12 @@ import com.veles.purchase.domain.usecase.sku.DeleteSkuUseCase
 import com.veles.purchase.domain.usecase.sku.GetSkuUseCase
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.model.event.DialogEvent
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class SkuListViewModel @Inject constructor(
+class SkuListViewModel(
     private val deleteSkuUseCase: DeleteSkuUseCase,
     private val getSkuUseCase: GetSkuUseCase,
     private val sharedFlowBus: SharedFlowBus

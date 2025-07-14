@@ -21,13 +21,12 @@ import com.veles.purchase.presentation.model.event.DialogEvent
 import com.veles.purchase.presentation.model.event.SkuPhotoDeleteEvent
 import java.time.LocalDateTime
 import java.util.Locale
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class SkuEditViewModel @Inject constructor(
+class SkuEditViewModel(
     private val setSkuUseCase: SetSkuUseCase,
     private val getSkuUseCase: GetSkuUseCase,
     private val getSkuPhotoUseCase: GetSkuPhotoUseCase,

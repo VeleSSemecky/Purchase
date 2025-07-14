@@ -42,14 +42,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.skydoves.landscapist.glide.GlideImage
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.presentation.compose.Colors
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PhotoListFragment : BaseFragment() {
 
-    private val viewModel: PhotoListViewModel by viewModels { viewModelFactory }
+    private val viewModel: PhotoListViewModel by viewModel()
 
     private val onBack: () -> Unit = {
         findNavController().popBackStack()

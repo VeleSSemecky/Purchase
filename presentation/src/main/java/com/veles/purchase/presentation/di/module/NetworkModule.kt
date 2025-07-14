@@ -10,68 +10,61 @@ import com.veles.purchase.data.networking.interceptor.AuthInterceptor
 import com.veles.purchase.data.networking.interceptor.HeadersInterceptor
 import com.veles.purchase.data.networking.service.message.NotificationMessageService
 import com.veles.purchase.domain.core.loger.Logger
-import dagger.Module
-import dagger.Provides
+import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Module
-object NetworkModule {
+/**
+ * Koin module for network dependencies
+ * Converted from Dagger NetworkModule
+ */
+val networkModule = module {
 
-    private const val READ_TIMEOUT = 2
-    private const val WRITE_TIMEOUT = 1
+    single<Gson> {
+        GsonBuilder()
+            .setPrettyPrinting()
+            .serializeNulls()
+            .setStrictness(Strictness.LENIENT)
+            .create()
+    }
 
-    @Provides
-    @Singleton
-    fun provideMapperGson(): Gson = GsonBuilder()
-        .setPrettyPrinting()
-        .serializeNulls()
-        .setStrictness(Strictness.LENIENT)
-        .create()
-
-    @Singleton
-    @Provides
-    fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor,
-        httpLoggingInterceptor: HttpLoggingInterceptor,
-        headersInterceptor: HeadersInterceptor
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(headersInterceptor)
-        .addInterceptor(authInterceptor)
-        .connectTimeout(READ_TIMEOUT.toLong(), TimeUnit.MINUTES)
-        .readTimeout(READ_TIMEOUT.toLong(), TimeUnit.MINUTES)
-        .writeTimeout(WRITE_TIMEOUT.toLong(), TimeUnit.MINUTES)
-        .addInterceptor(httpLoggingInterceptor)
-        .build()
-
-    @Singleton
-    @Provides
-    fun provideHttpLoggingInterceptor(logger: Logger): HttpLoggingInterceptor =
+    single<HttpLoggingInterceptor> {
+        val logger = get<Logger>()
         HttpLoggingInterceptor { message -> logger.i("REST_LOGGER", message) }
             .setLevel(HttpLoggingInterceptor.Level.BODY)
+    }
 
-    @Singleton
-    @Provides
-    fun provideExceptionFactory(): ExceptionFactory = ExceptionFactory()
+    single<ExceptionFactory> { ExceptionFactory() }
 
-    @Singleton
-    @Provides
-    fun provideBaseRetrofit(
-        httpClient: OkHttpClient,
-        exceptionFactory: ExceptionFactory,
-        gson: Gson
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(EnvironmentConfig.MESSAGE_API)
-        .client(httpClient)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .addCallAdapterFactory(ErrorsCallAdapterFactory(exceptionFactory, gson))
-        .build()
+    single<AuthInterceptor> { AuthInterceptor() }
 
-    @Singleton
-    @Provides
-    fun provideNotificationMessageService(retrofit: Retrofit): NotificationMessageService = retrofit.create(NotificationMessageService::class.java)
+    single<HeadersInterceptor> { HeadersInterceptor() }
+
+    single<OkHttpClient> {
+        OkHttpClient.Builder()
+            .addInterceptor(get<HeadersInterceptor>())
+            .addInterceptor(get<AuthInterceptor>())
+            .connectTimeout(READ_TIMEOUT.toLong(), TimeUnit.MINUTES)
+            .readTimeout(READ_TIMEOUT.toLong(), TimeUnit.MINUTES)
+            .writeTimeout(WRITE_TIMEOUT.toLong(), TimeUnit.MINUTES)
+            .addInterceptor(get<HttpLoggingInterceptor>())
+            .build()
+    }
+
+    single<Retrofit> {
+        Retrofit.Builder()
+            .baseUrl(EnvironmentConfig.MESSAGE_API)
+            .client(get<OkHttpClient>())
+            .addConverterFactory(GsonConverterFactory.create(get<Gson>()))
+            .addCallAdapterFactory(ErrorsCallAdapterFactory(get<ExceptionFactory>(), get<Gson>()))
+            .build()
+    }
+
+    single<NotificationMessageService> { get<Retrofit>().create(NotificationMessageService::class.java) }
 }
+
+private const val READ_TIMEOUT = 2
+private const val WRITE_TIMEOUT = 1

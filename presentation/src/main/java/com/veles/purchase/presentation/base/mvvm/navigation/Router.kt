@@ -4,4 +4,5 @@ import androidx.navigation.NavController
 
 interface Router {
     operator fun invoke(): NavController
+    fun setNavController(navController: NavController)
 }

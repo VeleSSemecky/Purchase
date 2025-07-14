@@ -21,10 +21,11 @@ import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseBottomSheetDialogFragment
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.presentation.compose.Colors
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SortPurchaseFragment : BaseBottomSheetDialogFragment() {
 
-    private val viewModel: SortPurchaseViewModel by viewModelsWithFactory()
+    private val viewModel: SortPurchaseViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

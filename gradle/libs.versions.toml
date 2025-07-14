@@ -1,7 +1,7 @@
 [versions]
 
 #Plugins
-androidGradle = "8.10.1"
+androidGradle = "8.11.1"
 kotlin = "2.1.0"
 dokka = "1.9.20"
 ksp = "2.1.0-1.0.29"
@@ -9,6 +9,11 @@ navigation = "2.8.9"
 googleServices = "4.4.2"
 firebaseCrashlytics = "3.0.3"
 firebaseAppDistribution = "5.1.1"
+
+#Kotlin Multiplatform
+kotlinMultiplatform = "2.1.0"
+composeMultiplatform = "1.8.1"
+kotlinx-datetime = "0.7.1"
 
 #android
 minSdk = "26"
@@ -37,7 +42,8 @@ dagger = "2.50"
 coroutines = "1.10.2"
 
 #Room
-room = "2.7.1"
+room = "2.7.0-alpha10"
+sqliteKmp = "2.5.0-alpha10"
 
 #Network
 gson = "2.13.1"
@@ -49,8 +55,8 @@ flipper = "0.238.0"
 timber = "5.0.1"
 
 #Firebase
-firebaseBom = "33.13.0"
-firebaseUI = "8.0.2"
+firebaseBom = "33.16.0"
+firebaseUI = "9.0.0"
 
 #UI
 materialComponents = "1.12.0"
@@ -99,6 +105,11 @@ coreTesting = "2.2.0"
 coroutinesTest = "1.8.0"
 turbine = "1.0.0"
 
+#Koin
+koin = "3.5.6"
+koinCompose = "3.5.6"
+coreKtxVersion = "1.6.1"
+
 [libraries]
 #AndroidCore
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -128,6 +139,7 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
+sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqliteKmp" }
 
 #Network
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
@@ -221,6 +233,13 @@ core-testing = { group = "androidx.arch.core", name = "core-testing", version.re
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
+#Koin
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinCompose" }
+koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
+
 [plugins]
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
@@ -235,6 +254,9 @@ google-gms-google-services = { id = "com.google.gms.google-services", version.re
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 google-firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebaseAppDistribution" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+# Add Kotlin Multiplatform plugins
+jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinMultiplatform" }
+jetbrains-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 
 [bundles]
 firebase-data = [

@@ -18,10 +18,11 @@ import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.base.mvvm.fragment.BaseFragment
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BiometricComposeFragment : BaseFragment() {
 
-    private val viewModel: BiometricComposeViewModel by viewModels { viewModelFactory }
+    private val viewModel: BiometricComposeViewModel by viewModel()
 
 //    private val cryptographyManager = CryptographyManager()
 //    private val ciphertextWrapper

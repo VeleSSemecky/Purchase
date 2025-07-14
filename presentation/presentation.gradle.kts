@@ -180,11 +180,10 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
-    // DI
-    implementation(libs.dagger)
-    implementation(libs.dagger.android)
-    ksp(libs.dagger.compiler)
-    ksp(libs.dagger.android.processor)
+    // DI - Koin (replaced Dagger)
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
     // Network
     implementation(libs.retrofit)
@@ -205,6 +204,7 @@ dependencies {
     // Image
     implementation(libs.glide)
     implementation(libs.glide.okhttp3)
+    implementation(libs.core.ktx)
     ksp(libs.glide.compiler)
     implementation(libs.glide.landscapist)
 
@@ -246,6 +246,9 @@ dependencies {
     implementation(libs.play.app.update)
     implementation(libs.play.integrity)
     implementation(libs.concurrent.futures)
+
+    // Koin for testing
+    testImplementation(libs.koin.test)
 
     // Test
     testImplementation(libs.junit)

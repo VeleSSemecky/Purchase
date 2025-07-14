@@ -9,11 +9,10 @@ import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.model.event.MonthEvent
 import java.time.LocalDateTime
 import java.time.Month
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class MonthChooseViewModel @Inject constructor(
+class MonthChooseViewModel(
     private val sharedFlowBus: SharedFlowBus,
     args: MonthChooseFragmentArgs
 ) : ViewModel() {

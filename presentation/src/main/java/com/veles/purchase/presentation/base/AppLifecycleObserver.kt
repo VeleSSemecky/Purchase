@@ -3,11 +3,12 @@ package com.veles.purchase.presentation.base
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.veles.purchase.data.local.data.DataStore
-import javax.inject.Inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class AppLifecycleObserver @Inject constructor(
-    private val dataStore: DataStore
-) : DefaultLifecycleObserver {
+class AppLifecycleObserver : DefaultLifecycleObserver, KoinComponent {
+
+    private val dataStore: DataStore by inject()
 
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)

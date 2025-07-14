@@ -62,10 +62,11 @@ import com.veles.purchase.presentation.presentation.compose.textStyle1
 import java.time.Month
 import java.util.Currency
 import java.util.Locale
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SkuListFragment : BaseFragment() {
 
-    private val viewModel: SkuListViewModel by viewModels { viewModelFactory }
+    private val viewModel: SkuListViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

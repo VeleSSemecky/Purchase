@@ -2,14 +2,13 @@ package com.veles.purchase.presentation.di.module
 
 import com.veles.purchase.presentation.data.bus.SharedFlowBus
 import com.veles.purchase.presentation.data.bus.SharedFlowBusImpl
-import dagger.Binds
-import dagger.Module
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-interface BusModule {
+/**
+ * Koin module for bus dependencies
+ * Converted from Dagger BusModule
+ */
+val busModule = module {
 
-    @Binds
-    @Singleton
-    fun bindStateFlowBus(flowBus: SharedFlowBusImpl): SharedFlowBus
+    single<SharedFlowBus> { SharedFlowBusImpl() }
 }

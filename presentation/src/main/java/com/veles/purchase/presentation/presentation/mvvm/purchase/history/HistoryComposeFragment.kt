@@ -58,6 +58,9 @@ import com.veles.purchase.presentation.model.purchase.compose.history.HistoryToo
 import com.veles.purchase.presentation.presentation.compose.Colors
 import com.veles.purchase.presentation.presentation.compose.MyTheme
 import com.veles.purchase.presentation.presentation.compose.textStyle1
+import com.veles.purchase.presentation.presentation.compose.textStyle2
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -65,7 +68,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class HistoryComposeFragment : BaseFragment() {
 
-    private val viewModel: HistoryComposeViewModel by viewModels { viewModelFactory }
+    private val viewModel: HistoryComposeViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

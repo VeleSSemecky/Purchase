@@ -4,17 +4,13 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import com.veles.purchase.presentation.base.mvvm.viewmodel.ViewModelFactory
-import dagger.android.support.DaggerFragment
-import javax.inject.Inject
+import androidx.fragment.app.Fragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-abstract class BaseFragment : DaggerFragment() {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+/**
+ * Base Fragment converted from Dagger to Koin
+ */
+abstract class BaseFragment : Fragment() {
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,16 +18,5 @@ abstract class BaseFragment : DaggerFragment() {
     }
 
     @Composable
-    inline fun <reified VM : ViewModel> viewModel(
-        viewModelStoreOwner: ViewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-        },
-        key: String? = null,
-        factory: ViewModelProvider.Factory? = viewModelFactory
-    ): VM = androidx.lifecycle.viewmodel.compose.viewModel(
-        VM::class.java,
-        viewModelStoreOwner,
-        key,
-        factory
-    )
+    inline fun <reified VM : ViewModel> fragmentViewModel(): VM = viewModel<VM>().value
 }

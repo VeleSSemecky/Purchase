@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 @Singleton
-class FirebaseGetUserRepositoryImpl @Inject constructor(
+class FirebaseGetUserRepositoryImpl(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
 ) : FirebaseGetUserRepository {

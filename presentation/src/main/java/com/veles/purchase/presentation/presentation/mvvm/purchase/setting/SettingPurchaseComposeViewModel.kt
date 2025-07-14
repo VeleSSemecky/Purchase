@@ -12,14 +12,13 @@ import com.veles.purchase.presentation.extensions.launchOnError
 import com.veles.purchase.presentation.model.setting.CornerSetting
 import com.veles.purchase.presentation.model.setting.setCorner
 import com.veles.purchase.presentation.model.setting.toCornerSetting
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class SettingPurchaseComposeViewModel @Inject constructor(
+class SettingPurchaseComposeViewModel(
     private val getSettingUseCase: GetSettingUseCase,
     private val setSettingUseCase: SetSettingUseCase,
     private val router: Router

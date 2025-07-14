@@ -1,10 +1,11 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -13,10 +14,14 @@ dependencyResolutionManagement {
     }
 }
 
-include(":presentation")
-include(":domain")
-include(":data")
+rootProject.name = "Purchase"
+//include(":shared")
+//include(":androidApp")
+//include(":iosApp")
 include(":config")
+include(":data")
+include(":domain")
+include(":presentation")
 
 // Add ability to use a module name as part of a build script name
 rootProject.children.forEach { subProject ->

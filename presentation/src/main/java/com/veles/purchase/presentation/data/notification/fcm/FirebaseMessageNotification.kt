@@ -7,14 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
-import com.google.gson.Gson
 import com.veles.purchase.data.local.data.DataStore
 import com.veles.purchase.domain.model.fcm.DataModel
 import com.veles.purchase.presentation.R
 import com.veles.purchase.presentation.presentation.activity.MainActivity
-import javax.inject.Inject
+import com.google.gson.Gson
 
-class FirebaseMessageNotification @Inject constructor(
+class FirebaseMessageNotification(
     private val context: Context,
     private val dataStore: DataStore,
     private val gson: Gson

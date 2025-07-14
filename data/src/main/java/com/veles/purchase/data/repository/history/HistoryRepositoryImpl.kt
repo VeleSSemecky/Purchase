@@ -10,8 +10,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-@Singleton
-class HistoryRepositoryImpl @Inject constructor(
+class HistoryRepositoryImpl(
     private val purchaseDAO: PurchaseDAO
 ) : HistoryRepository {
 

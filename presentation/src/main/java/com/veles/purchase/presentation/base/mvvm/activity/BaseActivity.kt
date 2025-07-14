@@ -2,14 +2,16 @@ package com.veles.purchase.presentation.base.mvvm.activity
 
 import android.os.Bundle
 import androidx.annotation.CallSuper
-import com.veles.purchase.presentation.base.mvvm.viewmodel.ViewModelFactory
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.ParametersDefinition
+import org.koin.core.qualifier.Qualifier
 
-abstract class BaseActivity : DaggerAppCompatActivity() {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+/**
+ * Base Activity converted from Dagger to Koin
+ */
+abstract class BaseActivity : AppCompatActivity() {
 
     @CallSuper
     public override fun onCreate(savedInstanceState: Bundle?) {

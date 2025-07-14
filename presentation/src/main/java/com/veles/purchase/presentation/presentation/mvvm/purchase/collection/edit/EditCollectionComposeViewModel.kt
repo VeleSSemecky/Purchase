@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
@@ -13,7 +14,6 @@ import com.veles.purchase.presentation.model.purchase.toPurchaseCollectionModel
 import com.veles.purchase.presentation.model.purchase.toPurchaseCollectionModelUI
 import com.veles.purchase.presentation.model.user.UserCheckedUI
 import com.veles.purchase.presentation.model.user.toUserPurchaseModelUI
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -23,13 +23,16 @@ import kotlinx.coroutines.launch
 
 const val CATEGORY_MODELS_KEY = "CATEGORY_MODELS_KEY"
 
-class EditCollectionComposeViewModel @Inject constructor(
-    private val args: EditCollectionComposeFragmentArgs,
+class EditCollectionComposeViewModel(
+    savedStateHandle: SavedStateHandle,
     private val setCollectionPurchaseUseCase: SetCollectionPurchaseUseCase,
     private val firebaseFirestorePurchaseCollectionUseCase: FirebaseFirestorePurchaseCollectionUseCase,
     private val userUseCase: UserUseCase,
     private val router: Router
 ) : ViewModel() {
+
+    private val args: EditCollectionComposeFragmentArgs =
+        EditCollectionComposeFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     private val _uiState = MutableStateFlow(EditCollectionScreenState.EMPTY)
     val uiState = _uiState.asStateFlow()

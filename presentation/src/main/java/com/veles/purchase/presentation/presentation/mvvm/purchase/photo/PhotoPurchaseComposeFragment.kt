@@ -38,10 +38,11 @@ import com.veles.purchase.presentation.compose.CircularCenterProgressIndicator
 import com.veles.purchase.presentation.compose.IconSquare
 import com.veles.purchase.presentation.compose.ZoomableImage
 import com.veles.purchase.presentation.presentation.compose.Colors
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PhotoPurchaseComposeFragment : BaseFragment() {
 
-    private val viewModel: PhotoPurchaseComposeViewModel by viewModels { viewModelFactory }
+    private val viewModel: PhotoPurchaseComposeViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
