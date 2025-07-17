@@ -9,7 +9,6 @@ val presentationModule = module {
     includes(
         viewModelModule,
         uiModule,
-        dataModule
     )
 }
 

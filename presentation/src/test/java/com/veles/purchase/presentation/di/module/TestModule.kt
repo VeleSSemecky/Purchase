@@ -1,8 +1,7 @@
 package com.veles.purchase.presentation.di.module
 
 import org.koin.dsl.module
-import org.mockk.mockk
-import com.veles.purchase.domain.repository.PurchaseRepository
+import io.mockk.mockk
 import com.veles.purchase.presentation.update.AppUpdateHandler
 import com.veles.purchase.presentation.data.video.CameraCapability
 
@@ -11,18 +10,13 @@ import com.veles.purchase.presentation.data.video.CameraCapability
  */
 val testModule = module {
 
-    // Mock repository for testing
-    single<PurchaseRepository> {
-        mockk<PurchaseRepository>(relaxed = true)
-    }
-
     // Mock AppUpdateHandler for testing
-    single {
+    single<AppUpdateHandler> {
         mockk<AppUpdateHandler>(relaxed = true)
     }
 
     // Mock CameraCapability for testing
-    factory {
+    factory<CameraCapability> {
         mockk<CameraCapability>(relaxed = true)
     }
 }

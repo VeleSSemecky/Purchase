@@ -36,7 +36,7 @@ val shoppingKoinModule = module {
             setSkuUseCase = get(),
             getSkuUseCase = get(),
             getSkuPhotoUseCase = get(),
-            skuEditFragmentArgs = get(),
+            savedStateHandle = get(),
             sharedFlowBus = get(),
         )
     }

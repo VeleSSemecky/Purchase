@@ -2,6 +2,7 @@ package com.veles.purchase.presentation.presentation.compose.shopping.edit
 
 import android.icu.util.Currency
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.data.room.core.createPrimaryIDKey
@@ -30,9 +31,12 @@ class SkuEditViewModel(
     private val setSkuUseCase: SetSkuUseCase,
     private val getSkuUseCase: GetSkuUseCase,
     private val getSkuPhotoUseCase: GetSkuPhotoUseCase,
-    private val skuEditFragmentArgs: SkuEditFragmentArgs,
+    savedStateHandle: SavedStateHandle,
     private val sharedFlowBus: SharedFlowBus
 ) : ViewModel() {
+
+    private val args: SkuEditFragmentArgs =
+        SkuEditFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     val flowSkuLocalData: MutableStateFlow<TextFieldModel<LocalDateTime>> =
         MutableStateFlow(LocalDateTime.now().createTextFieldModel())
@@ -70,7 +74,7 @@ class SkuEditViewModel(
         flowSkuPrice.createTextFieldModel { isEmpty() }
         if (anyError(flowSkuName, flowSkuPrice)) return@launch
         val skuEntity = SkuModel(
-            skuId = skuEditFragmentArgs.skuId,
+            skuId = args.skuId,
             skuLocalData = flowSkuLocalData.value.model,
             skuName = flowSkuName.value.model,
             skuComment = flowSkuComment.value.model,
@@ -103,7 +107,7 @@ class SkuEditViewModel(
             flowSkuPhotoEntityList.value.toMutableList().apply {
                 add(
                     SkuPhotoModel(
-                        skuId = skuEditFragmentArgs.skuId,
+                        skuId = args.skuId,
                         skuPhotoUri = photoUri.toString(),
                         skuPhotoId = createPrimaryIDKey()
                     )
@@ -113,7 +117,7 @@ class SkuEditViewModel(
     }
 
     private fun onUpdateData() = viewModelScope.launch {
-        val id = skuEditFragmentArgs.skuId
+        val id = args.skuId
         getSkuUseCase.getSkuModel(id)?.apply {
             flowSkuLocalData.value = skuLocalData.createTextFieldModel()
             flowSkuName.value = skuName.createTextFieldModel()

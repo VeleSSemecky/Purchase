@@ -1,4 +1,9 @@
-//package com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.category
+package com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.category
+
+import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.list.CollectionPurchaseComposeViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
+
 //
 //import androidx.lifecycle.ViewModel
 //import androidx.navigation.fragment.navArgs
@@ -24,3 +29,15 @@
 //        }
 //    }
 //}
+
+val categoryModule = module {
+
+    // Category ViewModel
+    viewModel {
+        CategoryViewModel(
+            savedStateHandle = get(),
+            savePurchaseCategoryUseCase = get(),
+            router = get(),
+        )
+    }
+}

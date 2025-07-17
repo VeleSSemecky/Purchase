@@ -23,7 +23,7 @@ class CategoryViewModel(
     private val router: Router
 ) : ViewModel() {
 
-    private val args: CategoryFragmentArgs = CategoryFragmentArgs.fromSavedStateHandle(savedStateHandle)
+    private val args: CategoryFragmentArgs by lazy { CategoryFragmentArgs.fromSavedStateHandle(savedStateHandle) }
 
     private val _uiState = MutableStateFlow(CategoryScreenState(categories = args.modelCollectionPurchase.categoryModels))
     val uiState: StateFlow<CategoryScreenState> = _uiState.asStateFlow()

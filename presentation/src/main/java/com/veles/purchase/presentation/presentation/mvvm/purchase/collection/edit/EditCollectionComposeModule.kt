@@ -1,4 +1,8 @@
-//package com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit
+package com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit
+
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
+
 //
 //import androidx.lifecycle.ViewModel
 //import androidx.navigation.fragment.navArgs
@@ -24,3 +28,17 @@
 //        }
 //    }
 //}
+
+val editCollectionComposeModule = module {
+
+    // EditCollectionCompose ViewModel
+    viewModel {
+        EditCollectionComposeViewModel(
+            savedStateHandle = get(),
+            setCollectionPurchaseUseCase = get(),
+            firebaseFirestorePurchaseCollectionUseCase = get(),
+            userUseCase = get(),
+            router = get(),
+        )
+    }
+}

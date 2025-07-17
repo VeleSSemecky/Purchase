@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.di.module
 
+import com.veles.purchase.presentation.presentation.compose.shopping.list.skuListModule
 import org.koin.dsl.module
 import com.veles.purchase.presentation.presentation.mvvm.purchase.login.loginKoinModule
 import com.veles.purchase.presentation.presentation.mvvm.purchase.photo.photoPurchaseComposeKoinModule
@@ -8,6 +9,9 @@ import com.veles.purchase.presentation.presentation.compose.shopping.shoppingKoi
 import com.veles.purchase.presentation.presentation.mvvm.purchase.purchaseKoinModule
 import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.collectionKoinModule
 import com.veles.purchase.presentation.presentation.mvvm.pip.pipKoinModule
+import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.category.categoryModule
+import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.edit.editCollectionComposeModule
+import com.veles.purchase.presentation.presentation.mvvm.purchase.collection.list.collectionPurchaseComposeModule
 
 /**
  * Main Koin module that consolidates all feature modules
@@ -54,12 +58,14 @@ val allPresentationKoinModules = listOf(
     navigationKoinModule,
     purchaseKoinModule,
     photoPurchaseComposeKoinModule,
-    collectionKoinModule,
+    editCollectionComposeModule,
+    collectionPurchaseComposeModule,
+    categoryModule,
     shoppingKoinModule,
+    skuListModule,
     pipKoinModule,
 
     // Data layer integration
-    dataModule,
 
     // Domain layer integration
     useCaseModule
@@ -89,10 +95,12 @@ val consolidatedPresentationModule = module {
         navigationKoinModule,
         purchaseKoinModule,
         photoPurchaseComposeKoinModule,
-        collectionKoinModule,
+        editCollectionComposeModule,
+        collectionPurchaseComposeModule,
+        categoryModule,
         shoppingKoinModule,
+        skuListModule,
         pipKoinModule,
-        dataModule,
         useCaseModule // Added missing useCaseModule
     )
 }

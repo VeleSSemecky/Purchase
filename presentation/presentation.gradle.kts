@@ -249,9 +249,15 @@ dependencies {
 
     // Koin for testing
     testImplementation(libs.koin.test)
+    testImplementation(libs.koin.android.test)
+    testImplementation(libs.koin.test.junit4)
 
     // Test
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.core.testing)
+    testImplementation(libs.core.ktx)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.robolectric)
 }

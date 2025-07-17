@@ -99,14 +99,15 @@ credentials= "1.5.0"
 identity = "1.1.1"
 
 #Testing
-jUnit = "5.8.2"
-mockK = "1.13.10"
+jUnit = "5.13.3"
+mockK = "1.14.4"
 coreTesting = "2.2.0"
-coroutinesTest = "1.8.0"
-turbine = "1.0.0"
+coroutinesTest = "1.10.2"
+turbine = "1.2.1"
+robolectric = "4.15.1"
 
 #Koin
-koin = "3.5.6"
+koin = "4.1.0"
 koinCompose = "3.5.6"
 coreKtxVersion = "1.6.1"
 
@@ -232,12 +233,15 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
 core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTesting" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 
 #Koin
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinCompose" }
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
+koin-android-test = { group = "io.insert-koin", name = "koin-android-test", version.ref = "koin" }
+koin-test-junit4 = { group = "io.insert-koin", name = "koin-test-junit4", version.ref = "koin" }
 core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
 
 [plugins]

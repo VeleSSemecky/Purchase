@@ -7,6 +7,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import com.veles.purchase.data.local.cryptography.CryptographyManager
 import com.veles.purchase.data.repository.auth.AuthWithGoogleRepositoryImpl
 import com.veles.purchase.data.repository.auth.BiometricRepositoryImpl
 import com.veles.purchase.data.repository.collection.delete.DeleteCollectionPurchaseRepositoryImpl
@@ -120,6 +121,12 @@ val repositoryModule = module {
     single<BiometricRepository> {
         BiometricRepositoryImpl(
             cryptographyManager = get()
+        )
+    }
+    single<CryptographyManager> {
+        CryptographyManager(
+            cipher = get(),
+            sharedPreferences = get()
         )
     }
     single<PurchaseRepository> {

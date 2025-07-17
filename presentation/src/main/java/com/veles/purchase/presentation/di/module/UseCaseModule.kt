@@ -127,9 +127,9 @@ val useCaseModule = module {
     factory { PriceUseCase() }
 
     // SKU UseCases
-    factory<DeleteSkuPhotoUseCase> { DeleteSkuPhotoUseCase(get()) }
-    factory<DeleteSkuUseCase> { DeleteSkuUseCase(get()) }
-    factory<GetSkuPhotoUseCase> { GetSkuPhotoUseCase(get()) }
+    factory { DeleteSkuPhotoUseCase(get()) }
+    factory { DeleteSkuUseCase(get()) }
+    factory { GetSkuPhotoUseCase(get()) }
     factory<GetSkuSumMontUseCase> { GetSkuSumMontUseCase(get()) }
     factory<GetSkuUseCase> { GetSkuUseCase(get()) }
     factory<SetSkuUseCase> { SetSkuUseCase(get()) }

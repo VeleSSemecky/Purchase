@@ -16,11 +16,6 @@ val dataModule = module {
 //    }
 
     // Repository
-    single<PurchaseRepository> {
-        PurchaseRepositoryImpl(
-            firebaseFirestore = get()
-        )
-    }
 
     // Add more data layer dependencies here
 }
