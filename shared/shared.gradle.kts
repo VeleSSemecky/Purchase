@@ -7,6 +7,12 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.veles.purchase.shared.resources"
+    generateResClass = always
+}
+
 kotlin {
     androidTarget {
         compilations.all {
@@ -38,6 +44,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.foundation)
                 implementation(compose.animation)
+                implementation(compose.components.resources)
                 implementation(libs.coroutines.core)
 
                 implementation(libs.room.runtime)

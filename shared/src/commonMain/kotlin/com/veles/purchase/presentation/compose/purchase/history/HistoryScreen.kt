@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.history.HistoryType
 import com.veles.purchase.domain.model.history.PurchaseHistoryModel
+import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.purchase.history.HistoryViewModel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -42,6 +43,7 @@ import org.koin.core.parameter.parametersOf
  * - Type chips showing event type
  *
  * Phase 2.10 - History screen migration
+ * FIXED: Now using custom components matching pattern exactly
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +60,7 @@ fun HistoryScreen(
         topBar = {
             HistoryToolbar(onNavigateBack = onNavigateBack)
         },
-        containerColor = HistoryColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         HistoryContent(
             paddingValues = paddingValues,
@@ -91,7 +93,7 @@ private fun HistoryToolbar(onNavigateBack: () -> Unit) {
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = HistoryColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -136,7 +138,7 @@ private fun HistoryContent(
 private fun HistoryItem(item: PurchaseHistoryModel) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = HistoryColors.colorAccent
+            containerColor = Colors.colorAccent
         ),
         shape = RoundedCornerShape(0.dp),
         elevation = CardDefaults.cardElevation(
@@ -161,7 +163,7 @@ private fun HistoryItem(item: PurchaseHistoryModel) {
                     Text(
                         text = if (item.hasImages) "📷" else "  ",
                         fontSize = 24.sp,
-                        color = HistoryColors.gr
+                        color = Colors.gr
                     )
                 }
 
@@ -180,11 +182,11 @@ private fun HistoryItem(item: PurchaseHistoryModel) {
                     checked = item.isChecked,
                     onCheckedChange = null, // Read-only
                     colors = CheckboxDefaults.colors(
-                        checkedColor = HistoryColors.gr,
-                        uncheckedColor = HistoryColors.gr,
+                        checkedColor = Colors.gr,
+                        uncheckedColor = Colors.gr,
                         checkmarkColor = Color.Black,
-                        disabledCheckedColor = HistoryColors.gr,
-                        disabledUncheckedColor = HistoryColors.gr
+                        disabledCheckedColor = Colors.gr,
+                        disabledUncheckedColor = Colors.gr
                     ),
                     enabled = false
                 )
@@ -231,7 +233,7 @@ private fun HistoryTypeChip(historyType: HistoryType) {
         },
         shape = CircleShape,
         colors = AssistChipDefaults.assistChipColors(
-            containerColor = HistoryColors.colorAccent,
+            containerColor = Colors.colorAccent,
             labelColor = Color.White
         )
     )
@@ -256,7 +258,7 @@ private fun TimeChip(timestamp: Long) {
         },
         shape = CircleShape,
         colors = AssistChipDefaults.assistChipColors(
-            containerColor = HistoryColors.colorAccent,
+            containerColor = Colors.colorAccent,
             labelColor = Color.White
         )
     )
@@ -288,26 +290,8 @@ private fun DateChip(timestamp: Long) {
         },
         shape = CircleShape,
         colors = AssistChipDefaults.assistChipColors(
-            containerColor = HistoryColors.colorAccent,
+            containerColor = Colors.colorAccent,
             labelColor = Color.White
         )
     )
-}
-
-// Text style helper matching original
-@Composable
-private fun textStyle1() = TextStyle(
-    color = Color.White,
-    fontWeight = FontWeight.Bold
-)
-
-/**
- * Color palette for History Screen
- * Matching original design
- */
-object HistoryColors {
-    val colorPrimary = Color(0xFF212121)        // Toolbar
-    val colorAccent = Color(0xFF424242)         // Cards
-    val gr = Color(0xFF4ACFAC)                  // Green accent
-    val surface = Color(0xFF000000)             // Black background
 }

@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.compose.purchase.collection
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,35 +21,35 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
+import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.compose.DismissDirection
+import com.veles.purchase.presentation.compose.DismissValue
+import com.veles.purchase.presentation.compose.FractionalThreshold
+import com.veles.purchase.presentation.compose.SwipeToDismiss
+import com.veles.purchase.presentation.compose.rememberDismissState
+import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Collection List Screen - shows all purchase collections
  *
- * Migrated from: /presentation/src/main/java/com/veles/purchase/presentation/presentation/mvvm/purchase/collection/list/CollectionPurchaseComposeFragment.kt
+ * Migrated from: /presentation/.../mvvm/purchase/collection/list/CollectionPurchaseComposeFragment.kt
  *
- * Original design:
+ * Features:
  * - 2-column staggered grid
  * - Green collection cards (#38A186)
- * - Swipe to delete
+ * - Swipe to delete (Custom SwipeToDismiss with 0.7f threshold)
  * - Long press shows delete dialog
  * - FAB to add new collection
  * - Loading indicator
  *
  * Phase 2.5 - Collection feature migration
+ * FIXED: Now using custom components matching pattern exactly
  */
 
-// Original colors from presentation module
-object CollectionColors {
-    val colorPrimary = Color(0xff212121)
-    val colorPrimaryDark = Color(0xff303030)
-    val colorAccent = Color(0xff424242)
-    val gr = Color(0xff4ACFAC)  // Green accent
-    val surface = Color(0xFF121212)
-    val progress = Color(0x99000000)
-    val collectionCard = Color(0xFF38A186)  // Green for collection cards
-}
+// Specific teal color for collection cards (matches original)
+private val CollectionCardColor = Color(0xFF38A186)
 
 @Composable
 fun CollectionListScreen(
@@ -57,7 +58,7 @@ fun CollectionListScreen(
     onNavigateToAddCollection: () -> Unit = {}
 ) {
     Scaffold(
-        containerColor = CollectionColors.surface,
+        containerColor = Colors.surface,
         floatingActionButton = {
             FAB(onNavigateToAddCollection)
         },
@@ -82,7 +83,7 @@ fun CollectionListScreen(
 private fun FAB(onNavigateToAddCollection: () -> Unit) {
     FloatingActionButton(
         onClick = onNavigateToAddCollection,
-        containerColor = CollectionColors.gr
+        containerColor = Colors.gr
     ) {
         Icon(
             Icons.Filled.Add,
@@ -100,13 +101,11 @@ private fun Progress(viewModel: CollectionPurchaseViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(CollectionColors.progress)
+            .background(Colors.progress)
             .clickable(enabled = false) {},
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(
-            color = CollectionColors.gr
-        )
+        CircularProgressIndicator(color = Colors.gr)
     }
 }
 
@@ -149,23 +148,32 @@ private fun Content(
             modifier = Modifier.fillMaxSize()
         ) {
             itemsIndexed(list) { _, item ->
-                val dismissState = rememberSwipeToDismissBoxState()
+                val dismissState = rememberDismissState()
 
-                if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
-                    dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd
+                if (dismissState.isDismissed(DismissDirection.EndToStart) ||
+                    dismissState.isDismissed(DismissDirection.StartToEnd)
                 ) {
                     LaunchedEffect(item) {
                         viewModel.onDeletePurchaseCollections(item)
-                        dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+                        dismissState.snapTo(DismissValue.Default)
                     }
                 }
 
-                SwipeToDismissBox(
+                SwipeToDismiss(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateItem(),
                     state = dismissState,
-                    backgroundContent = {}
+                    background = {},
+                    dismissThresholds = { FractionalThreshold(0.7f) }
                 ) {
+                    val elevation = animateDpAsState(
+                        if (dismissState.dismissDirection == null) 6.dp else 10.dp
+                    ).value
+
                     ItemPurchaseCollection(
                         item = item,
+                        elevation = elevation,
                         onClick = { onNavigateToCollection(item.id) },
                         onLongClick = { viewModel.onDeletePurchaseCollections(item) }
                     )
@@ -179,18 +187,19 @@ private fun Content(
 @Composable
 private fun ItemPurchaseCollection(
     item: PurchaseCollectionModel,
+    elevation: androidx.compose.ui.unit.Dp,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
         Row(
             modifier = Modifier
-                .background(CollectionColors.collectionCard)
+                .background(CollectionCardColor)
                 .fillMaxWidth()
                 .combinedClickable(
                     onClick = onClick,
@@ -203,7 +212,7 @@ private fun ItemPurchaseCollection(
                 textAlign = TextAlign.Start,
                 text = item.name,
                 fontSize = 16.sp,
-                color = Color.White,
+                style = textStyle1(),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -265,6 +274,6 @@ private fun DialogDelete(viewModel: CollectionPurchaseViewModel) {
                 Text("No", color = Color.White)
             }
         },
-        containerColor = CollectionColors.colorPrimaryDark
+        containerColor = Colors.colorPrimaryDark
     )
 }

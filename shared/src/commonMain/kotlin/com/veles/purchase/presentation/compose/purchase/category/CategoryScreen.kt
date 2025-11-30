@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
+import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryScreenState
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
 import com.veles.purchase.presentation.mvvm.purchase.category.DialogState
@@ -51,6 +53,7 @@ import org.koin.core.parameter.parametersOf
  * - Confirm leave dialog (if unsaved changes)
  *
  * Phase 2.9 - Category management migration
+ * FIXED: Now using custom components matching pattern exactly
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,7 +94,7 @@ fun CategoryScreen(
             )
         },
         floatingActionButtonPosition = FabPosition.End,
-        containerColor = CategoryColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             // Content
@@ -172,7 +175,7 @@ private fun CategoryToolbar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = CategoryColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -181,7 +184,7 @@ private fun CategoryToolbar(
 private fun CategoryFAB(onCreateCategoryDialogClicked: () -> Unit) {
     FloatingActionButton(
         onClick = onCreateCategoryDialogClicked,
-        containerColor = CategoryColors.gr
+        containerColor = Colors.gr
     ) {
         Icon(
             Icons.Filled.Add,
@@ -196,11 +199,11 @@ private fun CategoryProgressIndicator() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(CategoryColors.progress)
+            .background(Colors.progress)
             .clickable(enabled = false) {},
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = CategoryColors.gr)
+        CircularProgressIndicator(color = Colors.gr)
     }
 }
 
@@ -245,7 +248,7 @@ private fun CategoryItem(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = CategoryColors.colorAccent
+            containerColor = Colors.colorAccent
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = elevation
@@ -345,8 +348,8 @@ private fun CategoryNameTextField(
             unfocusedContainerColor = Color.Transparent,
             errorContainerColor = Color.Transparent,
             cursorColor = Color.White.copy(alpha = 0.60f),
-            focusedIndicatorColor = CategoryColors.gr.copy(alpha = 0.87f),
-            focusedLabelColor = CategoryColors.gr.copy(alpha = 0.87f)
+            focusedIndicatorColor = Colors.gr.copy(alpha = 0.87f),
+            focusedLabelColor = Colors.gr.copy(alpha = 0.87f)
         )
     )
 }
@@ -402,7 +405,7 @@ private fun EditCategoryDialog(
                 )
             }
         },
-        containerColor = CategoryColors.colorPrimaryDark
+        containerColor = Colors.colorPrimaryDark
     )
 }
 
@@ -456,7 +459,7 @@ private fun CreateCategoryDialog(
                 )
             }
         },
-        containerColor = CategoryColors.colorPrimaryDark
+        containerColor = Colors.colorPrimaryDark
     )
 }
 
@@ -504,26 +507,6 @@ private fun ConfirmLeaveDialog(
                 )
             }
         },
-        containerColor = CategoryColors.colorPrimaryDark
+        containerColor = Colors.colorPrimaryDark
     )
-}
-
-// Text style helper matching original
-@Composable
-private fun textStyle1() = TextStyle(
-    color = Color.White,
-    fontWeight = FontWeight.Bold
-)
-
-/**
- * Color palette for Category Screen
- * Matching original design
- */
-object CategoryColors {
-    val colorPrimary = Color(0xFF212121)        // Toolbar
-    val colorPrimaryDark = Color(0xFF303030)    // Dialog background
-    val colorAccent = Color(0xFF424242)         // Cards
-    val gr = Color(0xFF4ACFAC)                  // Green accent
-    val surface = Color(0xFF000000)             // Black background
-    val progress = Color(0x99000000)            // Semi-transparent for overlay
 }

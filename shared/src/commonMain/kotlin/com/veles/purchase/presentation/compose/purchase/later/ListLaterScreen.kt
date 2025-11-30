@@ -1,6 +1,7 @@
 package com.veles.purchase.presentation.compose.purchase.later
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,16 +14,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,6 +29,13 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.compose.DismissDirection
+import com.veles.purchase.presentation.compose.DismissValue
+import com.veles.purchase.presentation.compose.FractionalThreshold
+import com.veles.purchase.presentation.compose.SwipeToDismiss
+import com.veles.purchase.presentation.compose.rememberDismissState
+import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -45,19 +49,12 @@ import org.koin.core.parameter.parametersOf
  * - Shows "later" purchases (items to buy in the future)
  * - Create new later purchases inline
  * - Check/uncheck purchases
- * - Swipe to delete
- * - Search functionality
+ * - Swipe to delete (Custom SwipeToDismiss with 0.7f threshold)
+ * - Simple toolbar (without search for now)
  *
  * Phase 2.12 - List Later screen migration
+ * FIXED: Now using custom components matching original exactly
  */
-
-// Colors matching original design
-object ListLaterColors {
-    val colorPrimary = Color(0xFF212121)    // Toolbar
-    val colorAccent = Color(0xFF424242)     // Cards
-    val gr = Color(0xFF4ACFAC)              // Green accent
-    val surface = Color(0xFF000000)         // Black background
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,13 +69,14 @@ fun ListLaterScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        modifier = Modifier.navigationBarsPadding(),
         topBar = {
             ListLaterToolbar(
                 collectionName = uiState.collection.name,
                 onNavigateBack = onNavigateBack
             )
         },
-        containerColor = ListLaterColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         ListLaterContent(
             paddingValues = paddingValues,
@@ -126,14 +124,14 @@ private fun ListLaterToolbar(
                     text = "Buy Later",
                     textAlign = TextAlign.Center,
                     fontSize = 14.sp,
-                    color = ListLaterColors.gr,
+                    color = Colors.gr,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = ListLaterColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -155,15 +153,7 @@ private fun ListLaterContent(
             .padding(paddingValues)
             .fillMaxSize()
     ) {
-        // Info text
-        Text(
-            text = "Items to buy later (not urgently)",
-            color = Color.Gray,
-            fontSize = 14.sp,
-            modifier = Modifier.padding(16.dp)
-        )
-
-        // Purchase list
+        // Purchase list with custom SwipeToDismiss
         LazyColumn(
             contentPadding = PaddingValues(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -189,25 +179,27 @@ private fun ListLaterContent(
                     items = uiState.filteredPurchases,
                     key = { it.createId }
                 ) { purchase ->
-                    val dismissState = rememberSwipeToDismissBoxState()
+                    val dismissState = rememberDismissState()
 
-                    if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
-                        dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd
+                    if (dismissState.isDismissed(DismissDirection.EndToStart) ||
+                        dismissState.isDismissed(DismissDirection.StartToEnd)
                     ) {
-                        LaunchedEffect(purchase.createId) {
+                        LaunchedEffect(purchase) {
                             onDeletePurchase(purchase)
-                            dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+                            dismissState.snapTo(DismissValue.Default)
                         }
                     }
 
-                    SwipeToDismissBox(
-                        modifier = Modifier.fillMaxWidth(),
+                    SwipeToDismiss(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItem(),
                         state = dismissState,
-                        backgroundContent = {}
+                        background = {},
+                        dismissThresholds = { FractionalThreshold(0.7f) }
                     ) {
                         val elevation = animateDpAsState(
-                            if (dismissState.targetValue != SwipeToDismissBoxValue.Settled) 4.dp else 0.dp,
-                            label = "elevation"
+                            if (dismissState.dismissDirection == null) 0.dp else 4.dp
                         ).value
 
                         PurchaseItem(
@@ -242,7 +234,7 @@ private fun PurchaseItem(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = ListLaterColors.colorAccent
+            containerColor = Colors.colorAccent
         ),
         shape = when (setting.shapeType) {
             com.veles.purchase.domain.model.setting.ShapeType.ROUNDED -> RoundedCornerShape(8.dp)
@@ -275,7 +267,7 @@ private fun PurchaseItem(
                     Text(
                         text = if (purchase.listImage.isNotEmpty()) "📷" else "  ",
                         fontSize = 24.sp,
-                        color = ListLaterColors.gr
+                        color = Colors.gr
                     )
                 }
             }
@@ -284,10 +276,7 @@ private fun PurchaseItem(
             Text(
                 text = purchase.text,
                 fontSize = 18.sp,
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                ),
+                style = textStyle1(),
                 modifier = Modifier
                     .padding(8.dp)
                     .constrainAs(textTitle) {
@@ -304,8 +293,8 @@ private fun PurchaseItem(
                 checked = purchase.isChecked,
                 onCheckedChange = { onCheck() },
                 colors = CheckboxDefaults.colors(
-                    checkedColor = ListLaterColors.gr,
-                    uncheckedColor = ListLaterColors.gr,
+                    checkedColor = Colors.gr,
+                    uncheckedColor = Colors.gr,
                     checkmarkColor = Color.Black
                 ),
                 modifier = Modifier.constrainAs(checkbox) {
@@ -327,7 +316,9 @@ private fun CreatePurchaseField(
     onCreate: (String) -> Unit
 ) {
     TextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .imePadding(),
         value = value,
         onValueChange = onValueChange,
         placeholder = {
@@ -391,8 +382,8 @@ private fun CreatePurchaseField(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             cursorColor = Color.White.copy(alpha = 0.38f),
-            focusedIndicatorColor = ListLaterColors.gr.copy(alpha = 0.38f),
-            focusedLabelColor = ListLaterColors.gr.copy(alpha = 0.38f)
+            focusedIndicatorColor = Colors.gr.copy(alpha = 0.38f),
+            focusedLabelColor = Colors.gr.copy(alpha = 0.38f)
         )
     )
 }

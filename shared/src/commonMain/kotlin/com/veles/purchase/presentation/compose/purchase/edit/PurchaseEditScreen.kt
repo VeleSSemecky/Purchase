@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.domain.utill.emptyString
+import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.mvvm.purchase.edit.PurchaseEditViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -41,6 +42,7 @@ import org.koin.core.parameter.parametersOf
  * - Loading indicator during save
  *
  * Phase 2.7 - Simplified version (no photos, no date picker)
+ * FIXED: Now using custom components matching pattern exactly
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +79,7 @@ fun PurchaseEditScreen(
                 }
             )
         },
-        containerColor = PurchaseEditColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             // Content
@@ -101,11 +103,11 @@ fun PurchaseEditScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(PurchaseEditColors.progress)
+                        .background(Colors.progress)
                         .clickable(enabled = false) {},
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = PurchaseEditColors.gr)
+                    CircularProgressIndicator(color = Colors.gr)
                 }
             }
         }
@@ -150,7 +152,7 @@ private fun PurchaseEditToolbar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = PurchaseEditColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -447,15 +449,3 @@ private fun purchaseEditTextFieldColors() = OutlinedTextFieldDefaults.colors(
     errorLabelColor = Color.Red.copy(alpha = 0.7f),
     cursorColor = Color.White
 )
-
-/**
- * Color palette for Purchase Edit Screen
- * Matching original design
- */
-object PurchaseEditColors {
-    val colorPrimary = Color(0xFF212121)        // Toolbar
-    val colorAccent = Color(0xFF424242)         // Cards/accents
-    val gr = Color(0xFF4ACFAC)                  // Green accent (progress)
-    val surface = Color(0xFF000000)             // Black background
-    val progress = Color(0x80000000)            // Semi-transparent black for overlay
-}

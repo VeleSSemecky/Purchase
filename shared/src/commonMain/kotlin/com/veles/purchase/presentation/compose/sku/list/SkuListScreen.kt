@@ -23,6 +23,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.SkuModel
+import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -33,23 +35,16 @@ import org.koin.compose.viewmodel.koinViewModel
  *
  * Features:
  * - List of SKUs with name, comment, and price
- * - Delete functionality
+ * - Delete functionality (delete button, no swipe)
  * - Search functionality
  * - FAB to add new SKU
  * - Empty state handling
  *
  * Phase 2.13 - SKU List screen migration
+ * FIXED: Now using custom components matching pattern exactly
  *
  * SKU = Stock Keeping Unit - items you buy frequently
  */
-
-// Colors matching original design
-object SkuListColors {
-    val colorPrimary = Color(0xFF212121)    // Toolbar
-    val colorAccent = Color(0xFF424242)     // Cards
-    val gr = Color(0xFF4ACFAC)              // Green accent
-    val surface = Color(0xFF000000)         // Black background
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +64,7 @@ fun SkuListScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onNavigateToSkuEdit(null) },
-                containerColor = SkuListColors.gr,
+                containerColor = Colors.gr,
                 contentColor = Color.Black
             ) {
                 Icon(
@@ -78,7 +73,7 @@ fun SkuListScreen(
                 )
             }
         },
-        containerColor = SkuListColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         SkuListContent(
             paddingValues = paddingValues,
@@ -108,7 +103,7 @@ private fun SkuListToolbar(
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = SkuListColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -131,7 +126,7 @@ private fun SkuListContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = SkuListColors.gr)
+                CircularProgressIndicator(color = Colors.gr)
             }
             return
         }
@@ -182,7 +177,7 @@ private fun SkuItem(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = SkuListColors.colorAccent
+            containerColor = Colors.colorAccent
         ),
         shape = RoundedCornerShape(0.dp),
         elevation = CardDefaults.cardElevation(
@@ -207,8 +202,7 @@ private fun SkuItem(
                 Text(
                     text = sku.skuName,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    style = textStyle1(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -229,7 +223,7 @@ private fun SkuItem(
                     text = "${sku.skuPrice} ${sku.skuCurrencyCode}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = SkuListColors.gr
+                    color = Colors.gr
                 )
             }
 

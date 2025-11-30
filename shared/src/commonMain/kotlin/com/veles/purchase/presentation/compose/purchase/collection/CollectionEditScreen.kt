@@ -17,8 +17,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionEditViewModel
+import com.veles.purchase.shared.resources.Res
+import com.veles.purchase.shared.resources.ic_baseline_history_24
+import com.veles.purchase.shared.resources.ic_category
+import com.veles.purchase.shared.resources.ic_navigate_next
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -35,6 +41,7 @@ import org.koin.core.parameter.parametersOf
  * - Loading indicator during save
  *
  * Phase 2.8 - Simplified version (no user selection list)
+ * FIXED: Now using custom components matching pattern exactly
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +75,7 @@ fun CollectionEditScreen(
                 }
             )
         },
-        containerColor = CollectionEditColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             // Content
@@ -86,11 +93,11 @@ fun CollectionEditScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(CollectionEditColors.progress)
+                        .background(Colors.progress)
                         .clickable(enabled = false) {},
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = CollectionEditColors.gr)
+                    CircularProgressIndicator(color = Colors.gr)
                 }
             }
         }
@@ -135,7 +142,7 @@ private fun ToolBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = CollectionEditColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -217,36 +224,33 @@ private fun ComponentCategory(onCategoryClicked: () -> Unit) {
             .clickable { onCategoryClicked() },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors().copy(
-            containerColor = CollectionEditColors.colorAccent
+            containerColor = Colors.colorAccent
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // TODO: Replace with actual icons when assets are available
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                text = "📂", // Category icon placeholder
-                fontSize = 24.sp,
-                color = CollectionEditColors.gr
+            Icon(
+                painter = painterResource(Res.drawable.ic_category),
+                contentDescription = "Category",
+                tint = Colors.gr,
+                modifier = Modifier.size(24.dp)
             )
             Text(
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
                     .weight(1f)
                     .padding(horizontal = 8.dp),
                 text = "Category settings",
                 color = Color.White
             )
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                text = "›", // Navigate next icon placeholder
-                fontSize = 24.sp,
-                color = CollectionEditColors.gr
+            Icon(
+                painter = painterResource(Res.drawable.ic_navigate_next),
+                contentDescription = "Next",
+                tint = Colors.gr,
+                modifier = Modifier.size(24.dp)
             )
         }
     }
@@ -262,36 +266,33 @@ private fun ComponentHistory(onHistoryClicked: () -> Unit) {
             .clickable { onHistoryClicked() },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors().copy(
-            containerColor = CollectionEditColors.colorAccent
+            containerColor = Colors.colorAccent
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // TODO: Replace with actual icons when assets are available
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                text = "🕐", // History icon placeholder
-                fontSize = 24.sp,
-                color = CollectionEditColors.gr
+            Icon(
+                painter = painterResource(Res.drawable.ic_baseline_history_24),
+                contentDescription = "History",
+                tint = Colors.gr,
+                modifier = Modifier.size(24.dp)
             )
             Text(
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
                     .weight(1f)
                     .padding(horizontal = 8.dp),
                 text = "History",
                 color = Color.White
             )
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                text = "›", // Navigate next icon placeholder
-                fontSize = 24.sp,
-                color = CollectionEditColors.gr
+            Icon(
+                painter = painterResource(Res.drawable.ic_navigate_next),
+                contentDescription = "Next",
+                tint = Colors.gr,
+                modifier = Modifier.size(24.dp)
             )
         }
     }
@@ -316,15 +317,3 @@ private fun collectionEditTextFieldColors() = OutlinedTextFieldDefaults.colors(
     errorLabelColor = Color.Red.copy(alpha = 0.7f),
     cursorColor = Color.White
 )
-
-/**
- * Color palette for Collection Edit Screen
- * Matching original design
- */
-object CollectionEditColors {
-    val colorPrimary = Color(0xFF212121)        // Toolbar
-    val colorAccent = Color(0xFF424242)         // Cards/buttons
-    val gr = Color(0xFF4ACFAC)                  // Green accent
-    val surface = Color(0xFF000000)             // Black background
-    val progress = Color(0x80000000)            // Semi-transparent black for overlay
-}

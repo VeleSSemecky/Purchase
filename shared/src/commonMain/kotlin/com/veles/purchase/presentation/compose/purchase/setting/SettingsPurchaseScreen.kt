@@ -24,6 +24,8 @@ import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.setting.PurchaseSetting
 import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
+import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.purchase.setting.SettingsPurchaseViewModel
 import com.veles.purchase.presentation.mvvm.purchase.setting.CornerSetting
 import org.koin.compose.viewmodel.koinViewModel
@@ -42,22 +44,8 @@ import org.koin.compose.viewmodel.koinViewModel
  * - Preview card with sample purchase item
  *
  * Phase 2.3 - Full feature migration with original styling
+ * FIXED: Now using custom components matching pattern exactly
  */
-
-// Original colors from presentation module
-object PurchaseColors {
-    val colorPrimary = Color(0xff212121)
-    val colorAccent = Color(0xff424242)
-    val gr = Color(0xff4ACFAC)  // Green accent
-    val surface = Color(0xFF121212)
-}
-
-// Text style function matching original
-@Composable
-private fun textStyle1() = TextStyle(
-    color = Color.White,
-    fontWeight = FontWeight.Bold
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,9 +60,9 @@ fun SettingsPurchaseScreen(
     // Apply original dark theme
     MaterialTheme(
         colorScheme = darkColorScheme(
-            primary = PurchaseColors.colorPrimary,
-            surface = PurchaseColors.surface,
-            primaryContainer = PurchaseColors.gr,
+            primary = Colors.colorPrimary,
+            surface = Colors.surface,
+            primaryContainer = Colors.gr,
             background = Color.Black
         )
     ) {
@@ -203,7 +191,7 @@ private fun ToolBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = PurchaseColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -215,7 +203,7 @@ private fun PreviewCard(
 ) {
     Card(
         colors = CardDefaults.cardColors().copy(
-            containerColor = PurchaseColors.colorAccent
+            containerColor = Colors.colorAccent
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
@@ -285,8 +273,8 @@ private fun PreviewCard(
                     onCheckedChange = {
                     },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = PurchaseColors.gr,
-                        uncheckedColor = PurchaseColors.gr,
+                        checkedColor = Colors.gr,
+                        uncheckedColor = Colors.gr,
                         checkmarkColor = Color.Black
                     )
                 )
@@ -315,8 +303,8 @@ private fun ShapeTypeRow(
             selected = shapeType == settings.shapeType,
             onClick = { viewModel.onShapeTypeChanged(shapeType) },
             colors = RadioButtonDefaults.colors().copy(
-                selectedColor = PurchaseColors.gr,
-                unselectedColor = PurchaseColors.gr,
+                selectedColor = Colors.gr,
+                unselectedColor = Colors.gr,
                 disabledSelectedColor = Color.Black
             )
         )
@@ -349,8 +337,8 @@ private fun SizeTypeRow(
             selected = sizeType == settings.sizeType,
             onClick = { viewModel.onSizeTypeChanged(sizeType) },
             colors = RadioButtonDefaults.colors().copy(
-                selectedColor = PurchaseColors.gr,
-                unselectedColor = PurchaseColors.gr,
+                selectedColor = Colors.gr,
+                unselectedColor = Colors.gr,
                 disabledSelectedColor = Color.Black,
                 disabledUnselectedColor = Color.Black
             )
@@ -380,8 +368,8 @@ private fun AllCornerSlider(
             onValueChange = onValueChange,
             valueRange = 0f..100f,
             colors = SliderDefaults.colors(
-                thumbColor = PurchaseColors.gr,
-                activeTrackColor = PurchaseColors.gr
+                thumbColor = Colors.gr,
+                activeTrackColor = Colors.gr
             )
         )
         Box {
@@ -436,8 +424,8 @@ private fun SliderWithValue(
             onValueChange = onValueChange,
             valueRange = 0f..100f,
             colors = SliderDefaults.colors(
-                thumbColor = PurchaseColors.gr,
-                activeTrackColor = PurchaseColors.gr
+                thumbColor = Colors.gr,
+                activeTrackColor = Colors.gr
             )
         )
         Box {
@@ -473,8 +461,8 @@ private fun SymmetryCheckbox(
             checked = settings.isSymmetry,
             onCheckedChange = { viewModel.onIsSymmetryChanged(it) },
             colors = CheckboxDefaults.colors(
-                checkedColor = PurchaseColors.gr,
-                uncheckedColor = PurchaseColors.gr,
+                checkedColor = Colors.gr,
+                uncheckedColor = Colors.gr,
                 checkmarkColor = Color.Black
             )
         )
@@ -505,8 +493,8 @@ private fun ShowImageCheckbox(
             checked = settings.isImage,
             onCheckedChange = { viewModel.onIsShowImageChanged(it) },
             colors = CheckboxDefaults.colors(
-                checkedColor = PurchaseColors.gr,
-                uncheckedColor = PurchaseColors.gr,
+                checkedColor = Colors.gr,
+                uncheckedColor = Colors.gr,
                 checkmarkColor = Color.Black
             )
         )

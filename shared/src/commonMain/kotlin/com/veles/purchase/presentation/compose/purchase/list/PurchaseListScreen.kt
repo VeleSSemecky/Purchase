@@ -11,7 +11,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +35,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
 import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.compose.DismissDirection
+import com.veles.purchase.presentation.compose.DismissValue
+import com.veles.purchase.presentation.compose.FractionalThreshold
+import com.veles.purchase.presentation.compose.SwipeToDismiss
+import com.veles.purchase.presentation.compose.rememberDismissState
+import com.veles.purchase.presentation.compose.search.SearchTopAppBar
+import com.veles.purchase.presentation.compose.search.SearchWidgetState
+import com.veles.purchase.presentation.compose.textStyle1
+import com.veles.purchase.presentation.compose.textStyle2
 import com.veles.purchase.presentation.mvvm.purchase.list.PurchaseListViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -42,23 +56,16 @@ import org.koin.core.parameter.parametersOf
  *
  * Features:
  * - List of purchases with checkboxes
- * - Search functionality
- * - Swipe to delete
- * - Add new purchase
+ * - Search functionality (SearchTopAppBar)
+ * - Swipe to delete (Custom SwipeToDismiss with 0.7f threshold)
+ * - Add new purchase inline
  * - Category chips (if available)
  * - Photo indicators (if available)
+ * - Sort functionality
  *
- * Phase 2.6 - Purchase List feature migration (simplified)
+ * Phase 2.6 - Purchase List feature migration
+ * FIXED: Now using custom components matching original exactly
  */
-
-// Colors matching original design
-object PurchaseListColors {
-    val colorPrimary = Color(0xff212121)
-    val colorAccent = Color(0xff424242)  // Card background
-    val gr = Color(0xff4ACFAC)  // Green accent
-    val surface = Color(0xFF000000)  // Black background
-    val progress = Color(0x99000000)
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,31 +78,54 @@ fun PurchaseListScreen(
 ) {
     val collection by viewModel.flowCollectionPurchase.collectAsState()
     val searchText by viewModel.flowSearchText.collectAsState()
-    var searchWidgetState by remember { mutableStateOf(SearchWidgetState.CLOSED) }
+    val searchWidgetState = remember { mutableStateOf(SearchWidgetState.CLOSED) }
 
     Scaffold(
-        containerColor = PurchaseListColors.surface,
+        modifier = Modifier.navigationBarsPadding(),
+        containerColor = Colors.surface,
         topBar = {
-            when (searchWidgetState) {
-                SearchWidgetState.CLOSED -> {
-                    PurchaseListTopBar(
-                        collectionName = collection.name,
-                        onBackClick = onNavigateBack,
-                        onSearchClick = { searchWidgetState = SearchWidgetState.OPENED },
-                        onSettingsClick = onNavigateToSettings
+            SearchTopAppBar(
+                searchTextState = searchText,
+                searchWidgetState = searchWidgetState,
+                onTextChange = { viewModel.updateSearchText(it) },
+                onCloseClicked = { },
+                onSearchClicked = { },
+                navigationIcon = { _ ->
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
+                title = { _ ->
+                    Text(
+                        text = collection.name,
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                },
+                actions = { widgetState ->
+                    IconButton(onClick = { widgetState.value = SearchWidgetState.OPENED }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = Color.White
+                        )
+                    }
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.White
+                        )
+                    }
                 }
-                SearchWidgetState.OPENED -> {
-                    SearchTopBar(
-                        searchText = searchText,
-                        onTextChange = { viewModel.updateSearchText(it) },
-                        onCloseClick = {
-                            searchWidgetState = SearchWidgetState.CLOSED
-                            viewModel.updateSearchText("")
-                        }
-                    )
-                }
-            }
+            )
         }
     ) { paddingValues ->
         Box(
@@ -112,99 +142,6 @@ fun PurchaseListScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PurchaseListTopBar(
-    collectionName: String,
-    onBackClick: () -> Unit,
-    onSearchClick: () -> Unit,
-    onSettingsClick: () -> Unit
-) {
-    TopAppBar(
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White
-                )
-            }
-        },
-        title = {
-            Text(
-                text = collectionName.ifEmpty { "Purchases" },
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                color = Color.White,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        actions = {
-            IconButton(onClick = onSearchClick) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
-                    tint = Color.White
-                )
-            }
-            IconButton(onClick = onSettingsClick) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
-                    tint = Color.White
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = PurchaseListColors.colorPrimary
-        )
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SearchTopBar(
-    searchText: String,
-    onTextChange: (String) -> Unit,
-    onCloseClick: () -> Unit
-) {
-    TextField(
-        value = searchText,
-        onValueChange = onTextChange,
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = {
-            Text("Search purchases...", color = Color.Gray)
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search",
-                tint = Color.White
-            )
-        },
-        trailingIcon = {
-            IconButton(onClick = onCloseClick) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
-                    tint = Color.White
-                )
-            }
-        },
-        singleLine = true,
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White,
-            focusedContainerColor = PurchaseListColors.colorPrimary,
-            unfocusedContainerColor = PurchaseListColors.colorPrimary,
-            cursorColor = PurchaseListColors.gr,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        )
-    )
-}
-
 @Composable
 private fun Progress(viewModel: PurchaseListViewModel) {
     val progress by viewModel.flowProgress.collectAsState()
@@ -213,11 +150,11 @@ private fun Progress(viewModel: PurchaseListViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(PurchaseListColors.progress)
+            .background(Colors.progress)
             .clickable(enabled = false) {},
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = PurchaseListColors.gr)
+        CircularProgressIndicator(color = Colors.gr)
     }
 }
 
@@ -248,7 +185,7 @@ private fun Content(
             onSortClick = { viewModel.toggleSortByChecked() }
         )
 
-        // Purchase list
+        // Purchase list with custom SwipeToDismiss
         LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -257,23 +194,27 @@ private fun Content(
                 items = sortedPurchases,
                 key = { it.createId }
             ) { purchase ->
-                val dismissState = rememberSwipeToDismissBoxState()
+                val dismissState = rememberDismissState()
 
-                if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
-                    dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd
+                if (dismissState.isDismissed(DismissDirection.EndToStart) ||
+                    dismissState.isDismissed(DismissDirection.StartToEnd)
                 ) {
                     LaunchedEffect(purchase) {
                         viewModel.deletePurchase(purchase)
-                        dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+                        dismissState.snapTo(DismissValue.Default)
                     }
                 }
 
-                SwipeToDismissBox(
+                SwipeToDismiss(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateItem(),
                     state = dismissState,
-                    backgroundContent = {}
+                    background = {},
+                    dismissThresholds = { FractionalThreshold(0.7f) }
                 ) {
                     val elevation = animateDpAsState(
-                        if (dismissState.targetValue != SwipeToDismissBoxValue.Settled) 4.dp else 0.dp
+                        if (dismissState.dismissDirection == null) 0.dp else 4.dp
                     ).value
 
                     PurchaseItem(
@@ -298,7 +239,7 @@ private fun SortIndicator(
 ) {
     Text(
         text = if (sortByChecked) "Sorted: Unchecked First" else "Sorted: Default",
-        color = PurchaseListColors.gr,
+        color = Colors.gr,
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onSortClick() }
@@ -318,7 +259,7 @@ private fun PurchaseItem(
 
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = PurchaseListColors.colorAccent
+            containerColor = Colors.colorAccent
         ),
         // shape = purchaseSetting.toShape(), // TODO: Add shape support when needed
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
@@ -417,8 +358,8 @@ private fun PurchaseItem(
                         viewModel.onChecked(purchase)
                     },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = PurchaseListColors.gr,
-                        uncheckedColor = PurchaseListColors.gr,
+                        checkedColor = Colors.gr,
+                        uncheckedColor = Colors.gr,
                         checkmarkColor = Color.Black
                     )
                 )
@@ -434,7 +375,7 @@ private fun PhotoChip(item: PurchaseModel) {
         modifier = Modifier
             .padding(top = 6.dp)
             .background(
-                color = PurchaseListColors.gr.copy(alpha = 0.1f),
+                color = Colors.gr.copy(alpha = 0.1f),
                 shape = CircleShape
             )
             .height(20.dp),
@@ -443,7 +384,7 @@ private fun PhotoChip(item: PurchaseModel) {
         Text(
             text = "📷",
             fontSize = 12.sp,
-            color = PurchaseListColors.gr,
+            color = Colors.gr,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
         )
     }
@@ -456,7 +397,7 @@ private fun CategoryChip(item: PurchaseModel) {
         modifier = Modifier
             .padding(top = 6.dp)
             .background(
-                color = PurchaseListColors.gr.copy(alpha = 0.1f),
+                color = Colors.gr.copy(alpha = 0.1f),
                 shape = CircleShape
             )
             .height(20.dp),
@@ -466,25 +407,13 @@ private fun CategoryChip(item: PurchaseModel) {
             text = item.purchaseCategoryModel?.name ?: "Uncategorized",
             fontSize = 12.sp,
             style = TextStyle(
-                color = PurchaseListColors.gr,
+                color = Colors.gr,
                 fontWeight = FontWeight.Bold
             ),
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
         )
     }
 }
-
-// Text style functions matching original
-@Composable
-private fun textStyle1() = TextStyle(
-    color = Color.White,
-    fontWeight = FontWeight.Bold
-)
-
-@Composable
-private fun textStyle2() = TextStyle(
-    color = Color.White.copy(alpha = 0.6f)
-)
 
 @Composable
 private fun CreatePurchaseInput(viewModel: PurchaseListViewModel) {
@@ -563,16 +492,8 @@ private fun CreatePurchaseInput(viewModel: PurchaseListViewModel) {
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             cursorColor = Color.White.copy(alpha = 0.60f),
-            focusedIndicatorColor = PurchaseListColors.gr.copy(alpha = 0.87f),
-            focusedLabelColor = PurchaseListColors.gr.copy(alpha = 0.87f)
+            focusedIndicatorColor = Colors.gr.copy(alpha = 0.87f),
+            focusedLabelColor = Colors.gr.copy(alpha = 0.87f)
         )
     )
-}
-
-/**
- * Search widget state
- */
-enum class SearchWidgetState {
-    OPENED,
-    CLOSED
 }

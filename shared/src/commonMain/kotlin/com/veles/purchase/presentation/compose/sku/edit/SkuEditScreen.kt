@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -38,20 +39,13 @@ import org.koin.core.parameter.parametersOf
  * - Save button
  *
  * Phase 2.14 - SKU Edit screen migration
+ * FIXED: Now using custom components matching pattern exactly
  *
  * Simplified for KMP:
  * - Removed photo gallery (can add later)
  * - Removed date picker (can add later)
  * - Removed currency picker dialog (hardcoded for now)
  */
-
-// Colors matching original design
-object SkuEditColors {
-    val colorPrimary = Color(0xFF212121)    // Toolbar
-    val surface = Color(0xFF000000)         // Black background
-    val textFieldBorder = Color.White.copy(alpha = 0.38f)
-    val textColor = Color.White
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +71,7 @@ fun SkuEditScreen(
                 isSaving = uiState.isSaving
             )
         },
-        containerColor = SkuEditColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(
@@ -162,7 +156,7 @@ private fun SkuEditToolbar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = SkuEditColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -194,7 +188,7 @@ private fun SkuEditContent(
             label = {
                 Text(
                     text = "Title",
-                    color = SkuEditColors.textColor
+                    color = Color.White
                 )
             },
             isError = uiState.nameError != null,
@@ -207,11 +201,11 @@ private fun SkuEditContent(
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = SkuEditColors.textColor,
-                unfocusedTextColor = SkuEditColors.textColor,
-                focusedBorderColor = SkuEditColors.textFieldBorder,
-                unfocusedBorderColor = SkuEditColors.textFieldBorder,
-                cursorColor = SkuEditColors.textColor
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White.copy(alpha = 0.38f),
+                unfocusedBorderColor = Color.White.copy(alpha = 0.38f),
+                cursorColor = Color.White
             ),
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 fontSize = 16.sp
@@ -228,7 +222,7 @@ private fun SkuEditContent(
             label = {
                 Text(
                     text = "Price",
-                    color = SkuEditColors.textColor
+                    color = Color.White
                 )
             },
             trailingIcon = {
@@ -237,7 +231,7 @@ private fun SkuEditContent(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
-                    color = SkuEditColors.textColor
+                    color = Color.White
                 )
             },
             isError = uiState.priceError != null,
@@ -251,11 +245,11 @@ private fun SkuEditContent(
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = SkuEditColors.textColor,
-                unfocusedTextColor = SkuEditColors.textColor,
-                focusedBorderColor = SkuEditColors.textFieldBorder,
-                unfocusedBorderColor = SkuEditColors.textFieldBorder,
-                cursorColor = SkuEditColors.textColor
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White.copy(alpha = 0.38f),
+                unfocusedBorderColor = Color.White.copy(alpha = 0.38f),
+                cursorColor = Color.White
             ),
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 fontSize = 16.sp
@@ -272,17 +266,17 @@ private fun SkuEditContent(
             label = {
                 Text(
                     text = "Comment",
-                    color = SkuEditColors.textColor
+                    color = Color.White
                 )
             },
             minLines = 3,
             maxLines = 5,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = SkuEditColors.textColor,
-                unfocusedTextColor = SkuEditColors.textColor,
-                focusedBorderColor = SkuEditColors.textFieldBorder,
-                unfocusedBorderColor = SkuEditColors.textFieldBorder,
-                cursorColor = SkuEditColors.textColor
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White.copy(alpha = 0.38f),
+                unfocusedBorderColor = Color.White.copy(alpha = 0.38f),
+                cursorColor = Color.White
             ),
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 fontSize = 16.sp

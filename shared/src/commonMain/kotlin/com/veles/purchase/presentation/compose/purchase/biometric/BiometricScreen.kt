@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.platform.biometric.BiometricAuthenticator
 import com.veles.purchase.platform.biometric.BiometricResult
+import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.mvvm.purchase.biometric.BiometricViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -33,16 +34,11 @@ import org.koin.core.parameter.parametersOf
  * - Status indicators
  *
  * Phase 2.11 - Biometric screen migration
+ * FIXED: Now using custom components matching pattern exactly
  */
 
-// Colors matching original design
-object BiometricColors {
-    val colorPrimary = Color(0xFF212121)        // Toolbar
-    val colorAccent = Color(0xFF424242)         // Cards
-    val gr = Color(0xFF4ACFAC)                  // Green accent
-    val red = Color(0xFFE53935)                 // Error red
-    val surface = Color(0xFF000000)             // Black background
-}
+// Biometric-specific error color
+private val ErrorRed = Color(0xFFE53935)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +55,7 @@ fun BiometricScreen(
         topBar = {
             BiometricToolbar(onNavigateBack = onNavigateBack)
         },
-        containerColor = BiometricColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         BiometricContent(
             paddingValues = paddingValues,
@@ -92,7 +88,7 @@ private fun BiometricToolbar(onNavigateBack: () -> Unit) {
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = BiometricColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -118,7 +114,7 @@ private fun BiometricContent(
         Text(
             text = "🔐",
             fontSize = 96.sp,
-            color = if (uiState.isBiometricAvailable) BiometricColors.gr else Color.Gray
+            color = if (uiState.isBiometricAvailable) Colors.gr else Color.Gray
         )
 
         // Title
@@ -158,7 +154,7 @@ private fun BiometricContent(
                 .height(56.dp),
             enabled = uiState.isBiometricAvailable && uiState.isBiometricEnrolled && !uiState.isAuthenticating,
             colors = ButtonDefaults.buttonColors(
-                containerColor = BiometricColors.gr,
+                containerColor = Colors.gr,
                 contentColor = Color.Black,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.DarkGray
@@ -201,7 +197,7 @@ private fun StatusCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = BiometricColors.colorAccent
+            containerColor = Colors.colorAccent
         ),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -220,7 +216,7 @@ private fun StatusCard(
                 Surface(
                     modifier = Modifier.size(12.dp),
                     shape = RoundedCornerShape(6.dp),
-                    color = if (status) BiometricColors.gr else BiometricColors.red
+                    color = if (status) Colors.gr else ErrorRed
                 ) {}
             }
 
@@ -282,7 +278,7 @@ private fun AuthenticationResultDialog(
             Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
-                color = if (isSuccess) BiometricColors.gr else BiometricColors.red
+                color = if (isSuccess) Colors.gr else ErrorRed
             )
         },
         text = {
@@ -295,10 +291,10 @@ private fun AuthenticationResultDialog(
             TextButton(onClick = onDismiss) {
                 Text(
                     text = "OK",
-                    color = BiometricColors.gr
+                    color = Colors.gr
                 )
             }
         },
-        containerColor = BiometricColors.colorAccent
+        containerColor = Colors.colorAccent
     )
 }

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.SkuSumMonthModel
+import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.mvvm.sku.statistics.SkuStatisticsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -35,20 +36,13 @@ import org.koin.compose.viewmodel.koinViewModel
  * - Empty state handling
  *
  * Phase 2.15 - SKU Statistics screen migration
+ * FIXED: Now using custom components matching pattern exactly
  *
  * Simplified for KMP:
  * - No year/month picker dialogs (can add later)
  * - Shows current year by default
  * - Simple list view
  */
-
-// Colors matching original design
-object SkuStatisticsColors {
-    val colorPrimary = Color(0xFF212121)    // Toolbar
-    val itemBackground = Color(0xFF212121).copy(alpha = 0.8f)
-    val gr = Color(0xFF4ACFAC)              // Green accent
-    val surface = Color(0xFF000000)         // Black background
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +60,7 @@ fun SkuStatisticsScreen(
                 onNavigateBack = onNavigateBack
             )
         },
-        containerColor = SkuStatisticsColors.surface
+        containerColor = Colors.surface
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(
@@ -75,7 +69,7 @@ fun SkuStatisticsScreen(
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = SkuStatisticsColors.gr)
+                CircularProgressIndicator(color = Colors.gr)
             }
         } else {
             SkuStatisticsContent(
@@ -131,14 +125,14 @@ private fun SkuStatisticsToolbar(
                     text = subtitle,
                     textAlign = TextAlign.Center,
                     fontSize = 14.sp,
-                    color = SkuStatisticsColors.gr,
+                    color = Colors.gr,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = SkuStatisticsColors.colorPrimary
+            containerColor = Colors.colorPrimary
         )
     )
 }
@@ -173,7 +167,7 @@ private fun SkuStatisticsContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(SkuStatisticsColors.gr.copy(alpha = 0.2f))
+                .background(Colors.gr.copy(alpha = 0.2f))
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -191,7 +185,7 @@ private fun SkuStatisticsContent(
                 ),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = SkuStatisticsColors.gr
+                color = Colors.gr
             )
         }
 
@@ -218,7 +212,7 @@ private fun StatisticsItem(item: SkuSumMonthModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(SkuStatisticsColors.itemBackground)
+            .background(Colors.colorPrimary.copy(alpha = 0.8f))
             .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -240,7 +234,7 @@ private fun StatisticsItem(item: SkuSumMonthModel) {
             text = "${item.sum} ${item.currencyCode}",
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
-            color = SkuStatisticsColors.gr,
+            color = Colors.gr,
             textAlign = TextAlign.End
         )
     }
