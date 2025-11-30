@@ -19,8 +19,11 @@ import com.veles.purchase.presentation.compose.purchase.collection.CollectionEdi
 import com.veles.purchase.presentation.compose.purchase.collection.CollectionListScreen
 import com.veles.purchase.presentation.compose.purchase.edit.PurchaseEditScreen
 import com.veles.purchase.presentation.compose.purchase.history.HistoryScreen
+import com.veles.purchase.presentation.compose.purchase.later.ListLaterScreen
 import com.veles.purchase.presentation.compose.purchase.list.PurchaseListScreen
 import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchaseScreen
+import com.veles.purchase.presentation.compose.sku.edit.SkuEditScreen
+import com.veles.purchase.presentation.compose.sku.list.SkuListScreen
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
@@ -126,14 +129,56 @@ fun AppNavigation(
             )
         }
 
+        composable<Route.Purchase.Later> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.Purchase.Later>()
+            ListLaterScreen(
+                collectionId = args.collectionId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToPurchaseEdit = { purchaseId ->
+                    navController.navigate(Route.Purchase.Edit(purchaseId, args.collectionId))
+                }
+            )
+        }
+
         // SKU navigation
         composable<Route.Sku.List> {
-            PlaceholderScreen("SKU List - Coming Soon")
+            SkuListScreen(
+                onNavigateToSkuEdit = { skuId ->
+                    if (skuId != null) {
+                        navController.navigate(Route.Sku.Edit(skuId))
+                    } else {
+                        navController.navigate(Route.Sku.Edit())
+                    }
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable<Route.Sku.Detail> { backStackEntry ->
             val args = backStackEntry.toRoute<Route.Sku.Detail>()
             PlaceholderScreen("SKU Detail: ${args.skuId}")
+        }
+
+        composable<Route.Sku.Edit> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.Sku.Edit>()
+            SkuEditScreen(
+                skuId = args.skuId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<Route.Sku.Statistics> {
+            com.veles.purchase.presentation.compose.sku.statistics.SkuStatisticsScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         // Settings navigation

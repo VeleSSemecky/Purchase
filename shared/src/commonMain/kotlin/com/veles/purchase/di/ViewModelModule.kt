@@ -6,8 +6,12 @@ import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionEditVi
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseViewModel
 import com.veles.purchase.presentation.mvvm.purchase.edit.PurchaseEditViewModel
 import com.veles.purchase.presentation.mvvm.purchase.history.HistoryViewModel
+import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterViewModel
 import com.veles.purchase.presentation.mvvm.purchase.list.PurchaseListViewModel
 import com.veles.purchase.presentation.mvvm.purchase.setting.SettingsPurchaseViewModel
+import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditViewModel
+import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
+import com.veles.purchase.presentation.mvvm.sku.statistics.SkuStatisticsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -90,6 +94,38 @@ val viewModelModule = module {
     viewModel { parameters ->
         BiometricViewModel(
             biometricAuthenticator = parameters.get()
+        )
+    }
+
+    // List Later ViewModel (requires collectionId parameter)
+    viewModel { parameters ->
+        ListLaterViewModel(
+            collectionId = parameters.get(),
+            purchaseRepository = get(),
+            collectionRepository = get(),
+            settingRepository = get()
+        )
+    }
+
+    // SKU List ViewModel
+    viewModel {
+        SkuListViewModel(
+            skuRepository = get()
+        )
+    }
+
+    // SKU Edit ViewModel (requires skuId parameter - nullable for new SKU)
+    viewModel { parameters ->
+        SkuEditViewModel(
+            skuId = parameters.getOrNull(),
+            skuRepository = get()
+        )
+    }
+
+    // SKU Statistics ViewModel (Outlay Graph)
+    viewModel {
+        SkuStatisticsViewModel(
+            skuRepository = get()
         )
     }
 

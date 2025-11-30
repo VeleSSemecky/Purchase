@@ -54,6 +54,9 @@ sealed class Route {
 
         @Serializable
         data class History(val collectionId: String) : Purchase()
+
+        @Serializable
+        data class Later(val collectionId: String) : Purchase()
     }
 
     /**
@@ -71,7 +74,7 @@ sealed class Route {
         data class Edit(val skuId: String? = null) : Sku()
 
         @Serializable
-        data class Statistics(val year: Int, val month: Int) : Sku()
+        data object Statistics : Sku()
     }
 
     /**
