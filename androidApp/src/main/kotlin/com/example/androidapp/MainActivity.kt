@@ -7,20 +7,30 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.shared.App
+import com.veles.purchase.App
 
+/**
+ * Main Activity для Purchase KMP app
+ *
+ * Phase 2.4 - Early Test Integration
+ *
+ * Використовує App() composable з shared модуля
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    // App з shared модуля!
                     App()
                 }
             }
         }
     }
 }
+

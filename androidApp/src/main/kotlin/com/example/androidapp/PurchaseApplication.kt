@@ -1,14 +1,25 @@
 package com.example.androidapp
 
 import android.app.Application
-import com.example.shared.data.local.database.initializeDatabase
+import com.veles.purchase.di.appModules
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
+/**
+ * Application class for Purchase KMP app
+ *
+ * Initializes Koin DI with all modules from shared
+ */
 class PurchaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        // Initialize Room database for Android
-        initializeDatabase(this)
+        // Initialize Koin
+        startKoin {
+            androidContext(this@PurchaseApplication)
+            modules(appModules)
+        }
     }
 }
+

@@ -52,42 +52,35 @@ android {
 }
 
 dependencies {
-//    implementation(project(":shared"))
-//    implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.lifecycle.runtime)
-//    implementation(libs.androidx.activity)
-//    implementation(libs.compose.activity)
-//    implementation(libs.compose.ui)
-//    implementation(libs.compose.ui.tooling.preview)
-//    implementation(libs.compose.material3)
-//
-//    testImplementation(libs.junit)
-//    androidTestImplementation(libs.androidx.junit)
-//    androidTestImplementation(libs.androidx.espresso.core)
-//    androidTestImplementation(libs.compose.ui.tooling)
-//
-//    debugImplementation(libs.compose.ui.tooling)
-//    debugImplementation(libs.compose.ui.tooling.preview)
-
-
+    // Shared KMP module
     implementation(project(":shared"))
+
+    // Koin for Android
+    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation("io.insert-koin:koin-androidx-compose:4.0.0")
+
+    // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.activity)
+
+    // Compose
     implementation(libs.compose.activity)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
 
-    // Add AppCompat for theme support
+    // AppCompat for theme support
     implementation(libs.app.compat)
     implementation(libs.material.components)
 
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.compose.ui.tooling)
 
+    // Debug
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling.preview)
 }
