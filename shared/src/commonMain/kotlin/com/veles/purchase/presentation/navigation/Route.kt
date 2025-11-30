@@ -18,6 +18,24 @@ sealed class Route {
     data object Main : Route()
 
     /**
+     * Collection routes
+     */
+    @Serializable
+    sealed class Collection : Route() {
+        @Serializable
+        data object List : Collection()
+
+        @Serializable
+        data class Edit(val collectionId: String = "") : Collection()
+
+        @Serializable
+        data class Category(val collectionId: String) : Collection()
+
+        @Serializable
+        data class History(val collectionId: String) : Collection()
+    }
+
+    /**
      * Purchase routes
      */
     @Serializable

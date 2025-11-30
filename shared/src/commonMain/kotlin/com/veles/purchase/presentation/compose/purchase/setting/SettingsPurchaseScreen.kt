@@ -5,14 +5,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.domain.model.setting.PurchaseSetting
 import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
 import com.veles.purchase.presentation.mvvm.purchase.setting.SettingsPurchaseViewModel
@@ -43,6 +52,13 @@ object PurchaseColors {
     val surface = Color(0xFF121212)
 }
 
+// Text style function matching original
+@Composable
+private fun textStyle1() = TextStyle(
+    color = Color.White,
+    fontWeight = FontWeight.Bold
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPurchaseScreen(
@@ -64,35 +80,7 @@ fun SettingsPurchaseScreen(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = "Setting Purchase",
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Text("←", color = Color.White, fontSize = 24.sp)
-                        }
-                    },
-                    actions = {
-                        IconButton(
-                            onClick = {
-                                viewModel.onSaveSettingsClicked()
-                                onNavigateBack()
-                            }
-                        ) {
-                            Text("✓", color = Color.White, fontSize = 24.sp)
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = PurchaseColors.colorPrimary
-                    )
-                )
+                ToolBar(onNavigateBack, viewModel)
             },
             containerColor = Color.Black
         ) { paddingValues ->
@@ -148,52 +136,161 @@ fun SettingsPurchaseScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PreviewCard(settings: com.veles.purchase.domain.model.setting.PurchaseSetting) {
+private fun ToolBar(
+    onNavigateBack: () -> Unit,
+    viewModel: SettingsPurchaseViewModel
+) {
+    TopAppBar(
+        title = {
+            ConstraintLayout(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                val (
+                    referenceIconBack,
+                    referenceTextTitle,
+                    referenceIconSave
+                ) = createRefs()
+
+                IconButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier
+                        .constrainAs(referenceIconBack) {
+                            start.linkTo(parent.start)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
+                }
+
+                Text(
+                    text = "Setting Purchase",
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier
+                        .constrainAs(referenceTextTitle) {
+                            start.linkTo(referenceIconBack.end, margin = 8.dp)
+                            end.linkTo(referenceIconSave.start, margin = 8.dp)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }
+                )
+
+                IconButton(
+                    onClick = {
+                        viewModel.onSaveSettingsClicked()
+                    },
+                    modifier = Modifier
+                        .constrainAs(referenceIconSave) {
+                            end.linkTo(parent.end)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = "Save",
+                        tint = Color.White
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            containerColor = PurchaseColors.colorPrimary
+        )
+    )
+}
+
+@Composable
+private fun PreviewCard(
+    purchaseSetting: PurchaseSetting,
+    item: PurchaseModel = PurchaseModel.TEST
+) {
     Card(
-        colors = CardDefaults.cardColors(
+        colors = CardDefaults.cardColors().copy(
             containerColor = PurchaseColors.colorAccent
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .clickable { }
+            .padding(
+                start = 16.dp,
+                end = 16.dp
+            )
+            .clickable {
+            }
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Image icon placeholder
-            if (settings.isImage) {
-                Text(
-                    text = "🖼️",
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
+        ConstraintLayout {
+            val (
+                referenceIconPhoto,
+                referenceTextTitle,
+                referenceIconCheck
+            ) = createRefs()
+
+            Box(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .constrainAs(referenceIconPhoto) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
+            ) {
+                if (purchaseSetting.isImage) {
+                    Text(
+                        text = "🖼️",
+                        fontSize = 24.sp,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
 
-            // Purchase text
             Text(
-                text = "Test Purchase Item",
+                text = item.text,
                 fontSize = 18.sp,
-                color = Color.White,
-                modifier = Modifier.weight(1f)
+                style = textStyle1(),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .constrainAs(referenceTextTitle) {
+                        start.linkTo(referenceIconPhoto.end)
+                        end.linkTo(referenceIconCheck.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        width = Dimension.fillToConstraints
+                    }
             )
 
-            // Checkbox
-            Checkbox(
-                checked = false,
-                onCheckedChange = {},
-                colors = CheckboxDefaults.colors(
-                    checkedColor = PurchaseColors.gr,
-                    uncheckedColor = PurchaseColors.gr,
-                    checkmarkColor = Color.Black
+            Box(
+                modifier = Modifier
+                    .clickable {
+                    }
+                    .constrainAs(referenceIconCheck) {
+                        start.linkTo(referenceTextTitle.end)
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
+            ) {
+                Checkbox(
+                    checked = item.isChecked,
+                    onCheckedChange = {
+                    },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = PurchaseColors.gr,
+                        uncheckedColor = PurchaseColors.gr,
+                        checkmarkColor = Color.Black
+                    )
                 )
-            )
+            }
         }
     }
 }
@@ -206,26 +303,28 @@ private fun ShapeTypeRow(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
             .selectable(
                 selected = shapeType == settings.shapeType,
                 onClick = { viewModel.onShapeTypeChanged(shapeType) }
             )
             .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         RadioButton(
             selected = shapeType == settings.shapeType,
             onClick = { viewModel.onShapeTypeChanged(shapeType) },
-            colors = RadioButtonDefaults.colors(
+            colors = RadioButtonDefaults.colors().copy(
                 selectedColor = PurchaseColors.gr,
-                unselectedColor = PurchaseColors.gr
+                unselectedColor = PurchaseColors.gr,
+                disabledSelectedColor = Color.Black
             )
         )
         Text(
+            textAlign = TextAlign.Center,
             text = shapeType.toString(),
             fontSize = 18.sp,
-            color = Color.White
+            style = textStyle1()
         )
     }
 }
@@ -249,15 +348,17 @@ private fun SizeTypeRow(
         RadioButton(
             selected = sizeType == settings.sizeType,
             onClick = { viewModel.onSizeTypeChanged(sizeType) },
-            colors = RadioButtonDefaults.colors(
+            colors = RadioButtonDefaults.colors().copy(
                 selectedColor = PurchaseColors.gr,
-                unselectedColor = PurchaseColors.gr
+                unselectedColor = PurchaseColors.gr,
+                disabledSelectedColor = Color.Black,
+                disabledUnselectedColor = Color.Black
             )
         )
         Text(
             text = sizeType.toString(),
             fontSize = 18.sp,
-            color = Color.White
+            style = textStyle1()
         )
     }
 }
@@ -283,13 +384,15 @@ private fun AllCornerSlider(
                 activeTrackColor = PurchaseColors.gr
             )
         )
-        Box(modifier = Modifier.width(45.dp)) {
+        Box {
             Text(
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(45.dp)
+                    .align(Alignment.Center),
                 text = value.toInt().toString(),
                 fontSize = 18.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                style = textStyle1()
             )
         }
     }
@@ -337,13 +440,15 @@ private fun SliderWithValue(
                 activeTrackColor = PurchaseColors.gr
             )
         )
-        Box(modifier = Modifier.width(45.dp)) {
+        Box {
             Text(
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(45.dp)
+                    .align(Alignment.Center),
                 text = value.toInt().toString(),
                 fontSize = 18.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                style = textStyle1()
             )
         }
     }
@@ -376,7 +481,7 @@ private fun SymmetryCheckbox(
         Text(
             text = "Symmetry",
             fontSize = 18.sp,
-            color = Color.White
+            style = textStyle1()
         )
     }
 }
@@ -408,7 +513,7 @@ private fun ShowImageCheckbox(
         Text(
             text = "Show image",
             fontSize = 18.sp,
-            color = Color.White
+            style = textStyle1()
         )
     }
 }

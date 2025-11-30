@@ -26,6 +26,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Visibility
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.presentation.mvvm.purchase.list.PurchaseListViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -295,7 +299,6 @@ private fun SortIndicator(
     Text(
         text = if (sortByChecked) "Sorted: Unchecked First" else "Sorted: Default",
         color = PurchaseListColors.gr,
-        fontSize = 14.sp,
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onSortClick() }
@@ -311,113 +314,189 @@ private fun PurchaseItem(
     viewModel: PurchaseListViewModel,
     onItemClick: () -> Unit
 ) {
+    val purchaseSetting by viewModel.flowPurchaseSetting.collectAsState()
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = PurchaseListColors.colorAccent
         ),
+        // shape = purchaseSetting.toShape(), // TODO: Add shape support when needed
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(
+                start = 16.dp,
+                end = 16.dp
+            )
             .combinedClickable(
                 onClick = onItemClick,
-                onLongClick = { /* TODO: Edit or other action */ }
+                onLongClick = { /* TODO: Long press action */ }
             )
     ) {
-        Row(
+        ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(8.dp)
         ) {
-            // Purchase details
-            Column(
+            val (
+                referenceTextTitle,
+                referenceTextDescription,
+                referenceIconCheck,
+                referenceChipCategory,
+            ) = createRefs()
+            createVerticalChain(referenceTextTitle, referenceTextDescription, referenceChipCategory, chainStyle = ChainStyle.Packed)
+
+            Text(
+                text = purchase.text,
+                fontSize = 18.sp,
+                style = textStyle1(),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .weight(1f)
                     .padding(horizontal = 8.dp)
-            ) {
-                Text(
-                    text = purchase.text,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                    .constrainAs(referenceTextTitle) {
+                        start.linkTo(parent.start)
+                        end.linkTo(referenceIconCheck.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(referenceTextDescription.top)
+                        width = Dimension.fillToConstraints
+                    }
+            )
 
-                if (purchase.count.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = purchase.count,
-                        fontSize = 14.sp,
-                        color = Color.White.copy(alpha = 0.6f)
+            Text(
+                text = purchase.count,
+                fontSize = 14.sp,
+                style = textStyle2(),
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .constrainAs(referenceTextDescription) {
+                        start.linkTo(parent.start)
+                        end.linkTo(referenceIconCheck.start)
+                        top.linkTo(referenceTextTitle.bottom)
+                        bottom.linkTo(referenceChipCategory.top)
+                        width = Dimension.fillToConstraints
+                        visibility = if (purchase.count.isNotEmpty()) Visibility.Visible else Visibility.Gone
+                    }
+            )
+
+            FlowRow(
+                modifier = Modifier
+                    .padding(
+                        start = 8.dp,
+                        end = 8.dp
                     )
-                }
-
-                // Category and photo chips
-                Row(
-                    modifier = Modifier.padding(top = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    // Category chip
-                    purchase.purchaseCategoryModel?.let { category ->
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = PurchaseListColors.gr.copy(alpha = 0.1f),
-                                    shape = CircleShape
-                                )
-                                .height(20.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = category.name,
-                                fontSize = 12.sp,
-                                color = PurchaseListColors.gr,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                            )
-                        }
-                    }
-
-                    // Photo indicator
-                    if (purchase.listImage.isNotEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = PurchaseListColors.gr.copy(alpha = 0.1f),
-                                    shape = CircleShape
-                                )
-                                .height(20.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "📷",
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(horizontal = 6.dp)
-                            )
-                        }
-                    }
-                }
+                    .constrainAs(referenceChipCategory) {
+                        start.linkTo(parent.start)
+                        end.linkTo(referenceIconCheck.start)
+                        top.linkTo(referenceTextDescription.bottom)
+                        bottom.linkTo(parent.bottom)
+                        width = Dimension.wrapContent
+                        horizontalBias = 0f
+                    },
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CategoryChip(item = purchase)
+                PhotoChip(item = purchase)
             }
 
-            // Checkbox
-            Checkbox(
-                checked = purchase.isChecked,
-                onCheckedChange = { viewModel.onChecked(purchase) },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = PurchaseListColors.gr,
-                    uncheckedColor = PurchaseListColors.gr,
-                    checkmarkColor = Color.Black
+            Box(
+                modifier = Modifier
+                    .clickable {
+                        viewModel.onChecked(purchase)
+                    }
+                    .constrainAs(referenceIconCheck) {
+                        start.linkTo(referenceTextTitle.end)
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
+            ) {
+                Checkbox(
+                    checked = purchase.isChecked,
+                    onCheckedChange = {
+                        viewModel.onChecked(purchase)
+                    },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = PurchaseListColors.gr,
+                        uncheckedColor = PurchaseListColors.gr,
+                        checkmarkColor = Color.Black
+                    )
                 )
-            )
+            }
         }
     }
 }
 
 @Composable
+private fun PhotoChip(item: PurchaseModel) {
+    if (item.listImage.isEmpty()) return
+    Box(
+        modifier = Modifier
+            .padding(top = 6.dp)
+            .background(
+                color = PurchaseListColors.gr.copy(alpha = 0.1f),
+                shape = CircleShape
+            )
+            .height(20.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "📷",
+            fontSize = 12.sp,
+            color = PurchaseListColors.gr,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+        )
+    }
+}
+
+@Composable
+private fun CategoryChip(item: PurchaseModel) {
+    if (item.purchaseCategoryModel == null) return
+    Box(
+        modifier = Modifier
+            .padding(top = 6.dp)
+            .background(
+                color = PurchaseListColors.gr.copy(alpha = 0.1f),
+                shape = CircleShape
+            )
+            .height(20.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = item.purchaseCategoryModel?.name ?: "Uncategorized",
+            fontSize = 12.sp,
+            style = TextStyle(
+                color = PurchaseListColors.gr,
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+        )
+    }
+}
+
+// Text style functions matching original
+@Composable
+private fun textStyle1() = TextStyle(
+    color = Color.White,
+    fontWeight = FontWeight.Bold
+)
+
+@Composable
+private fun textStyle2() = TextStyle(
+    color = Color.White.copy(alpha = 0.6f)
+)
+
+@Composable
 private fun CreatePurchaseInput(viewModel: PurchaseListViewModel) {
     val newPurchaseName by viewModel.flowNewNamePurchase.collectAsState()
+
+    val label = @Composable {
+        Text(
+            modifier = Modifier.alpha(0.60f),
+            text = "Search or create purchase",
+            color = Color.White.copy(alpha = 0.87f)
+        )
+    }
 
     TextField(
         value = newPurchaseName,
@@ -425,43 +504,57 @@ private fun CreatePurchaseInput(viewModel: PurchaseListViewModel) {
         modifier = Modifier
             .fillMaxWidth()
             .imePadding(),
+        label = if (newPurchaseName.isNotEmpty()) label else null,
         placeholder = {
             Text(
-                text = "Add new purchase...",
-                color = Color.White.copy(alpha = 0.6f)
+                modifier = Modifier.alpha(0.60f),
+                text = "Name purchase",
+                color = Color.White
             )
         },
         textStyle = TextStyle(
-            fontSize = 16.sp,
-            color = Color.White
+            fontSize = MaterialTheme.typography.titleMedium.fontSize
         ),
         singleLine = true,
         trailingIcon = {
             Row {
-                if (newPurchaseName.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.onNewNamePurchaseChanged("") }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Clear",
-                            tint = Color.White
-                        )
+                IconButton(
+                    onClick = {
+                        if (newPurchaseName.isEmpty()) return@IconButton
+                        viewModel.onNewNamePurchaseChanged("")
                     }
-                    IconButton(onClick = { viewModel.insertAdd(newPurchaseName) }) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = "Add",
-                            tint = Color.White
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Icon",
+                        tint = Color.White,
+                        modifier = Modifier.alpha(
+                            if (newPurchaseName.isEmpty()) 0.toFloat() else 1.toFloat()
                         )
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        if (newPurchaseName.isEmpty()) return@IconButton
+                        viewModel.insertAdd(newPurchaseName)
                     }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Done Icon",
+                        tint = Color.White,
+                        modifier = Modifier.alpha(
+                            if (newPurchaseName.isEmpty()) 0.toFloat() else 1.toFloat()
+                        )
+                    )
                 }
             }
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
             onDone = {
-                if (newPurchaseName.isNotEmpty()) {
-                    viewModel.insertAdd(newPurchaseName)
-                }
+                if (newPurchaseName.isEmpty()) return@KeyboardActions
+                viewModel.insertAdd(newPurchaseName)
             }
         ),
         colors = TextFieldDefaults.colors(
@@ -469,10 +562,9 @@ private fun CreatePurchaseInput(viewModel: PurchaseListViewModel) {
             unfocusedTextColor = Color.White,
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
-            cursorColor = Color.White.copy(alpha = 0.6f),
+            cursorColor = Color.White.copy(alpha = 0.60f),
             focusedIndicatorColor = PurchaseListColors.gr.copy(alpha = 0.87f),
-            unfocusedIndicatorColor = Color.White.copy(alpha = 0.3f),
-            focusedLabelColor = PurchaseListColors.gr
+            focusedLabelColor = PurchaseListColors.gr.copy(alpha = 0.87f)
         )
     )
 }

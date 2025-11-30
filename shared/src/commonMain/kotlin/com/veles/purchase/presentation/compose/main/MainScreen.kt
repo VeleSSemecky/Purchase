@@ -103,7 +103,8 @@ fun MainScreen(navController: NavHostController) {
                         navController.navigate(Route.Purchase.List(collectionId))
                     },
                     onNavigateToAddCollection = {
-                        // TODO: Navigate to EditCollectionScreen when migrated
+                        // Navigate to EditCollectionScreen (Phase 2.8!)
+                        navController.navigate(Route.Collection.Edit())
                     }
                 )
             }

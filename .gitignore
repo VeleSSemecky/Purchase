@@ -40,3 +40,6 @@ gradle-app.setting
 
 # Application confidential data
 Secret.kt
+
+# Genereted kotlin code
+.kotlin

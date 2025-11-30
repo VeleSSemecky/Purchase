@@ -11,10 +11,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.veles.purchase.platform.biometric.BiometricAuthenticator
 import com.veles.purchase.presentation.compose.main.MainScreen
+import com.veles.purchase.presentation.compose.purchase.biometric.BiometricScreen
+import com.veles.purchase.presentation.compose.purchase.category.CategoryScreen
+import com.veles.purchase.presentation.compose.purchase.collection.CollectionEditScreen
+import com.veles.purchase.presentation.compose.purchase.collection.CollectionListScreen
 import com.veles.purchase.presentation.compose.purchase.edit.PurchaseEditScreen
+import com.veles.purchase.presentation.compose.purchase.history.HistoryScreen
 import com.veles.purchase.presentation.compose.purchase.list.PurchaseListScreen
 import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchaseScreen
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 /**
  * Main navigation graph for the application
@@ -24,7 +32,8 @@ import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchase
 @Composable
 fun AppNavigation(
     navController: NavHostController = rememberNavController(),
-    startDestination: Route = Route.Main
+    startDestination: Route = Route.Main,
+    activity: Any? = null
 ) {
     NavHost(
         navController = navController,
@@ -33,6 +42,54 @@ fun AppNavigation(
         // Main screen
         composable<Route.Main> {
             MainScreen(navController = navController)
+        }
+
+        // Collection navigation
+        composable<Route.Collection.List> {
+            CollectionListScreen(
+                onNavigateToCollection = { collectionId ->
+                    navController.navigate(Route.Purchase.List(collectionId))
+                },
+                onNavigateToAddCollection = {
+                    navController.navigate(Route.Collection.Edit())
+                }
+            )
+        }
+
+        composable<Route.Collection.Edit> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.Collection.Edit>()
+            CollectionEditScreen(
+                collectionId = args.collectionId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToCategory = { collectionId ->
+                    navController.navigate(Route.Collection.Category(collectionId))
+                },
+                onNavigateToHistory = { collectionId ->
+                    navController.navigate(Route.Collection.History(collectionId))
+                }
+            )
+        }
+
+        composable<Route.Collection.Category> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.Collection.Category>()
+            CategoryScreen(
+                collectionId = args.collectionId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<Route.Collection.History> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.Collection.History>()
+            HistoryScreen(
+                collectionId = args.collectionId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         // Purchase navigation
@@ -44,7 +101,7 @@ fun AppNavigation(
                     navController.popBackStack()
                 },
                 onNavigateToSettings = {
-                    navController.navigate(Route.Settings.Purchase)
+                    navController.navigate(Route.Collection.Edit(args.collectionId))
                 },
                 onNavigateToPurchaseDetail = { purchaseId ->
                     // Navigate to edit screen to edit the purchase
@@ -98,7 +155,20 @@ fun AppNavigation(
         }
 
         composable<Route.Auth.Biometric> {
-            PlaceholderScreen("Biometric Auth - Coming Soon")
+            // Create BiometricAuthenticator from activity (Android only)
+            if (activity != null) {
+                val authenticator: BiometricAuthenticator = koinInject(
+                    parameters = { parametersOf(activity) }
+                )
+                BiometricScreen(
+                    biometricAuthenticator = authenticator,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
+            } else {
+                PlaceholderScreen("Biometric Auth requires activity context")
+            }
         }
     }
 }

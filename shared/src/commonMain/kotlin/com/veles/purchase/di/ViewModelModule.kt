@@ -1,7 +1,11 @@
 package com.veles.purchase.di
 
+import com.veles.purchase.presentation.mvvm.purchase.biometric.BiometricViewModel
+import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
+import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionEditViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseViewModel
 import com.veles.purchase.presentation.mvvm.purchase.edit.PurchaseEditViewModel
+import com.veles.purchase.presentation.mvvm.purchase.history.HistoryViewModel
 import com.veles.purchase.presentation.mvvm.purchase.list.PurchaseListViewModel
 import com.veles.purchase.presentation.mvvm.purchase.setting.SettingsPurchaseViewModel
 import org.koin.core.module.dsl.viewModel
@@ -38,6 +42,14 @@ val viewModelModule = module {
         )
     }
 
+    // Collection Edit ViewModel (requires collectionId parameter)
+    viewModel { parameters ->
+        CollectionEditViewModel(
+            collectionId = parameters.get(),
+            collectionRepository = get()
+        )
+    }
+
     // Purchase List ViewModel (requires collectionId parameter)
     viewModel { parameters ->
         PurchaseListViewModel(
@@ -58,8 +70,30 @@ val viewModelModule = module {
         )
     }
 
+    // Category ViewModel (requires collectionId parameter)
+    viewModel { parameters ->
+        CategoryViewModel(
+            collectionId = parameters.get(),
+            collectionRepository = get()
+        )
+    }
+
+    // History ViewModel (requires collectionId parameter)
+    viewModel { parameters ->
+        HistoryViewModel(
+            collectionId = parameters.get(),
+            historyRepository = get()
+        )
+    }
+
+    // Biometric ViewModel (requires BiometricAuthenticator parameter from activity)
+    viewModel { parameters ->
+        BiometricViewModel(
+            biometricAuthenticator = parameters.get()
+        )
+    }
+
     // TODO Phase 2.2+: Add more ViewModels as they are migrated
-    // viewModel { BiometricComposeViewModel(get(), get()) }
     // etc.
 }
 

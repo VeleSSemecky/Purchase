@@ -17,12 +17,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
+import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.mvvm.purchase.edit.PurchaseEditViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -218,17 +220,21 @@ private fun TitleField(
         colors = purchaseEditTextFieldColors(),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(
+                start = 20.dp,
+                end = 20.dp
+            ),
         isError = value.isBlank(),
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {
+            onValueChange(it)
+        },
         label = {
             Text(
                 text = "Title",
                 color = Color.White
             )
-        },
-        singleLine = true
+        }
     )
 }
 
@@ -241,30 +247,43 @@ private fun PriceField(
         colors = purchaseEditTextFieldColors(),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(
+                start = 20.dp,
+                end = 20.dp
+            ),
         value = value,
-        onValueChange = { newValue ->
-            // Only allow numbers and one decimal point with max 2 decimals
-            if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d{0,2}$"))) {
-                onValueChange(newValue)
+        maxLines = 1,
+        trailingIcon = {
+            Text(
+                modifier = Modifier.padding(
+                    top = 10.dp,
+                    bottom = 10.dp,
+                    start = 20.dp,
+                    end = 20.dp
+                ),
+                text = "$",  // Default currency for Phase 2.7
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp,
+                color = Color.White
+            )
+        },
+        onValueChange = { it ->
+            if (it.count { it.toString() == "." } > 1 ||
+                it.substringAfter(".", emptyString()).count() > 2
+            ) {
+                return@OutlinedTextField
+            }
+            if (it.isEmpty() || it.matches("[0123456789.]+".toRegex())) {
+                onValueChange(it)
             }
         },
         label = {
             Text(
-                text = "Price",
+                "Price",
                 color = Color.White
             )
         },
-        trailingIcon = {
-            Text(
-                text = "$", // Default currency for Phase 2.7
-                modifier = Modifier.padding(horizontal = 16.dp),
-                color = Color.White,
-                fontSize = 16.sp
-            )
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        singleLine = true
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
 
@@ -277,16 +296,13 @@ private fun CommentField(
         colors = purchaseEditTextFieldColors(),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(
+                start = 20.dp,
+                end = 20.dp
+            ),
         value = value,
-        onValueChange = onValueChange,
-        label = {
-            Text(
-                text = "Comment",
-                color = Color.White
-            )
-        },
-        maxLines = 3
+        onValueChange = { onValueChange(it) },
+        label = { Text("Comment", color = Color.White) }
     )
 }
 
@@ -297,28 +313,32 @@ private fun CheckedSwitch(
 ) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 20.dp)
+            .padding(PaddingValues(horizontal = 20.dp))
             .border(
                 width = 1.dp,
-                color = Color.White.copy(alpha = 0.38f),
+                Color.White.copy(alpha = 0.38f),
                 shape = OutlinedTextFieldDefaults.shape
             )
-            .padding(horizontal = 16.dp)
+            .padding(PaddingValues(horizontal = 16.dp))
             .defaultMinSize(
                 minWidth = TextFieldDefaults.MinWidth,
                 minHeight = TextFieldDefaults.MinHeight
             )
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = Modifier.weight(1f),
             text = "Checked",
             color = Color.White
         )
         Switch(
+            modifier = Modifier,
             checked = checked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = { isChecked ->
+                onCheckedChange(isChecked)
+            }
         )
     }
 }

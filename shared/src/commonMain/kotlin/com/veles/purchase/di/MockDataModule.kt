@@ -1,6 +1,7 @@
 package com.veles.purchase.di
 
 import com.veles.purchase.domain.repository.collection.CollectionRepository
+import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import com.veles.purchase.domain.repository.setting.SettingRepository
 import com.veles.purchase.domain.repository.sku.SkuPhotoRepository
@@ -39,6 +40,11 @@ val mockDataModule = module {
     // Settings Repository
     single<SettingRepository> {
         MockDomainModule.provideSettingRepository()
+    }
+
+    // History Repository
+    single<HistoryRepository> {
+        MockDomainModule.provideHistoryRepository()
     }
 }
 

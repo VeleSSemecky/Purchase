@@ -18,7 +18,7 @@ import org.koin.compose.KoinContext
  * Usage (Android):
  * ```kotlin
  * setContent {
- *     App()
+ *     App(activity = this)
  * }
  * ```
  *
@@ -26,19 +26,20 @@ import org.koin.compose.KoinContext
  * ```swift
  * var body: some View {
  *     ComposeView {
- *         AppKt.App()
+ *         AppKt.App(activity: nil)
  *     }
  * }
  * ```
  */
 @Composable
-fun App() {
+fun App(activity: Any? = null) {
     // Ensure Koin context is available
     KoinContext {
         MaterialTheme {
             Surface {
                 AppNavigation(
-                    startDestination = Route.Main
+                    startDestination = Route.Main,
+                    activity = activity
                 )
             }
         }

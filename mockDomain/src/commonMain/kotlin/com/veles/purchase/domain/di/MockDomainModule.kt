@@ -2,6 +2,8 @@ package com.veles.purchase.domain.di
 
 import com.veles.purchase.domain.repository.collection.CollectionRepository
 import com.veles.purchase.domain.repository.collection.MockCollectionRepository
+import com.veles.purchase.domain.repository.history.HistoryRepository
+import com.veles.purchase.domain.repository.history.MockHistoryRepository
 import com.veles.purchase.domain.repository.purchase.MockPurchaseRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import com.veles.purchase.domain.repository.setting.MockSettingRepository
@@ -37,6 +39,10 @@ object MockDomainModule {
         MockSettingRepository()
     }
 
+    private val historyRepository: HistoryRepository by lazy {
+        MockHistoryRepository()
+    }
+
     fun provideCollectionRepository(): CollectionRepository = collectionRepository
 
     fun providePurchaseRepository(): PurchaseRepository = purchaseRepository
@@ -46,5 +52,7 @@ object MockDomainModule {
     fun provideSkuPhotoRepository(): SkuPhotoRepository = skuPhotoRepository
 
     fun provideSettingRepository(): SettingRepository = settingRepository
+
+    fun provideHistoryRepository(): HistoryRepository = historyRepository
 }
 

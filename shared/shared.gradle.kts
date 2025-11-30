@@ -54,6 +54,8 @@ kotlin {
                 implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
+                // ConstraintLayout Compose
+                implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0")
 
                 // Lifecycle ViewModel
                 implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
