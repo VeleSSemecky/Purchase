@@ -28,8 +28,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
@@ -263,39 +261,22 @@ private fun CategoryItem(
                 onClick = { onItemClicked(position, item) }
             )
     ) {
-        ConstraintLayout(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            val (
-                referenceTextTitle,
-                referenceIconDelete,
-            ) = createRefs()
-
             Text(
                 text = item.name,
                 fontSize = 18.sp,
                 style = textStyle1(),
                 modifier = Modifier
+                    .weight(1f)
                     .padding(horizontal = 8.dp)
-                    .constrainAs(referenceTextTitle) {
-                        start.linkTo(parent.start)
-                        end.linkTo(referenceIconDelete.start)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        width = Dimension.fillToConstraints
-                    }
             )
 
             IconButton(
-                modifier = Modifier
-                    .constrainAs(referenceIconDelete) {
-                        start.linkTo(referenceTextTitle.end)
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    },
                 onClick = { onRemoveCategory(item) }
             ) {
                 Icon(
@@ -361,7 +342,7 @@ private fun EditCategoryDialog(
     onTextUpdated: (Int, String) -> Unit,
     onDismissed: () -> Unit
 ) {
-    var categoryName by rememberSaveable(item.id) { mutableStateOf(item.name) }
+    var categoryName by remember(item.id) { mutableStateOf(item.name) }
 
     AlertDialog(
         onDismissRequest = onDismissed,

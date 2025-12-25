@@ -3,6 +3,7 @@ package com.example.shared.domain.usecase
 import com.example.shared.domain.model.purchase.PurchaseModel
 import com.example.shared.domain.model.purchase.generateId
 import com.example.shared.domain.repository.PurchaseRepository
+import com.veles.purchase.domain.util.TimeProvider
 import kotlinx.coroutines.flow.Flow
 
 class GetAllPurchasesUseCase(
@@ -27,7 +28,7 @@ class AddPurchaseUseCase(
             text = text,
             count = count,
             isChecked = false,
-            time = System.currentTimeMillis(),
+            time = TimeProvider.currentTimeMillis(),
             price = price,
             collectionId = collectionId
         )

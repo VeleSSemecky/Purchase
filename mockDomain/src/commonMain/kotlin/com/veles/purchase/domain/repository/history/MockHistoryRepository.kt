@@ -2,6 +2,7 @@ package com.veles.purchase.domain.repository.history
 
 import com.veles.purchase.domain.model.history.HistoryType
 import com.veles.purchase.domain.model.history.PurchaseHistoryModel
+import com.veles.purchase.domain.util.TimeProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -34,7 +35,7 @@ class MockHistoryRepository : HistoryRepository {
 
     @OptIn(ExperimentalUuidApi::class)
     private fun generateMockHistory(): List<PurchaseHistoryModel> {
-        val now = System.currentTimeMillis()
+        val now = TimeProvider.currentTimeMillis()
         val oneHour = 60 * 60 * 1000L
         val oneDay = 24 * oneHour
 

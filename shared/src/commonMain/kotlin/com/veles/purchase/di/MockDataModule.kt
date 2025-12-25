@@ -49,11 +49,14 @@ val mockDataModule = module {
 }
 
 /**
- * Initialize Koin with mock data module
+ * Initialize Koin with mock data module and ViewModels
  * Call this in your Application.onCreate() (Android) or app initialization (iOS)
  */
 fun initKoinMockData() = org.koin.core.context.startKoin {
-    modules(mockDataModule)
+    modules(
+        mockDataModule,
+        viewModelModule
+    )
 }
 
 

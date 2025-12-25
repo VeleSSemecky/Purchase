@@ -242,7 +242,7 @@ private fun HistoryTypeChip(historyType: HistoryType) {
 @OptIn(kotlin.time.ExperimentalTime::class)
 @Composable
 private fun TimeChip(timestamp: Long) {
-    val instant = Instant.fromEpochMilliseconds(timestamp)
+    val instant = kotlinx.datetime.Instant.fromEpochMilliseconds(timestamp)
     val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
     val timeText = "${localDateTime.hour.toString().padStart(2, '0')}:${localDateTime.minute.toString().padStart(2, '0')}"
 
@@ -268,7 +268,7 @@ private fun TimeChip(timestamp: Long) {
 @Suppress("DEPRECATION")
 @Composable
 private fun DateChip(timestamp: Long) {
-    val instant = Instant.fromEpochMilliseconds(timestamp)
+    val instant = kotlinx.datetime.Instant.fromEpochMilliseconds(timestamp)
     val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 
     val monthNames = listOf(

@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.compose.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,7 +25,12 @@ import androidx.navigation.toRoute
 import com.veles.purchase.presentation.compose.purchase.collection.CollectionListScreen
 import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchaseScreen
 import com.veles.purchase.presentation.navigation.Route
+import com.veles.purchase.shared.resources.Res
+import com.veles.purchase.shared.resources.ic_baseline_camera_alt_24
+import com.veles.purchase.shared.resources.ic_baseline_payment_24
+import com.veles.purchase.shared.resources.ic_baseline_settings_24
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 
 /**
  * Main Screen with Navigation Drawer
@@ -205,21 +211,21 @@ private fun DrawerMenuItems(
     // SKU List / History
     DrawerMenuItem(
         text = "History Pays",  // Original: R.string.history_pays
-        icon = "💳",  // Placeholder for ic_baseline_payment_24
+        iconResource = Res.drawable.ic_baseline_payment_24,
         onClick = onSkuListClick
     )
 
     // PIP (Picture in Picture / Camera)
     DrawerMenuItem(
         text = "PIP",  // Original: R.string.pip
-        icon = "📷",  // Placeholder for ic_baseline_camera_alt_24
+        iconResource = Res.drawable.ic_baseline_camera_alt_24,
         onClick = onPipClick
     )
 
     // Settings
     DrawerMenuItem(
         text = "Settings",  // Original: R.string.setting
-        icon = "⚙️",  // Placeholder for ic_baseline_settings_24
+        iconResource = Res.drawable.ic_baseline_settings_24,
         onClick = onSettingsClick
     )
 }
@@ -230,7 +236,7 @@ private fun DrawerMenuItems(
 @Composable
 private fun DrawerMenuItem(
     text: String,
-    icon: String,  // Using emoji for now, will be replaced with Material Icons
+    iconResource: org.jetbrains.compose.resources.DrawableResource,
     onClick: () -> Unit
 ) {
     Row(
@@ -240,9 +246,11 @@ private fun DrawerMenuItem(
             .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = icon,
-            fontSize = 24.sp
+        Image(
+            painter = painterResource(iconResource),
+            contentDescription = text,
+            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
+            modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(

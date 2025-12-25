@@ -154,6 +154,9 @@ fun AppNavigation(
                 },
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToStatistics = {
+                    navController.navigate(Route.Sku.Statistics)
                 }
             )
         }

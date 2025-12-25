@@ -179,10 +179,7 @@ private fun SkuStatisticsContent(
                 color = Color.White
             )
             Text(
-                text = String.format("%.2f %s",
-                    uiState.totalSum,
-                    uiState.statistics.firstOrNull()?.currencyCode ?: "UAH"
-                ),
+                text = "${uiState.totalSum} ${uiState.statistics.firstOrNull()?.currencyCode ?: "UAH"}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Colors.gr

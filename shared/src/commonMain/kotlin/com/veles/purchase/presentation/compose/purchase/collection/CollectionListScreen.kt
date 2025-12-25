@@ -29,6 +29,9 @@ import com.veles.purchase.presentation.compose.SwipeToDismiss
 import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseViewModel
+import com.veles.purchase.shared.resources.Res
+import com.veles.purchase.shared.resources.ic_purchase_collections
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -225,11 +228,11 @@ private fun ItemPurchaseCollection(
                     )
             )
 
-            // Icon placeholder (will be replaced with actual icon resource later)
-            Text(
-                text = "📋",
-                fontSize = 24.sp,
-                modifier = Modifier.padding(8.dp)
+            Icon(
+                modifier = Modifier.padding(8.dp),
+                painter = painterResource(Res.drawable.ic_purchase_collections),
+                contentDescription = "Purchase Collections Icon",
+                tint = Color.White
             )
         }
     }

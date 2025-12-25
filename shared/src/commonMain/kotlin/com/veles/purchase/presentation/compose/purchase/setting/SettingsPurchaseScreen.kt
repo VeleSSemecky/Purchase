@@ -18,8 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.setting.PurchaseSetting
 import com.veles.purchase.domain.model.setting.ShapeType
@@ -131,63 +129,35 @@ private fun ToolBar(
     viewModel: SettingsPurchaseViewModel
 ) {
     TopAppBar(
-        title = {
-            ConstraintLayout(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                val (
-                    referenceIconBack,
-                    referenceTextTitle,
-                    referenceIconSave
-                ) = createRefs()
-
-                IconButton(
-                    onClick = onNavigateBack,
-                    modifier = Modifier
-                        .constrainAs(referenceIconBack) {
-                            start.linkTo(parent.start)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-
-                Text(
-                    text = "Setting Purchase",
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
-                    color = Color.White,
-                    modifier = Modifier
-                        .constrainAs(referenceTextTitle) {
-                            start.linkTo(referenceIconBack.end, margin = 8.dp)
-                            end.linkTo(referenceIconSave.start, margin = 8.dp)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }
+        navigationIcon = {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White
                 )
-
-                IconButton(
-                    onClick = {
-                        viewModel.onSaveSettingsClicked()
-                    },
-                    modifier = Modifier
-                        .constrainAs(referenceIconSave) {
-                            end.linkTo(parent.end)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = "Save",
-                        tint = Color.White
-                    )
+            }
+        },
+        title = {
+            Text(
+                text = "Setting Purchase",
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        actions = {
+            IconButton(
+                onClick = {
+                    viewModel.onSaveSettingsClicked()
                 }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Save",
+                    tint = Color.White
+                )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(
@@ -217,68 +187,45 @@ private fun PreviewCard(
             .clickable {
             }
     ) {
-        ConstraintLayout {
-            val (
-                referenceIconPhoto,
-                referenceTextTitle,
-                referenceIconCheck
-            ) = createRefs()
-
-            Box(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .constrainAs(referenceIconPhoto) {
-                        start.linkTo(parent.start)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    }
-            ) {
-                if (purchaseSetting.isImage) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icon photo
+            if (purchaseSetting.isImage) {
+                Box(
+                    modifier = Modifier.padding(end = 16.dp)
+                ) {
                     Text(
                         text = "🖼️",
-                        fontSize = 24.sp,
-                        modifier = Modifier.align(Alignment.Center)
+                        fontSize = 24.sp
                     )
                 }
             }
 
+            // Title text
             Text(
                 text = item.text,
                 fontSize = 18.sp,
                 style = textStyle1(),
                 modifier = Modifier
-                    .padding(8.dp)
-                    .constrainAs(referenceTextTitle) {
-                        start.linkTo(referenceIconPhoto.end)
-                        end.linkTo(referenceIconCheck.start)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        width = Dimension.fillToConstraints
-                    }
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
             )
 
-            Box(
-                modifier = Modifier
-                    .clickable {
-                    }
-                    .constrainAs(referenceIconCheck) {
-                        start.linkTo(referenceTextTitle.end)
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    }
-            ) {
-                Checkbox(
-                    checked = item.isChecked,
-                    onCheckedChange = {
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Colors.gr,
-                        uncheckedColor = Colors.gr,
-                        checkmarkColor = Color.Black
-                    )
+            // Checkbox
+            Checkbox(
+                checked = item.isChecked,
+                onCheckedChange = {
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Colors.gr,
+                    uncheckedColor = Colors.gr,
+                    checkmarkColor = Color.Black
                 )
-            }
+            )
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.shared.domain.model.purchase
 
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
+import com.veles.purchase.domain.util.TimeProvider
 
 data class PurchaseModel(
     val id: String,
@@ -16,7 +15,6 @@ data class PurchaseModel(
 /**
  * Extension function to generate unique ID for new purchases
  */
-@OptIn(ExperimentalTime::class)
 fun generateId(): String {
-    return "${Clock.System.now().epochSeconds}_${(0..9999).random()}"
+    return "${TimeProvider.currentTimeMillis()}_${(0..9999).random()}"
 }

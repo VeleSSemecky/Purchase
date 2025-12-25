@@ -1,5 +1,6 @@
 package com.veles.purchase.domain.model.history
 
+import com.veles.purchase.domain.util.TimeProvider
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -42,7 +43,7 @@ data class PurchaseHistoryModel(
             purchaseName: String,
             historyType: HistoryType,
             isChecked: Boolean = false,
-            timestamp: Long = System.currentTimeMillis(),
+            timestamp: Long = TimeProvider.currentTimeMillis(),
             collectionId: String = ""
         ) = PurchaseHistoryModel(
             id = Uuid.random().toString(),

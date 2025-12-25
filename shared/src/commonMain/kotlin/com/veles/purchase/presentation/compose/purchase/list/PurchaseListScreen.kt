@@ -30,10 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ChainStyle
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.Visibility
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.DismissDirection
@@ -46,6 +42,10 @@ import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.compose.textStyle2
 import com.veles.purchase.presentation.mvvm.purchase.list.PurchaseListViewModel
+import com.veles.purchase.shared.resources.Res
+import com.veles.purchase.shared.resources.image
+import com.veles.purchase.shared.resources.no_image
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -274,96 +274,77 @@ private fun PurchaseItem(
                 onLongClick = { /* TODO: Long press action */ }
             )
     ) {
-        ConstraintLayout(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            val (
-                referenceTextTitle,
-                referenceTextDescription,
-                referenceIconCheck,
-                referenceChipCategory,
-            ) = createRefs()
-            createVerticalChain(referenceTextTitle, referenceTextDescription, referenceChipCategory, chainStyle = ChainStyle.Packed)
-
-            Text(
-                text = purchase.text,
-                fontSize = 18.sp,
-                style = textStyle1(),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .constrainAs(referenceTextTitle) {
-                        start.linkTo(parent.start)
-                        end.linkTo(referenceIconCheck.start)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(referenceTextDescription.top)
-                        width = Dimension.fillToConstraints
-                    }
-            )
-
-            Text(
-                text = purchase.count,
-                fontSize = 14.sp,
-                style = textStyle2(),
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .constrainAs(referenceTextDescription) {
-                        start.linkTo(parent.start)
-                        end.linkTo(referenceIconCheck.start)
-                        top.linkTo(referenceTextTitle.bottom)
-                        bottom.linkTo(referenceChipCategory.top)
-                        width = Dimension.fillToConstraints
-                        visibility = if (purchase.count.isNotEmpty()) Visibility.Visible else Visibility.Gone
-                    }
-            )
-
-            FlowRow(
-                modifier = Modifier
-                    .padding(
-                        start = 8.dp,
-                        end = 8.dp
-                    )
-                    .constrainAs(referenceChipCategory) {
-                        start.linkTo(parent.start)
-                        end.linkTo(referenceIconCheck.start)
-                        top.linkTo(referenceTextDescription.bottom)
-                        bottom.linkTo(parent.bottom)
-                        width = Dimension.wrapContent
-                        horizontalBias = 0f
-                    },
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                CategoryChip(item = purchase)
-                PhotoChip(item = purchase)
-            }
-
-            Box(
-                modifier = Modifier
-                    .clickable {
-                        viewModel.onChecked(purchase)
-                    }
-                    .constrainAs(referenceIconCheck) {
-                        start.linkTo(referenceTextTitle.end)
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    }
-            ) {
-                Checkbox(
-                    checked = purchase.isChecked,
-                    onCheckedChange = {
-                        viewModel.onChecked(purchase)
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Colors.gr,
-                        uncheckedColor = Colors.gr,
-                        checkmarkColor = Color.Black
-                    )
+            // Image indicator icon
+            if (purchaseSetting.isImage) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(end = 8.dp),
+                    painter = painterResource(
+                        if (purchase.listImage.isNotEmpty()) {
+                            Res.drawable.image
+                        } else {
+                            Res.drawable.no_image
+                        }
+                    ),
+                    contentDescription = "Has photos",
+                    tint = Colors.gr
                 )
             }
+
+            // Content column (title, description, chips)
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = purchase.text,
+                    fontSize = 18.sp,
+                    style = textStyle1(),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+
+                if (purchase.count.isNotEmpty()) {
+                    Text(
+                        text = purchase.count,
+                        fontSize = 14.sp,
+                        style = textStyle2(),
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                }
+
+                FlowRow(
+                    modifier = Modifier.padding(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = 4.dp
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CategoryChip(item = purchase)
+                    PhotoChip(item = purchase)
+                }
+            }
+
+            // Checkbox
+            Checkbox(
+                checked = purchase.isChecked,
+                onCheckedChange = {
+                    viewModel.onChecked(purchase)
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Colors.gr,
+                    uncheckedColor = Colors.gr,
+                    checkmarkColor = Color.Black
+                )
+            )
         }
     }
 }
@@ -381,11 +362,19 @@ private fun PhotoChip(item: PurchaseModel) {
             .height(20.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "📷",
-            fontSize = 12.sp,
-            color = Colors.gr,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+        Icon(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 2.dp)
+                .align(Alignment.Center),
+            painter = painterResource(
+                if (item.listImage.isNotEmpty()) {
+                    Res.drawable.image
+                } else {
+                    Res.drawable.no_image
+                }
+            ),
+            contentDescription = "Has photos",
+            tint = Colors.gr
         )
     }
 }

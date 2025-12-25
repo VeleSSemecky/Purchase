@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -26,6 +27,9 @@ import com.veles.purchase.domain.model.SkuModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
+import com.veles.purchase.shared.resources.Res
+import com.veles.purchase.shared.resources.ic_baseline_insert_chart_outlined_24
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -51,6 +55,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SkuListScreen(
     onNavigateToSkuEdit: (String?) -> Unit = {},
     onNavigateBack: () -> Unit = {},
+    onNavigateToStatistics: () -> Unit = {},
     viewModel: SkuListViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -58,7 +63,8 @@ fun SkuListScreen(
     Scaffold(
         topBar = {
             SkuListToolbar(
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
+                onNavigateToStatistics = onNavigateToStatistics
             )
         },
         floatingActionButton = {
@@ -89,9 +95,19 @@ fun SkuListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SkuListToolbar(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToStatistics: () -> Unit
 ) {
     TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White
+                )
+            }
+        },
         title = {
             Text(
                 text = "Shopping",
@@ -101,6 +117,15 @@ private fun SkuListToolbar(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+        },
+        actions = {
+            IconButton(onClick = onNavigateToStatistics) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_baseline_insert_chart_outlined_24),
+                    contentDescription = "Statistics",
+                    tint = Color.White
+                )
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Colors.colorPrimary

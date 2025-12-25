@@ -26,8 +26,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.DismissDirection
@@ -37,6 +35,10 @@ import com.veles.purchase.presentation.compose.SwipeToDismiss
 import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterViewModel
+import com.veles.purchase.shared.resources.Res
+import com.veles.purchase.shared.resources.image
+import com.veles.purchase.shared.resources.no_image
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -248,28 +250,28 @@ private fun PurchaseItem(
             .padding(horizontal = 16.dp)
             .clickable(onClick = onClick)
     ) {
-        ConstraintLayout(
-            modifier = Modifier.fillMaxWidth()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            val (iconPhoto, textTitle, checkbox) = createRefs()
-
-            // Photo indicator
+            // Photo indicator icon
             if (setting.isImage) {
-                Box(
+                Icon(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .constrainAs(iconPhoto) {
-                            start.linkTo(parent.start)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
+                        .size(24.dp)
+                        .padding(start = 16.dp),
+                    painter = painterResource(
+                        if (purchase.listImage.isNotEmpty()) {
+                            Res.drawable.image
+                        } else {
+                            Res.drawable.no_image
                         }
-                ) {
-                    Text(
-                        text = if (purchase.listImage.isNotEmpty()) "📷" else "  ",
-                        fontSize = 24.sp,
-                        color = Colors.gr
-                    )
-                }
+                    ),
+                    contentDescription = "Has photos",
+                    tint = Colors.gr
+                )
             }
 
             // Purchase name
@@ -278,14 +280,8 @@ private fun PurchaseItem(
                 fontSize = 18.sp,
                 style = textStyle1(),
                 modifier = Modifier
-                    .padding(8.dp)
-                    .constrainAs(textTitle) {
-                        start.linkTo(if (setting.isImage) iconPhoto.end else parent.start, margin = if (setting.isImage) 0.dp else 16.dp)
-                        end.linkTo(checkbox.start)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        width = Dimension.fillToConstraints
-                    }
+                    .weight(1f)
+                    .padding(horizontal = if (setting.isImage) 8.dp else 16.dp)
             )
 
             // Checkbox
@@ -296,13 +292,7 @@ private fun PurchaseItem(
                     checkedColor = Colors.gr,
                     uncheckedColor = Colors.gr,
                     checkmarkColor = Color.Black
-                ),
-                modifier = Modifier.constrainAs(checkbox) {
-                    start.linkTo(textTitle.end)
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
+                )
             )
         }
     }

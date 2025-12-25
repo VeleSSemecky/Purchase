@@ -10,11 +10,11 @@ import com.example.shared.data.local.migration.DatabaseMigrations
 expect fun getDatabaseBuilder(): RoomDatabase.Builder<PurchaseDatabase>
 
 /**
- * Common function to get database instance with migrations
+ * Common function to get database instance
+ * Note: Migrations are handled in platform-specific implementations
  */
 fun getDatabase(): PurchaseDatabase {
     return getDatabaseBuilder()
-        .addMigrations(*DatabaseMigrations.getAllMigrations())
         .fallbackToDestructiveMigration(true)
         .build()
 }

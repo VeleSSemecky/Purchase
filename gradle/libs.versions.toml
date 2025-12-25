@@ -2,18 +2,18 @@
 
 #Plugins
 androidGradle = "8.11.1"
-kotlin = "2.1.0"
+kotlin = "2.2.21"
 dokka = "1.9.20"
-ksp = "2.1.0-1.0.29"
-navigation = "2.8.9"
+ksp = "2.2.21-2.0.4"
+navigation = "2.9.6"
 googleServices = "4.4.2"
 firebaseCrashlytics = "3.0.3"
 firebaseAppDistribution = "5.1.1"
 
 #Kotlin Multiplatform
-kotlinMultiplatform = "2.1.0"
-composeMultiplatform = "1.8.1"
-kotlinx-datetime = "0.7.1"
+kotlinMultiplatform = "2.2.21"
+composeMultiplatform = "1.9.3"
+kotlinx-datetime = "0.9.0"
 
 #android
 minSdk = "26"
@@ -42,8 +42,8 @@ dagger = "2.50"
 coroutines = "1.10.2"
 
 #Room
-room = "2.7.0-alpha10"
-sqliteKmp = "2.5.0-alpha10"
+room = "2.7.2"
+sqliteKmp = "2.6.2"
 
 #Network
 gson = "2.13.1"
@@ -134,6 +134,9 @@ dagger-android-processor = { group = "com.google.dagger", name = "dagger-android
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutines" }
+
+#DateTime
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 #Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
