@@ -3,9 +3,11 @@ package com.veles.purchase.presentation.mvvm.purchase.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.history.PurchaseHistoryModel
+import com.veles.purchase.domain.model.history.toHistoryModels
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 /**
@@ -30,7 +32,8 @@ class HistoryViewModel(
      * Sorted by timestamp descending (most recent first)
      */
     val historyList: StateFlow<List<PurchaseHistoryModel>> = historyRepository
-        .getHistory(collectionId)
+        .getHistoryFlow(collectionId)
+        .map { it.toHistoryModels() }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),

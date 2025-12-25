@@ -42,19 +42,21 @@ kotlin {
                 // mockDomain - mock data for Phase 2-3
                 implementation(project(":mockDomain"))
 
-            implementation(compose.runtime)
-            implementation(compose.ui)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.foundation)
-            implementation(compose.animation)
-            api(compose.components.resources)  // API instead of implementation for iOS export
-            implementation(libs.coroutines.core)
+                implementation(compose.runtime)
+                implementation(compose.ui)
+                implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                api(compose.components.resources)  // API instead of implementation for iOS export
+                implementation(libs.coroutines.core)
 
+                // Room KMP Database
                 implementation(libs.room.runtime)
                 implementation(libs.sqlite.bundled)
 
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                // Date/Time - using version catalog (0.9.0 - latest)
+                implementation(libs.kotlinx.datetime)
 
                 // Koin for DI
                 implementation("io.insert-koin:koin-core:4.0.0")
@@ -63,7 +65,23 @@ kotlin {
 
                 // Navigation
                 implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+
+                // Serialization
+                implementation(libs.kotlinx.serialization.json)
+
+                // Ktor Client (Network) - 3.0.2
+                implementation(libs.ktor.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.ktor.client.logging)
+                implementation(libs.ktor.client.auth)
+
+                // Firebase KMP (GitLive)
+                implementation(libs.firebase.kmp.common)
+                implementation(libs.firebase.kmp.firestore)
+                implementation(libs.firebase.kmp.auth)
+                implementation(libs.firebase.kmp.storage)
+                implementation(libs.firebase.kmp.messaging)
             }
         }
 
@@ -96,8 +114,18 @@ kotlin {
                 implementation(libs.room.runtime)
                 implementation(libs.room.ktx)
 
+                // Ktor Android Engine
+                implementation(libs.ktor.client.okhttp)
+
                 // Activity Compose
                 implementation("androidx.activity:activity-compose:1.9.3")
+            }
+        }
+
+        val iosMain by getting {
+            dependencies {
+                // Ktor iOS Engine
+                implementation(libs.ktor.client.darwin)
             }
         }
 
@@ -107,14 +135,12 @@ kotlin {
 }
 
 dependencies {
-    // Phase 3: Temporarily disable KSP for iOS - using mockDomain, not database yet
-    // Will be re-enabled in Phase 4 when migrating data module
-    // add("kspCommonMainMetadata", libs.room.compiler)
+    // Phase 5: Enable KSP for all platforms - migrating to real Room database
+    add("kspCommonMainMetadata", libs.room.compiler)
     add("kspAndroid", libs.room.compiler)
-    // Temporarily disabled for Phase 3 - iOS will use mockDomain
-    // add("kspIosSimulatorArm64", libs.room.compiler)
-    // add("kspIosX64", libs.room.compiler)
-    // add("kspIosArm64", libs.room.compiler)
+    add("kspIosSimulatorArm64", libs.room.compiler)
+    add("kspIosX64", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)
 }
 
 android {

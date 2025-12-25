@@ -13,7 +13,7 @@ firebaseAppDistribution = "5.1.1"
 #Kotlin Multiplatform
 kotlinMultiplatform = "2.2.21"
 composeMultiplatform = "1.9.3"
-kotlinx-datetime = "0.9.0"
+kotlinx-datetime = "0.7.1"
 
 #android
 minSdk = "26"
@@ -46,6 +46,7 @@ room = "2.7.2"
 sqliteKmp = "2.6.2"
 
 #Network
+ktor = "3.0.2"
 gson = "2.13.1"
 okHttp = "4.12.0"
 retrofit = "3.0.0"
@@ -57,6 +58,7 @@ timber = "5.0.1"
 #Firebase
 firebaseBom = "33.16.0"
 firebaseUI = "9.0.0"
+firebaseKmp = "2.4.0"
 
 #UI
 materialComponents = "1.12.0"
@@ -138,6 +140,9 @@ coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-co
 #DateTime
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
+#Serialization
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.9.0" }
+
 #Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -146,6 +151,14 @@ room-paging = { group = "androidx.room", name = "room-paging", version.ref = "ro
 sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqliteKmp" }
 
 #Network
+ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-client-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okHttp" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
@@ -167,6 +180,13 @@ firebase-storage = { module = "com.google.firebase:firebase-storage" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-ui-auth = { group = "com.firebaseui", name = "firebase-ui-auth", version.ref = "firebaseUI" }
 firebase-ui-storage = { group = "com.firebaseui", name = "firebase-ui-storage", version.ref = "firebaseUI" }
+
+#Firebase KMP (GitLive)
+firebase-kmp-common = { group = "dev.gitlive", name = "firebase-common", version.ref = "firebaseKmp" }
+firebase-kmp-firestore = { group = "dev.gitlive", name = "firebase-firestore", version.ref = "firebaseKmp" }
+firebase-kmp-auth = { group = "dev.gitlive", name = "firebase-auth", version.ref = "firebaseKmp" }
+firebase-kmp-storage = { group = "dev.gitlive", name = "firebase-storage", version.ref = "firebaseKmp" }
+firebase-kmp-messaging = { group = "dev.gitlive", name = "firebase-messaging", version.ref = "firebaseKmp" }
 
 #UI
 constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }

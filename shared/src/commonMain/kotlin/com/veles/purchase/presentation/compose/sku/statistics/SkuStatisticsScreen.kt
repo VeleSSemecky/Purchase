@@ -179,7 +179,7 @@ private fun SkuStatisticsContent(
                 color = Color.White
             )
             Text(
-                text = "${uiState.totalSum} ${uiState.statistics.firstOrNull()?.currencyCode ?: "UAH"}",
+                text = "${uiState.totalSum} ${uiState.statistics.firstOrNull()?.skuCurrencyCode ?: "UAH"}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Colors.gr
@@ -196,7 +196,7 @@ private fun SkuStatisticsContent(
         ) {
             items(
                 items = uiState.statistics,
-                key = { it.skuName }
+                key = { it.skuMonth ?: it.skuSumMonth ?: "" }
             ) { item ->
                 StatisticsItem(item = item)
             }
@@ -214,9 +214,9 @@ private fun StatisticsItem(item: SkuSumMonthModel) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // SKU name
+        // SKU month/name
         Text(
-            text = item.skuName,
+            text = item.skuMonth ?: "Unknown",
             modifier = Modifier.weight(1f),
             fontSize = 16.sp,
             color = Color.White,
@@ -228,7 +228,7 @@ private fun StatisticsItem(item: SkuSumMonthModel) {
 
         // Sum and currency
         Text(
-            text = "${item.sum} ${item.currencyCode}",
+            text = "${item.skuSumMonth ?: "0"} ${item.skuCurrencyCode}",
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = Colors.gr,

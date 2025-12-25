@@ -8,11 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		044cc79b4c5943d3b6a994786898e625 /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1c478cc7cd274ee191b10eb9687f69b2 /* iOSApp.swift */; };
+		3DF95A4C2EFCE72000070111 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3DF95A4B2EFCE72000070111 /* GoogleService-Info.plist */; };
+		3DF95A4F2EFCE87D00070111 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A4E2EFCE87D00070111 /* FirebaseAnalytics */; };
+		3DF95A512EFCE87D00070111 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A502EFCE87D00070111 /* FirebaseAuth */; };
+		3DF95A532EFCE87D00070111 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A522EFCE87D00070111 /* FirebaseCore */; };
+		3DF95A552EFCE87D00070111 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A542EFCE87D00070111 /* FirebaseCrashlytics */; };
+		3DF95A572EFCE87D00070111 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A562EFCE87D00070111 /* FirebaseDatabase */; };
+		3DF95A592EFCE87D00070111 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A582EFCE87D00070111 /* FirebaseFirestore */; };
+		3DF95A5B2EFCE87D00070111 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A5A2EFCE87D00070111 /* FirebaseFunctions */; };
+		3DF95A5D2EFCE87D00070111 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A5C2EFCE87D00070111 /* FirebaseMessaging */; };
+		3DF95A5F2EFCE87D00070111 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A5E2EFCE87D00070111 /* FirebaseStorage */; };
 		7dc577a2301341d6b6c7ecf4388cb813 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3cbe560ef57947ebac18222841d2051e /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1c478cc7cd274ee191b10eb9687f69b2 /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
+		3DF95A4B2EFCE72000070111 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3cbe560ef57947ebac18222841d2051e /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5bdc0a8392c949b5bf5db20f059b05fd /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		e500fee6415d40f2ab4014458af6b7c5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -23,6 +34,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3DF95A5D2EFCE87D00070111 /* FirebaseMessaging in Frameworks */,
+				3DF95A572EFCE87D00070111 /* FirebaseDatabase in Frameworks */,
+				3DF95A5F2EFCE87D00070111 /* FirebaseStorage in Frameworks */,
+				3DF95A5B2EFCE87D00070111 /* FirebaseFunctions in Frameworks */,
+				3DF95A4F2EFCE87D00070111 /* FirebaseAnalytics in Frameworks */,
+				3DF95A552EFCE87D00070111 /* FirebaseCrashlytics in Frameworks */,
+				3DF95A532EFCE87D00070111 /* FirebaseCore in Frameworks */,
+				3DF95A512EFCE87D00070111 /* FirebaseAuth in Frameworks */,
+				3DF95A592EFCE87D00070111 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,6 +68,7 @@
 		d6f9f693a0f34ecea389ec6082ad999d /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				3DF95A4B2EFCE72000070111 /* GoogleService-Info.plist */,
 				1c478cc7cd274ee191b10eb9687f69b2 /* iOSApp.swift */,
 				3cbe560ef57947ebac18222841d2051e /* ContentView.swift */,
 				e500fee6415d40f2ab4014458af6b7c5 /* Info.plist */,
@@ -101,6 +122,9 @@
 				Base,
 			);
 			mainGroup = 1b7f9f0e820c4a299025294313f5417b;
+			packageReferences = (
+				3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 6951314d2d214930a8934f990a121402 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -115,30 +139,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3DF95A4C2EFCE72000070111 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		cb51c7d0058f4c6c89e4836b12390dff /* Build Shared Framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Build Shared Framework";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\necho \"Building shared framework...\"\n\n# Determine the target architecture\nif [ \"$ARCHS\" = \"arm64\" ] || [ \"$ARCHS\" = \"arm64 x86_64\" ]; then\n  TARGET=\"iosSimulatorArm64\"\n  GRADLE_TASK=\":shared:linkDebugFrameworkIosSimulatorArm64\"\nelse\n  TARGET=\"iosX64\"\n  GRADLE_TASK=\":shared:linkDebugFrameworkIosX64\"\nfi\n\necho \"Building for architecture: $ARCHS (using $TARGET)\"\n\ncd \"$SRCROOT/..\"\n./gradlew $GRADLE_TASK\n\n# Try both possible framework locations\nFRAMEWORK_LOCATIONS=(\n  \"$SRCROOT/../shared/build/bin/$TARGET/debugFramework/shared.framework\"\n  \"$SRCROOT/../shared/build/XCFrameworks/debug/shared.framework\"\n)\n\nFRAMEWORK_SRC=\"\"\nfor location in \"${FRAMEWORK_LOCATIONS[@]}\"; do\n  if [ -d \"$location\" ]; then\n    FRAMEWORK_SRC=\"$location\"\n    break\n  fi\ndone\n\nif [ -z \"$FRAMEWORK_SRC\" ]; then\n  echo \"Error: Framework not found in expected locations\"\n  exit 1\nfi\n\nFRAMEWORK_DEST=\"$BUILT_PRODUCTS_DIR/shared.framework\"\necho \"Copying framework from $FRAMEWORK_SRC to $FRAMEWORK_DEST\"\n\nrm -rf \"$FRAMEWORK_DEST\"\ncp -R \"$FRAMEWORK_SRC\" \"$FRAMEWORK_DEST\"\necho \"Framework copied successfully\"\n";
-		};
 		CC51C7D0058F4C6C89E4836B12390DFF /* Copy Compose Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -156,6 +163,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT/Scripts/copy-compose-resources.sh\"\n";
+		};
+		cb51c7d0058f4c6c89e4836b12390dff /* Build Shared Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Shared Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\necho \"Building shared framework...\"\n\n# Determine the target architecture\nif [ \"$ARCHS\" = \"arm64\" ] || [ \"$ARCHS\" = \"arm64 x86_64\" ]; then\n  TARGET=\"iosSimulatorArm64\"\n  GRADLE_TASK=\":shared:linkDebugFrameworkIosSimulatorArm64\"\nelse\n  TARGET=\"iosX64\"\n  GRADLE_TASK=\":shared:linkDebugFrameworkIosX64\"\nfi\n\necho \"Building for architecture: $ARCHS (using $TARGET)\"\n\ncd \"$SRCROOT/..\"\n./gradlew $GRADLE_TASK\n\n# Try both possible framework locations\nFRAMEWORK_LOCATIONS=(\n  \"$SRCROOT/../shared/build/bin/$TARGET/debugFramework/shared.framework\"\n  \"$SRCROOT/../shared/build/XCFrameworks/debug/shared.framework\"\n)\n\nFRAMEWORK_SRC=\"\"\nfor location in \"${FRAMEWORK_LOCATIONS[@]}\"; do\n  if [ -d \"$location\" ]; then\n    FRAMEWORK_SRC=\"$location\"\n    break\n  fi\ndone\n\nif [ -z \"$FRAMEWORK_SRC\" ]; then\n  echo \"Error: Framework not found in expected locations\"\n  exit 1\nfi\n\nFRAMEWORK_DEST=\"$BUILT_PRODUCTS_DIR/shared.framework\"\necho \"Copying framework from $FRAMEWORK_SRC to $FRAMEWORK_DEST\"\n\nrm -rf \"$FRAMEWORK_DEST\"\ncp -R \"$FRAMEWORK_SRC\" \"$FRAMEWORK_DEST\"\necho \"Framework copied successfully\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -396,6 +421,65 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3DF95A4E2EFCE87D00070111 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		3DF95A502EFCE87D00070111 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		3DF95A522EFCE87D00070111 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		3DF95A542EFCE87D00070111 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		3DF95A562EFCE87D00070111 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		3DF95A582EFCE87D00070111 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		3DF95A5A2EFCE87D00070111 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		3DF95A5C2EFCE87D00070111 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		3DF95A5E2EFCE87D00070111 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DF95A4D2EFCE87D00070111 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1a82268b20874d49b6b812d05691a1e8 /* Project object */;
 }

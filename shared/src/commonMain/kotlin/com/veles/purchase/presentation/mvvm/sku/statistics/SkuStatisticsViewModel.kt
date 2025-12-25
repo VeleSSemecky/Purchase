@@ -89,7 +89,7 @@ data class SkuStatisticsUiState(
     val error: String? = null
 ) {
     val totalSum: Double
-        get() = statistics.sumOf { it.sum.toDoubleOrNull() ?: 0.0 }
+        get() = statistics.sumOf { it.skuSumMonth?.toDoubleOrNull() ?: 0.0 }
 
     val displayPeriod: String
         get() = if (month == 0) {
