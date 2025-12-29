@@ -4,6 +4,7 @@ import com.veles.purchase.data.entity.user.UserDto
 import com.veles.purchase.data.extensions.toUserDto
 import com.veles.purchase.data.extensions.userPurchase
 import com.veles.purchase.domain.repository.auth.AuthWithGoogleRepository
+import com.veles.purchase.platform.logger.AppLogger
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.firestore.FirebaseFirestore
@@ -18,13 +19,14 @@ class AuthWithGoogleRepositoryImpl(
     private val getFCMToken: suspend () -> String = { "" }
 ) : AuthWithGoogleRepository {
 
-    override suspend fun firebaseAuthWithGoogle(idToken: String?) {
-        if (idToken == null) {
-            throw IllegalArgumentException("ID Token cannot be null")
-        }
+    override suspend fun firebaseAuthWithGoogle(resultIdTokenAndAccessToken: Pair<String, String?>) {
+        val (idToken, accessToken) = resultIdTokenAndAccessToken
+
+        AppLogger.i("AuthWithGoogleRepositoryImpl", "ID Token => $idToken, Access Token => $accessToken")
 
         // Create Google credential
-        val credential = GoogleAuthProvider.credential(idToken, null)
+        val credential = GoogleAuthProvider.credential(idToken, accessToken)
+        AppLogger.i("AuthWithGoogleRepositoryImpl", "ID Token cannot be null")
 
         // Sign in with credential
         val authResult = auth.signInWithCredential(credential)

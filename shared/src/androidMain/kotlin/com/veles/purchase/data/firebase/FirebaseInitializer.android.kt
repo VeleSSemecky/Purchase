@@ -1,5 +1,6 @@
 package com.veles.purchase.data.firebase
 
+import android.content.Context
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.FirebaseApp
 import dev.gitlive.firebase.app
@@ -11,10 +12,8 @@ import dev.gitlive.firebase.initialize
  * so we just need to get the instance
  */
 actual class FirebaseInitializer {
-    actual fun initialize() {
-        // Firebase is already initialized in Android Application class
-        // via google-services.json
-        // No additional initialization needed
+    actual fun initialize(androidContext: Any?) {
+        Firebase.initialize(androidContext as Context)
     }
 
     actual fun getApp(): FirebaseApp {

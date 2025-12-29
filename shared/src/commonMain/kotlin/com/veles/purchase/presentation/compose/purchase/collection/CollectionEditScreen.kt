@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.presentation.compose.Colors
-import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionEditViewModel
+import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
 import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.ic_baseline_history_24
 import com.veles.purchase.shared.resources.ic_category
@@ -50,7 +50,7 @@ fun CollectionEditScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToCategory: (String) -> Unit = {}, // TODO: Navigate to category screen
     onNavigateToHistory: (String) -> Unit = {}, // TODO: Navigate to history screen
-    viewModel: CollectionEditViewModel = koinViewModel(
+    viewModel: EditCollectionComposeViewModel = koinViewModel(
         parameters = { parametersOf(collectionId) }
     )
 ) {
@@ -89,7 +89,7 @@ fun CollectionEditScreen(
             )
 
             // Progress overlay
-            if (progress == CollectionEditViewModel.ProgressState.Start) {
+            if (progress == EditCollectionComposeViewModel.ProgressState.Start) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

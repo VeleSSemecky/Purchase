@@ -24,7 +24,7 @@ import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
-import com.veles.purchase.presentation.mvvm.purchase.setting.SettingsPurchaseViewModel
+import com.veles.purchase.presentation.mvvm.purchase.setting.SettingPurchaseComposeViewModel
 import com.veles.purchase.presentation.mvvm.purchase.setting.CornerSetting
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -48,7 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPurchaseScreen(
-    viewModel: SettingsPurchaseViewModel = koinViewModel(),
+    viewModel: SettingPurchaseComposeViewModel = koinViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
     val settings by viewModel.flowPurchaseSetting.collectAsState()
@@ -126,7 +126,7 @@ fun SettingsPurchaseScreen(
 @Composable
 private fun ToolBar(
     onNavigateBack: () -> Unit,
-    viewModel: SettingsPurchaseViewModel
+    viewModel: SettingPurchaseComposeViewModel
 ) {
     TopAppBar(
         navigationIcon = {
@@ -234,7 +234,7 @@ private fun PreviewCard(
 private fun ShapeTypeRow(
     shapeType: ShapeType,
     settings: com.veles.purchase.domain.model.setting.PurchaseSetting,
-    viewModel: SettingsPurchaseViewModel
+    viewModel: SettingPurchaseComposeViewModel
 ) {
     Row(
         modifier = Modifier
@@ -268,7 +268,7 @@ private fun ShapeTypeRow(
 private fun SizeTypeRow(
     sizeType: SizeType,
     settings: com.veles.purchase.domain.model.setting.PurchaseSetting,
-    viewModel: SettingsPurchaseViewModel
+    viewModel: SettingPurchaseComposeViewModel
 ) {
     Row(
         modifier = Modifier
@@ -336,7 +336,7 @@ private fun AllCornerSlider(
 @Composable
 private fun SideCornerSliders(
     sideCorner: CornerSetting,
-    viewModel: SettingsPurchaseViewModel
+    viewModel: SettingPurchaseComposeViewModel
 ) {
     Column {
         SliderWithValue(sideCorner.topStart) {
@@ -392,7 +392,7 @@ private fun SliderWithValue(
 @Composable
 private fun SymmetryCheckbox(
     settings: com.veles.purchase.domain.model.setting.PurchaseSetting,
-    viewModel: SettingsPurchaseViewModel
+    viewModel: SettingPurchaseComposeViewModel
 ) {
     Row(
         modifier = Modifier
@@ -424,7 +424,7 @@ private fun SymmetryCheckbox(
 @Composable
 private fun ShowImageCheckbox(
     settings: com.veles.purchase.domain.model.setting.PurchaseSetting,
-    viewModel: SettingsPurchaseViewModel
+    viewModel: SettingPurchaseComposeViewModel
 ) {
     Row(
         modifier = Modifier

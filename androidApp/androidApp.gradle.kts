@@ -1,15 +1,24 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+
+    alias(libs.plugins.jetbrains.kotlin.parcelize)
+    alias(libs.plugins.navigation.safeargs.kotlin)
+    alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.google.firebase.appdistribution)
 }
 
 android {
-    namespace = "com.example.androidapp"
+    namespace = "com.veles.app"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.androidapp"
+        applicationId = "com.veles.app"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
@@ -31,13 +40,25 @@ android {
         }
     }
 
+    flavorDimensions.add("default")
+    productFlavors {
+        create("configProduction") {
+            applicationIdSuffix = ".configProduction"
+        }
+        create("configTest") {
+            applicationIdSuffix = ".configTest"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_19
         targetCompatibility = JavaVersion.VERSION_19
     }
 
-    kotlinOptions {
-        jvmTarget = "19"
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_19
+        }
     }
 
     buildFeatures {

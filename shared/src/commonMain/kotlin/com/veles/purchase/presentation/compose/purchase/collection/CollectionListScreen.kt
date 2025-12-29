@@ -28,7 +28,7 @@ import com.veles.purchase.presentation.compose.FractionalThreshold
 import com.veles.purchase.presentation.compose.SwipeToDismiss
 import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.textStyle1
-import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseViewModel
+import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseComposeViewModel
 import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.ic_purchase_collections
 import org.jetbrains.compose.resources.painterResource
@@ -56,7 +56,7 @@ private val CollectionCardColor = Color(0xFF38A186)
 
 @Composable
 fun CollectionListScreen(
-    viewModel: CollectionPurchaseViewModel = koinViewModel(),
+    viewModel: CollectionPurchaseComposeViewModel = koinViewModel(),
     onNavigateToCollection: (String) -> Unit = {},
     onNavigateToAddCollection: () -> Unit = {}
 ) {
@@ -97,9 +97,9 @@ private fun FAB(onNavigateToAddCollection: () -> Unit) {
 }
 
 @Composable
-private fun Progress(viewModel: CollectionPurchaseViewModel) {
+private fun Progress(viewModel: CollectionPurchaseComposeViewModel) {
     val progress by viewModel.stateFlowProgress.collectAsState()
-    if (progress != CollectionPurchaseViewModel.ProgressState.Start) return
+    if (progress != CollectionPurchaseComposeViewModel.ProgressState.Start) return
 
     Box(
         modifier = Modifier
@@ -115,7 +115,7 @@ private fun Progress(viewModel: CollectionPurchaseViewModel) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun Content(
-    viewModel: CollectionPurchaseViewModel,
+    viewModel: CollectionPurchaseComposeViewModel,
     onNavigateToCollection: (String) -> Unit
 ) {
     val list by viewModel.stateFlowListPurchaseCollections.collectAsState()
@@ -239,7 +239,7 @@ private fun ItemPurchaseCollection(
 }
 
 @Composable
-private fun DialogDelete(viewModel: CollectionPurchaseViewModel) {
+private fun DialogDelete(viewModel: CollectionPurchaseComposeViewModel) {
     val item by viewModel.stateFlowDeletePurchaseCollections.collectAsState()
     val collectionToDelete = item ?: return
 

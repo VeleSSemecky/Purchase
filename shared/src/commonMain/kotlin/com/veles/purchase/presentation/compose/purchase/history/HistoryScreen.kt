@@ -24,7 +24,7 @@ import com.veles.purchase.domain.model.history.HistoryType
 import com.veles.purchase.domain.model.history.PurchaseHistoryModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
-import com.veles.purchase.presentation.mvvm.purchase.history.HistoryViewModel
+import com.veles.purchase.presentation.mvvm.purchase.history.HistoryComposeViewModel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -50,7 +50,7 @@ import org.koin.core.parameter.parametersOf
 fun HistoryScreen(
     collectionId: String,
     onNavigateBack: () -> Unit = {},
-    viewModel: HistoryViewModel = koinViewModel(
+    viewModel: HistoryComposeViewModel = koinViewModel(
         parameters = { parametersOf(collectionId) }
     )
 ) {

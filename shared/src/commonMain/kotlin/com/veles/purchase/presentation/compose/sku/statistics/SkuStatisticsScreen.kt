@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.SkuSumMonthModel
 import com.veles.purchase.presentation.compose.Colors
-import com.veles.purchase.presentation.mvvm.sku.statistics.SkuStatisticsViewModel
+import com.veles.purchase.presentation.mvvm.sku.statistics.OutlayGraphViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -48,7 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SkuStatisticsScreen(
     onNavigateBack: () -> Unit = {},
-    viewModel: SkuStatisticsViewModel = koinViewModel()
+    viewModel: OutlayGraphViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -140,7 +140,7 @@ private fun SkuStatisticsToolbar(
 @Composable
 private fun SkuStatisticsContent(
     paddingValues: PaddingValues,
-    uiState: com.veles.purchase.presentation.mvvm.sku.statistics.SkuStatisticsUiState
+    uiState: com.veles.purchase.presentation.mvvm.sku.statistics.OutlayGraphUiState
 ) {
     Column(
         modifier = Modifier

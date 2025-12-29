@@ -1,7 +1,5 @@
 package com.veles.purchase.di
 
-import com.veles.purchase.data.firebase.FirebaseInitializer
-import com.veles.purchase.platform.biometric.BiometricAuthenticator
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -14,16 +12,11 @@ import org.koin.dsl.module
 actual val platformModule: Module = module {
 
     // Firebase Initializer
-    single {
-        FirebaseInitializer().apply {
-            initialize()
-        }
-    }
-
-    // Biometric Authenticator (stub for now)
-    factory {
-        BiometricAuthenticator()
-    }
+//    single {
+//        FirebaseInitializer().apply {
+//            initialize(androidContext())
+//        }
+//    }
 
     // TODO Phase 5: Add iOS-specific dependencies
     // - LocalAuthentication biometric

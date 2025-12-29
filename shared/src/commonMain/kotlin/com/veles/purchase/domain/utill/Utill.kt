@@ -7,6 +7,8 @@ import kotlin.uuid.Uuid
 
 fun emptyString() = ""
 
+fun dashString() = "-"
+
 fun zeroString() = "0"
 
 fun zeroInt() = 0

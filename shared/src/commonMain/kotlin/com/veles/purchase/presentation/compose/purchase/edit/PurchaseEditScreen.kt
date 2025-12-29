@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.domain.utill.emptyString
 import com.veles.purchase.presentation.compose.Colors
-import com.veles.purchase.presentation.mvvm.purchase.edit.PurchaseEditViewModel
+import com.veles.purchase.presentation.mvvm.purchase.edit.EditPurchaseViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -50,7 +50,7 @@ fun PurchaseEditScreen(
     collectionId: String,
     purchaseId: String = "", // Empty for new purchase
     onNavigateBack: () -> Unit = {},
-    viewModel: PurchaseEditViewModel = koinViewModel(
+    viewModel: EditPurchaseViewModel = koinViewModel(
         parameters = { parametersOf(collectionId, purchaseId) }
     )
 ) {
@@ -99,7 +99,7 @@ fun PurchaseEditScreen(
             )
 
             // Progress overlay
-            if (progress == PurchaseEditViewModel.ProgressState.Start) {
+            if (progress == EditPurchaseViewModel.ProgressState.Start) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

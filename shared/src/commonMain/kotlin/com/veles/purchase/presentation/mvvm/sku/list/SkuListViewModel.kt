@@ -3,27 +3,29 @@ package com.veles.purchase.presentation.mvvm.sku.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.SkuModel
-import com.veles.purchase.domain.repository.sku.SkuRepository
+import com.veles.purchase.domain.usecase.sku.DeleteSkuUseCase
+import com.veles.purchase.domain.usecase.sku.GetSkuUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 /**
  * ViewModel for SKU List Screen
  *
- * Migrated from: SkuListViewModel.kt
+ * Migrated from: SkuListViewModel.kt (Phase 6 - UseCase migration)
  *
  * Manages:
  * - Loading list of SKUs (shopping items)
  * - Deleting SKUs
  * - Search functionality
  *
- * Phase 2.13 - SKU List screen migration
+ * Phase 6 - Migrated to UseCases (Clean Architecture)
  *
  * SKU = Stock Keeping Unit - represents items you buy frequently
  * with price tracking over time
  */
 class SkuListViewModel(
-    private val skuRepository: SkuRepository
+    private val getSkuUseCase: GetSkuUseCase,
+    private val deleteSkuUseCase: DeleteSkuUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SkuListUiState())
@@ -37,7 +39,7 @@ class SkuListViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                val skus = skuRepository.getSkuEntityList()
+                val skus = getSkuUseCase.getSkuModelList()
                 _uiState.update {
                     it.copy(
                         skus = skus,
@@ -62,7 +64,7 @@ class SkuListViewModel(
     fun onDeleteSku(skuId: String) {
         viewModelScope.launch {
             try {
-                skuRepository.delete(skuId)
+                deleteSkuUseCase(skuId)
                 loadSkus() // Reload list after delete
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message) }

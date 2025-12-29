@@ -3,7 +3,8 @@ package com.veles.purchase.presentation.mvvm.sku.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.SkuModel
-import com.veles.purchase.domain.repository.sku.SkuRepository
+import com.veles.purchase.domain.usecase.sku.GetSkuUseCase
+import com.veles.purchase.domain.usecase.sku.SetSkuUseCase
 import com.veles.purchase.domain.utill.createPrimaryIDKey
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -11,7 +12,7 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel for SKU Edit Screen
  *
- * Migrated from: SkuEditViewModel.kt
+ * Migrated from: SkuEditViewModel.kt (Phase 6 - UseCase migration)
  *
  * Manages:
  * - Loading existing SKU for editing
@@ -19,7 +20,7 @@ import kotlinx.coroutines.launch
  * - Form validation
  * - Save operations
  *
- * Phase 2.14 - SKU Edit screen migration
+ * Phase 6 - Migrated to UseCases (Clean Architecture)
  *
  * Simplified for KMP:
  * - Removed SharedFlowBus event system
@@ -30,7 +31,8 @@ import kotlinx.coroutines.launch
  */
 class SkuEditViewModel(
     private val skuId: String?,
-    private val skuRepository: SkuRepository
+    private val getSkuUseCase: GetSkuUseCase,
+    private val setSkuUseCase: SetSkuUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SkuEditUiState())
@@ -46,7 +48,7 @@ class SkuEditViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                val sku = skuRepository.getSkuModel(id)
+                val sku = getSkuUseCase.getSkuModel(id)
                 if (sku != null) {
                     _uiState.update {
                         it.copy(
@@ -133,7 +135,7 @@ class SkuEditViewModel(
                     skuCurrencyCode = state.skuCurrencyCode
                 )
 
-                skuRepository.insert(sku, emptyList()) // No photos for now
+                setSkuUseCase(sku, emptyList()) // No photos for now
                 _uiState.update { it.copy(isSaving = false) }
                 onSuccess()
             } catch (e: Exception) {

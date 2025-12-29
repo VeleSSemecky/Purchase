@@ -1,17 +1,17 @@
 [versions]
 
 #Plugins
-androidGradle = "8.11.1"
-kotlin = "2.2.21"
+androidGradle = "8.11.2"
+kotlin = "2.3.0"
 dokka = "1.9.20"
-ksp = "2.2.21-2.0.4"
+ksp = "2.3.4"
 navigation = "2.9.6"
 googleServices = "4.4.2"
 firebaseCrashlytics = "3.0.3"
 firebaseAppDistribution = "5.1.1"
 
 #Kotlin Multiplatform
-kotlinMultiplatform = "2.2.21"
+kotlinMultiplatform = "2.3.0"
 composeMultiplatform = "1.9.3"
 kotlinx-datetime = "0.7.1"
 
@@ -73,7 +73,7 @@ workRuntime = "2.10.1"
 composeBom = "2025.05.01"
 composeActivity = "1.10.1"
 composeFragment = "1.8.6"
-composeLifecycleViewmodel = "2.8.7"
+composeLifecycleViewmodel = "2.9.6"
 composeConstraintlayout = "1.1.1"
 composeAccompanistPager = "0.36.0"
 composeAccompanistFlowlayout = "0.36.0"
@@ -184,8 +184,11 @@ firebase-ui-storage = { group = "com.firebaseui", name = "firebase-ui-storage", 
 #Firebase KMP (GitLive)
 firebase-kmp-common = { group = "dev.gitlive", name = "firebase-common", version.ref = "firebaseKmp" }
 firebase-kmp-firestore = { group = "dev.gitlive", name = "firebase-firestore", version.ref = "firebaseKmp" }
+firebase-kmp-firestore-android = { group = "dev.gitlive", name = "firebase-firestore-android", version.ref = "firebaseKmp" }
 firebase-kmp-auth = { group = "dev.gitlive", name = "firebase-auth", version.ref = "firebaseKmp" }
+firebase-kmp-auth-android = { group = "dev.gitlive", name = "firebase-auth-android", version.ref = "firebaseKmp" }
 firebase-kmp-storage = { group = "dev.gitlive", name = "firebase-storage", version.ref = "firebaseKmp" }
+firebase-kmp-storage-android = { group = "dev.gitlive", name = "firebase-storage-android", version.ref = "firebaseKmp" }
 firebase-kmp-messaging = { group = "dev.gitlive", name = "firebase-messaging", version.ref = "firebaseKmp" }
 
 #UI
@@ -268,7 +271,8 @@ koin-test-junit4 = { group = "io.insert-koin", name = "koin-test-junit4", versio
 core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
 
 [plugins]
-android-library = { id = "com.android.library", version.ref = "androidGradle" }
+android-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidGradle" }
+#android-library = { id = "com.android.library", version.ref = "androidGradle" }
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }

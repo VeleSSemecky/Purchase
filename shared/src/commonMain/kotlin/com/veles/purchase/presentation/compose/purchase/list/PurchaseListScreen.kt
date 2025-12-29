@@ -41,13 +41,13 @@ import com.veles.purchase.presentation.compose.search.SearchTopAppBar
 import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.compose.textStyle2
-import com.veles.purchase.presentation.mvvm.purchase.list.PurchaseListViewModel
 import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.image
 import com.veles.purchase.shared.resources.no_image
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import com.veles.purchase.presentation.mvvm.purchase.list.ListPurchaseViewModel
 
 /**
  * Purchase List Screen - shows purchases within a collection
@@ -71,7 +71,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun PurchaseListScreen(
     collectionId: String,
-    viewModel: PurchaseListViewModel = koinViewModel(parameters = { parametersOf(collectionId) }),
+    viewModel: ListPurchaseViewModel = koinViewModel(parameters = { parametersOf(collectionId) }),
     onNavigateBack: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     onNavigateToPurchaseDetail: (String) -> Unit = {}
@@ -143,9 +143,9 @@ fun PurchaseListScreen(
 }
 
 @Composable
-private fun Progress(viewModel: PurchaseListViewModel) {
+private fun Progress(viewModel: ListPurchaseViewModel) {
     val progress by viewModel.flowProgress.collectAsState()
-    if (progress != PurchaseListViewModel.ProgressState.Start) return
+    if (progress != ListPurchaseViewModel.ProgressState.Start) return
 
     Box(
         modifier = Modifier
@@ -161,7 +161,7 @@ private fun Progress(viewModel: PurchaseListViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(
-    viewModel: PurchaseListViewModel,
+    viewModel: ListPurchaseViewModel,
     onNavigateToPurchaseDetail: (String) -> Unit
 ) {
     val purchases by viewModel.flowListPurchaseModels.collectAsState()
@@ -252,7 +252,7 @@ private fun SortIndicator(
 private fun PurchaseItem(
     purchase: PurchaseModel,
     elevation: Dp,
-    viewModel: PurchaseListViewModel,
+    viewModel: ListPurchaseViewModel,
     onItemClick: () -> Unit
 ) {
     val purchaseSetting by viewModel.flowPurchaseSetting.collectAsState()
@@ -405,7 +405,7 @@ private fun CategoryChip(item: PurchaseModel) {
 }
 
 @Composable
-private fun CreatePurchaseInput(viewModel: PurchaseListViewModel) {
+private fun CreatePurchaseInput(viewModel: ListPurchaseViewModel) {
     val newPurchaseName by viewModel.flowNewNamePurchase.collectAsState()
 
     val label = @Composable {

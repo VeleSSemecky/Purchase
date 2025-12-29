@@ -1,0 +1,16 @@
+# Podfile for Purchase KMP iOS App
+# Note: This project uses Swift Package Manager for all dependencies (Firebase, GoogleSignIn)
+# The shared KMP framework is integrated directly without CocoaPods
+
+# CocoaPods is no longer used in this project.
+# All dependencies have been migrated to Swift Package Manager.
+
+# If you need to add new dependencies, use Xcode's Swift Package Manager:
+# File > Add Package Dependencies
+
+# Firebase iOS SDK: https://github.com/firebase/firebase-ios-sdk
+# GoogleSignIn-iOS: https://github.com/google/GoogleSignIn-iOS
+
+# The shared Kotlin Multiplatform framework is built via Gradle and
+# copied to iosApp/Frameworks/ during build phase.
+

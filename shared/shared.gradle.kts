@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.androidLibrary
+
 plugins {
     alias(libs.plugins.android.library)
     kotlin("multiplatform")
@@ -17,12 +19,23 @@ kotlin {
     // Enable default hierarchy template for proper iOS support
     applyDefaultHierarchyTemplate()
 
-    androidTarget {
+
+    androidLibrary {
+        namespace = "com.example.shared"
+        compileSdk = libs.versions.compileSdk.get().toInt()
+    androidResources.enable = true
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_19)
         }
     }
+//    androidTarget {
+//        compilerOptions {
+//            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_19)
+//        }
+//    }
 
+    // iOS targets with framework configuration
     listOf(
         iosX64(),
         iosArm64(),
@@ -30,8 +43,7 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
-            isStatic = true
-            // Export compose resources
+            isStatic = true  // Static framework for KMP Compose
             export(compose.components.resources)
         }
     }
@@ -39,8 +51,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                // mockDomain - mock data for Phase 2-3
-                implementation(project(":mockDomain"))
+                // Phase 5 Complete - Using real implementations instead of mocks
 
                 implementation(compose.runtime)
                 implementation(compose.ui)
@@ -59,9 +70,11 @@ kotlin {
                 implementation(libs.kotlinx.datetime)
 
                 // Koin for DI
-                implementation("io.insert-koin:koin-core:4.0.0")
-                implementation("io.insert-koin:koin-compose:4.0.0")
-                implementation("io.insert-koin:koin-compose-viewmodel:4.0.0")
+                implementation("io.insert-koin:koin-core:4.1.1")
+                implementation("io.insert-koin:koin-compose:4.1.1")
+                implementation("io.insert-koin:koin-compose-viewmodel:4.1.1")
+                implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.9.6")
+                implementation("org.jetbrains.androidx.savedstate:savedstate:1.3.6")
 
                 // Navigation
                 implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
@@ -97,9 +110,15 @@ kotlin {
                 // Lifecycle ViewModel (Android only)
                 implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
 
+                // Navigation Compose (Android only - iOS has savedstate issues)
+                implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
+
                 // Koin Android
+                implementation("io.insert-koin:koin-core:4.0.0")
+                implementation("io.insert-koin:koin-compose:4.0.0")
                 implementation("io.insert-koin:koin-android:4.0.0")
                 implementation("io.insert-koin:koin-androidx-compose:4.0.0")
+                implementation("io.insert-koin:koin-compose-viewmodel:4.0.0")
 
                 // DateTime - explicit for Android to ensure it's included in APK
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
@@ -110,6 +129,11 @@ kotlin {
                 // Firebase (for FCM notifications)
                 implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
 
+                // Google Sign-In / Credential Manager
+                implementation("androidx.credentials:credentials:1.3.0")
+                implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+                implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
                 // Room Database (Android)
                 implementation(libs.room.runtime)
                 implementation(libs.room.ktx)
@@ -119,6 +143,12 @@ kotlin {
 
                 // Activity Compose
                 implementation("androidx.activity:activity-compose:1.9.3")
+
+                implementation(project.dependencies.platform(libs.firebase.bom))
+                implementation(libs.bundles.firebase.data)
+                implementation(libs.firebase.ui.auth)
+                implementation(libs.firebase.ui.storage)
+
             }
         }
 
@@ -136,30 +166,29 @@ kotlin {
 
 dependencies {
     // Phase 5: Enable KSP for all platforms - migrating to real Room database
-    add("kspCommonMainMetadata", libs.room.compiler)
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
     add("kspIosX64", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
 }
 
-android {
-    namespace = "com.example.shared"
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
-    }
-
-    buildFeatures {
-        compose = true
-    }
-}
+//android {
+//    namespace = "com.example.shared"
+//    compileSdk = libs.versions.compileSdk.get().toInt()
+//
+//    defaultConfig {
+//        minSdk = libs.versions.minSdk.get().toInt()
+//    }
+//
+//    compileOptions {
+//        sourceCompatibility = JavaVersion.VERSION_19
+//        targetCompatibility = JavaVersion.VERSION_19
+//    }
+//
+//    buildFeatures {
+//        compose = true
+//    }
+//}
 
 // Ensure resource generation happens before Kotlin compilation
 tasks.configureEach {
@@ -212,4 +241,3 @@ tasks.configureEach {
         dependsOn("copyComposeResourcesToIosFramework")
     }
 }
-

@@ -11,9 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.veles.purchase.platform.biometric.BiometricAuthenticator
+import com.veles.purchase.presentation.compose.login.LoginScreen
 import com.veles.purchase.presentation.compose.main.MainScreen
-import com.veles.purchase.presentation.compose.purchase.biometric.BiometricScreen
 import com.veles.purchase.presentation.compose.purchase.category.CategoryScreen
 import com.veles.purchase.presentation.compose.purchase.collection.CollectionEditScreen
 import com.veles.purchase.presentation.compose.purchase.collection.CollectionListScreen
@@ -42,6 +41,18 @@ fun AppNavigation(
         navController = navController,
         startDestination = startDestination
     ) {
+        // Login screen
+        composable<Route.Login> {
+            LoginScreen(
+                activity = activity,
+                onLoginSuccess = {
+                    navController.navigate(Route.Main) {
+                        popUpTo(Route.Login) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         // Main screen
         composable<Route.Main> {
             MainScreen(navController = navController)
@@ -203,20 +214,7 @@ fun AppNavigation(
         }
 
         composable<Route.Auth.Biometric> {
-            // Create BiometricAuthenticator from activity (Android only)
-            if (activity != null) {
-                val authenticator: BiometricAuthenticator = koinInject(
-                    parameters = { parametersOf(activity) }
-                )
-                BiometricScreen(
-                    biometricAuthenticator = authenticator,
-                    onNavigateBack = {
-                        navController.popBackStack()
-                    }
-                )
-            } else {
-                PlaceholderScreen("Biometric Auth requires activity context")
-            }
+            PlaceholderScreen("Biometric - Removed from migration")
         }
     }
 }

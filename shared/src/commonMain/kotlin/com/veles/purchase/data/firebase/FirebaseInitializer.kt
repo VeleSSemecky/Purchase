@@ -1,6 +1,5 @@
 package com.veles.purchase.data.firebase
 
-import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.FirebaseApp
 
 /**
@@ -13,7 +12,7 @@ expect class FirebaseInitializer {
      * Android: Already initialized in Application class
      * iOS: Needs to call Firebase.initialize()
      */
-    fun initialize()
+    fun initialize(androidContext: Any? = null)
 
     /**
      * Get Firebase app instance

@@ -34,7 +34,7 @@ import com.veles.purchase.presentation.compose.FractionalThreshold
 import com.veles.purchase.presentation.compose.SwipeToDismiss
 import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.textStyle1
-import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterViewModel
+import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterPurchaseViewModel
 import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.image
 import com.veles.purchase.shared.resources.no_image
@@ -64,7 +64,7 @@ fun ListLaterScreen(
     collectionId: String,
     onNavigateBack: () -> Unit = {},
     onNavigateToPurchaseEdit: (String) -> Unit = {},
-    viewModel: ListLaterViewModel = koinViewModel(
+    viewModel: ListLaterPurchaseViewModel = koinViewModel(
         parameters = { parametersOf(collectionId) }
     )
 ) {

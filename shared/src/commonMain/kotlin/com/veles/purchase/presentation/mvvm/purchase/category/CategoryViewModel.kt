@@ -3,7 +3,8 @@ package com.veles.purchase.presentation.mvvm.purchase.category
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
-import com.veles.purchase.domain.repository.collection.CollectionRepository
+import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseUseCase
+import com.veles.purchase.domain.usecase.collection.SavePurchaseCategoryUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -26,7 +27,8 @@ import kotlin.uuid.Uuid
  */
 class CategoryViewModel(
     private val collectionId: String,
-    private val collectionRepository: CollectionRepository
+    private val getCollectionPurchaseUseCase: GetCollectionPurchaseUseCase,
+    private val savePurchaseCategoryUseCase: SavePurchaseCategoryUseCase
 ) : ViewModel() {
 
     // UI State
@@ -47,7 +49,7 @@ class CategoryViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val collection = collectionRepository.getCollection(collectionId)
+            val collection = getCollectionPurchaseUseCase(collectionId)
             if (collection != null) {
                 originalCategories = collection.categoryModels
                 _uiState.update {
@@ -136,17 +138,14 @@ class CategoryViewModel(
      * Returns true if save was successful
      */
     suspend fun onSaveClicked(): Boolean {
-        _uiState.update { it.copy(isLoading = true) }
+        _uiState.update { it.copy(isSaving = true) }
 
-        val collection = collectionRepository.getCollection(collectionId)
+        val collection = getCollectionPurchaseUseCase(collectionId)
         if (collection != null) {
-            val updatedCollection = collection.copy(
-                categoryModels = _uiState.value.categories
-            )
-            collectionRepository.saveCollection(updatedCollection)
+            savePurchaseCategoryUseCase(collection, _uiState.value.categories)
         }
 
-        _uiState.update { it.copy(isLoading = false) }
+        _uiState.update { it.copy(isSaving = false) }
         return true
     }
 }
@@ -156,6 +155,7 @@ class CategoryViewModel(
  */
 data class CategoryScreenState(
     val isLoading: Boolean = false,
+    val isSaving: Boolean = false,
     val categories: List<PurchaseCategoryModel> = emptyList(),
     val dialogState: DialogState = DialogState.NoDialog
 )

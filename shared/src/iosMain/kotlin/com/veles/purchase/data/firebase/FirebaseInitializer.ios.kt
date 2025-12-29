@@ -10,7 +10,7 @@ import dev.gitlive.firebase.initialize
  * Initializes Firebase using GoogleService-Info.plist
  */
 actual class FirebaseInitializer {
-    actual fun initialize() {
+    actual fun initialize(androidContext: Any?) {
         // Initialize Firebase with default configuration
         // Firebase will read from GoogleService-Info.plist
         try {

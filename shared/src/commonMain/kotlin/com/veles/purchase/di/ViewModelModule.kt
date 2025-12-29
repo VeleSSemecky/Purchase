@@ -1,135 +1,134 @@
 package com.veles.purchase.di
 
-import com.veles.purchase.presentation.mvvm.purchase.biometric.BiometricViewModel
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
-import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionEditViewModel
-import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseViewModel
-import com.veles.purchase.presentation.mvvm.purchase.edit.PurchaseEditViewModel
-import com.veles.purchase.presentation.mvvm.purchase.history.HistoryViewModel
-import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterViewModel
-import com.veles.purchase.presentation.mvvm.purchase.list.PurchaseListViewModel
-import com.veles.purchase.presentation.mvvm.purchase.setting.SettingsPurchaseViewModel
+import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
+import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseComposeViewModel
+import com.veles.purchase.presentation.mvvm.purchase.edit.EditPurchaseViewModel
+import com.veles.purchase.presentation.mvvm.purchase.history.HistoryComposeViewModel
+import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterPurchaseViewModel
+import com.veles.purchase.presentation.mvvm.purchase.list.ListPurchaseViewModel
+import com.veles.purchase.presentation.mvvm.purchase.setting.SettingPurchaseComposeViewModel
 import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditViewModel
 import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
-import com.veles.purchase.presentation.mvvm.sku.statistics.SkuStatisticsViewModel
+import com.veles.purchase.presentation.mvvm.sku.statistics.OutlayGraphViewModel
+import com.veles.purchase.presentation.viewmodel.login.LoginViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 /**
  * ViewModels Module - provides all ViewModels for the application
- *
- * Phase 2.2-2.7: ViewModels Migration
- *
- * Migrated ViewModels:
- * - SettingsPurchaseViewModel ✅ (Phase 2.2)
- * - CollectionPurchaseViewModel ✅ (Phase 2.5)
- * - PurchaseListViewModel ✅ (Phase 2.6)
- * - PurchaseEditViewModel ✅ (Phase 2.7)
- *
- * TODO: Migrate remaining ViewModels (~11 more)
- * - BiometricComposeViewModel
- * - etc.
+ * Phase 6: ViewModels migrated to UseCases (Clean Architecture)
  */
 val viewModelModule = module {
 
-    // Settings ViewModel
+    // Login ViewModel
     viewModel {
-        SettingsPurchaseViewModel(
-            settingRepository = get()
+        LoginViewModel(
+            authRepository = get()
         )
     }
 
-    // Collection ViewModel
+    // SettingPurchaseComposeViewModel
     viewModel {
-        CollectionPurchaseViewModel(
-            collectionRepository = get()
+        SettingPurchaseComposeViewModel(
+            getSettingUseCase = get(),
+            setSettingUseCase = get()
         )
     }
 
-    // Collection Edit ViewModel (requires collectionId parameter)
+    // CollectionPurchaseComposeViewModel
+    viewModel {
+        CollectionPurchaseComposeViewModel(
+            firebaseFirestorePurchaseCollectionUseCase = get(),
+            deletePurchaseCollectionUseCase = get()
+        )
+    }
+
+    // EditCollectionComposeViewModel
     viewModel { parameters ->
-        CollectionEditViewModel(
+        EditCollectionComposeViewModel(
             collectionId = parameters.get(),
-            collectionRepository = get()
+            getCollectionPurchaseUseCase = get(),
+            setCollectionPurchaseUseCase = get()
         )
     }
 
-    // Purchase List ViewModel (requires collectionId parameter)
-    viewModel { parameters ->
-        PurchaseListViewModel(
-            collectionId = parameters.get(),
-            purchaseRepository = get(),
-            collectionRepository = get(),
-            settingRepository = get()
-        )
-    }
-
-    // Purchase Edit ViewModel (requires collectionId and purchaseId parameters)
-    viewModel { parameters ->
-        PurchaseEditViewModel(
-            collectionId = parameters.get(),
-            purchaseId = parameters.get(),
-            purchaseRepository = get(),
-            collectionRepository = get()
-        )
-    }
-
-    // Category ViewModel (requires collectionId parameter)
+    // CategoryViewModel
     viewModel { parameters ->
         CategoryViewModel(
             collectionId = parameters.get(),
-            collectionRepository = get()
+            getCollectionPurchaseUseCase = get(),
+            savePurchaseCategoryUseCase = get()
         )
     }
 
-    // History ViewModel (requires collectionId parameter)
+    // ListPurchaseViewModel
     viewModel { parameters ->
-        HistoryViewModel(
+        ListPurchaseViewModel(
             collectionId = parameters.get(),
-            historyRepository = get()
+            getPurchasesUseCase = get(),
+            savePurchaseUseCase = get(),
+            checkPurchaseUseCase = get(),
+            deletePurchaseUseCase = get(),
+            getCollectionPurchaseUseCase = get(),
+            getSettingUseCase = get()
         )
     }
 
-    // Biometric ViewModel (requires BiometricAuthenticator parameter from activity)
+    // EditPurchaseViewModel
     viewModel { parameters ->
-        BiometricViewModel(
-            biometricAuthenticator = parameters.get()
-        )
-    }
-
-    // List Later ViewModel (requires collectionId parameter)
-    viewModel { parameters ->
-        ListLaterViewModel(
+        EditPurchaseViewModel(
             collectionId = parameters.get(),
-            purchaseRepository = get(),
-            collectionRepository = get(),
-            settingRepository = get()
+            purchaseId = parameters.get(),
+            getPurchaseUseCase = get(),
+            savePurchaseUseCase = get(),
+            getCollectionPurchaseUseCase = get()
         )
     }
 
-    // SKU List ViewModel
+    // HistoryComposeViewModel
+    viewModel { parameters ->
+        HistoryComposeViewModel(
+            collectionId = parameters.get(),
+            getPurchaseHistoryUseCase = get()
+        )
+    }
+
+
+    // ListLaterPurchaseViewModel
+    viewModel { parameters ->
+        ListLaterPurchaseViewModel(
+            collectionId = parameters.get(),
+            getPurchasesUseCase = get(),
+            savePurchaseUseCase = get(),
+            checkPurchaseUseCase = get(),
+            deletePurchaseUseCase = get(),
+            getCollectionPurchaseUseCase = get(),
+            getSettingUseCase = get()
+        )
+    }
+
+    // SkuListViewModel
     viewModel {
         SkuListViewModel(
-            skuRepository = get()
+            getSkuUseCase = get(),
+            deleteSkuUseCase = get()
         )
     }
 
-    // SKU Edit ViewModel (requires skuId parameter - nullable for new SKU)
+    // SkuEditViewModel
     viewModel { parameters ->
         SkuEditViewModel(
             skuId = parameters.getOrNull(),
-            skuRepository = get()
+            getSkuUseCase = get(),
+            setSkuUseCase = get()
         )
     }
 
-    // SKU Statistics ViewModel (Outlay Graph)
+    // OutlayGraphViewModel
     viewModel {
-        SkuStatisticsViewModel(
-            skuRepository = get()
+        OutlayGraphViewModel(
+            getSkuSumMontUseCase = get()
         )
     }
-
-    // TODO Phase 2.2+: Add more ViewModels as they are migrated
-    // etc.
 }
-

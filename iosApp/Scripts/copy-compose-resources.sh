@@ -20,6 +20,7 @@ echo "Platform: $PLATFORM_NAME"
 
 # Try multiple possible framework locations
 FRAMEWORK_LOCATIONS=(
+    "${SRCROOT}/Frameworks/shared.framework"
     "${BUILT_PRODUCTS_DIR}/shared.framework"
     "${BUILT_PRODUCTS_DIR}/Debug/shared.framework"
     "${BUILT_PRODUCTS_DIR}/Debug-iphonesimulator/shared.framework"

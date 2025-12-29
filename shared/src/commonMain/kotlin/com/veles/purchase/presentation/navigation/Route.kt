@@ -12,6 +12,12 @@ import kotlinx.serialization.Serializable
 sealed class Route {
 
     /**
+     * Login screen route
+     */
+    @Serializable
+    data object Login : Route()
+
+    /**
      * Main/Home screen route
      */
     @Serializable

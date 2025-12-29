@@ -28,7 +28,7 @@ include(":config")
 //include(":presentation") // Being migrated to shared in Phase 2
 
 // New KMP modules
-include(":mockDomain")  // Phase 1 - Mock data for UI development
+//include(":mockDomain")  // Phase 6: Deprecated - all repositories migrated to real implementations
 
 // Add ability to use a module name as part of a build script name
 rootProject.children.forEach { subProject ->

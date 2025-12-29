@@ -12,11 +12,10 @@ actual class DatabaseBuilder {
     actual fun build(): AppDatabase {
         val dbFile = NSHomeDirectory() + "/purchase_database.db"
         return Room.databaseBuilder<AppDatabase>(
-            name = dbFile,
-            factory = { AppDatabase::class.instantiateImpl() }
+            name = dbFile
         )
             .setDriver(BundledSQLiteDriver())
-            .fallbackToDestructiveMigration(true) // TODO: Add proper migrations
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 }

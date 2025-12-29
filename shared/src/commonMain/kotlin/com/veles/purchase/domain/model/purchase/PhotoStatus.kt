@@ -4,3 +4,4 @@ enum class PhotoStatus {
     LOCAL,
     DOWNLOADED
 }
+
