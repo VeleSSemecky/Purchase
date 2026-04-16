@@ -23,7 +23,7 @@ kotlin {
     androidLibrary {
         namespace = "com.example.shared"
         compileSdk = libs.versions.compileSdk.get().toInt()
-    androidResources.enable = true
+        androidResources.enable = true
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_19)

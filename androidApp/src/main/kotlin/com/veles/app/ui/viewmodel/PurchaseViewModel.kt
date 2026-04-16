@@ -1,5 +1,7 @@
 package com.veles.app.ui.viewmodel
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shared.di.DatabaseModule
@@ -8,6 +10,7 @@ import com.example.shared.domain.usecase.AddPurchaseUseCase
 import com.example.shared.domain.usecase.DeletePurchaseUseCase
 import com.example.shared.domain.usecase.GetAllPurchasesUseCase
 import com.example.shared.domain.usecase.UpdatePurchaseStatusUseCase
+import com.veles.purchase.presentation.compose.login.LoginScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

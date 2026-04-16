@@ -45,7 +45,8 @@ fun App(activity: Any? = null) {
         MaterialTheme {
             Surface {
                 AppNavigation(
-                    startDestination = if (needsLogin) Route.Login else Route.Main,
+                    startDestination = Route.Login,
+//                    startDestination = if (needsLogin) Route.Login else Route.Main,
                     activity = activity
                 )
             }
