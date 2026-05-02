@@ -325,7 +325,7 @@ class EditPurchaseFragment : BaseFragment() {
                                 )
                             },
                         contentScale = ContentScale.FillBounds,
-                        imageModel = viewModel.apiDatabaseURL(purchasePhotoModel),
+                        imageModel = { viewModel.apiDatabaseURL(purchasePhotoModel) },
                         loading = {
                             CircularCenterProgressIndicator()
                         },

@@ -3,81 +3,94 @@ package com.veles.purchase.presentation.compose.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.veles.purchase.presentation.compose.purchase.collection.CollectionListScreen
-import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchaseScreen
 import com.veles.purchase.presentation.navigation.Route
+import com.veles.purchase.presentation.viewmodel.main.MainViewModel
 import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.ic_baseline_camera_alt_24
 import com.veles.purchase.shared.resources.ic_baseline_payment_24
 import com.veles.purchase.shared.resources.ic_baseline_settings_24
+import com.veles.purchase.shared.resources.ic_outline_sensor_door
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
-/**
- * Main Screen with Navigation Drawer
- *
- * Migrated from: /Users/yuriimelnyk/StudioProjects/Purchase/presentation/src/main/java/com/veles/purchase/presentation/presentation/mvvm/purchase/navigation/NavigationFragment.kt
- *
- * Original design:
- * - Navigation drawer with user info and menu items
- * - Dark theme (colorPrimaryDark = #303030, colorPrimary = #212121)
- * - Green accent color (gr = #4ACFAC)
- * - Menu items: SKU List, PIP (camera), Settings
- * - Toolbar with menu icon and title "Collection List"
- *
- * Phase 2.4 - Main navigation screen migration
- */
-
-// Original colors from presentation module
-object NavigationColors {
-    val colorPrimary = Color(0xff212121)
-    val colorPrimaryDark = Color(0xff303030)
-    val colorAccent = Color(0xff424242)
-    val gr = Color(0xff4ACFAC)  // Green accent
-    val surface = Color(0xFF121212)
+// App colors (matches MyTheme / Colors.kt)
+private object NavColors {
+    val primary = Color(0xFF212121)
+    val primaryDark = Color(0xFF181818)
+    val green = Color(0xFF38A186)
+    val divider = Color(0xFF2E2E2E)
 }
 
-/**
- * Main screen with navigation drawer and nested navigation
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(
+    navController: NavHostController,
+    viewModel: MainViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        scrimColor = Color.Transparent,
+        scrimColor = Color.Black.copy(alpha = 0.5f),
         drawerContent = {
             DrawerContent(
-                drawerState = drawerState,
+                displayName = state.displayName,
+                email = state.email,
+                initials = state.initials,
                 onSkuListClick = {
                     scope.launch { drawerState.close() }
                     navController.navigate(Route.Sku.List)
                 },
                 onPipClick = {
                     scope.launch { drawerState.close() }
-                    // TODO: Navigate to PIP when migrated
                 },
                 onSettingsClick = {
                     scope.launch { drawerState.close() }
@@ -85,31 +98,26 @@ fun MainScreen(navController: NavHostController) {
                 },
                 onSignOutClick = {
                     scope.launch { drawerState.close() }
-                    // TODO: Implement logout when auth is migrated
+                    viewModel.logout {
+                        navController.navigate(Route.Login) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 }
             )
         }
     ) {
         Scaffold(
             topBar = {
-                MainToolbar(
-                    onMenuClick = {
-                        scope.launch { drawerState.open() }
-                    }
-                )
+                MainToolbar(onMenuClick = { scope.launch { drawerState.open() } })
             }
         ) { paddingValues ->
-            Box(
-                modifier = Modifier.padding(paddingValues)
-            ) {
-                // Collection List Screen (migrated in Phase 2.5!)
+            Box(modifier = Modifier.padding(paddingValues)) {
                 CollectionListScreen(
                     onNavigateToCollection = { collectionId ->
-                        // Navigate to PurchaseListScreen with collectionId (Phase 2.6!)
                         navController.navigate(Route.Purchase.List(collectionId))
                     },
                     onNavigateToAddCollection = {
-                        // Navigate to EditCollectionScreen (Phase 2.8!)
                         navController.navigate(Route.Collection.Edit())
                     }
                 )
@@ -118,12 +126,13 @@ fun MainScreen(navController: NavHostController) {
     }
 }
 
-/**
- * Navigation drawer content with user header and menu items
- */
+// ── Drawer ────────────────────────────────────────────────────────────────────
+
 @Composable
 private fun DrawerContent(
-    drawerState: DrawerState,
+    displayName: String,
+    email: String,
+    initials: String,
     onSkuListClick: () -> Unit,
     onPipClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -134,135 +143,155 @@ private fun DrawerContent(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .fillMaxWidth(0.8f)
-                .background(NavigationColors.colorPrimaryDark)
+                .fillMaxWidth(0.82f)
+                .background(NavColors.primaryDark)
         ) {
-            DrawerHeader(onSignOutClick = onSignOutClick)
-            DrawerMenuItems(
-                onSkuListClick = onSkuListClick,
-                onPipClick = onPipClick,
-                onSettingsClick = onSettingsClick
+            DrawerHeader(
+                displayName = displayName,
+                email = email,
+                initials = initials,
+                onSignOutClick = onSignOutClick
+            )
+
+            HorizontalDivider(color = NavColors.divider, thickness = 0.5.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            DrawerMenuItem(
+                text = "History Pays",
+                iconRes = Res.drawable.ic_baseline_payment_24,
+                onClick = onSkuListClick
+            )
+            DrawerMenuItem(
+                text = "PIP",
+                iconRes = Res.drawable.ic_baseline_camera_alt_24,
+                onClick = onPipClick
+            )
+            DrawerMenuItem(
+                text = "Settings",
+                iconRes = Res.drawable.ic_baseline_settings_24,
+                onClick = onSettingsClick
             )
         }
     }
 }
 
-/**
- * Drawer header with user info (placeholder for now)
- */
+// ── Drawer Header ─────────────────────────────────────────────────────────────
+
 @Composable
-private fun DrawerHeader(onSignOutClick: () -> Unit) {
-    Column {
+private fun DrawerHeader(
+    displayName: String,
+    email: String,
+    initials: String,
+    onSignOutClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(NavColors.primaryDark)
+            .padding(top = 24.dp, bottom = 20.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // User avatar placeholder
+            // ── Avatar — initials in brand green circle ────────────────────
             Box(
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(64.dp)
                     .clip(CircleShape)
-                    .background(NavigationColors.gr),
+                    .background(NavColors.green),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "U",
-                    style = MaterialTheme.typography.displayMedium,
+                    text = initials,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
             }
 
-            // Sign out icon (placeholder)
-            Box(
+            Spacer(modifier = Modifier.weight(1f))
+
+            // ── Logout button — door icon ──────────────────────────────────
+            Surface(
                 modifier = Modifier
-                    .size(24.dp)
-                    .clickable { onSignOutClick() }
-                    .background(Color.Gray)
-            )
+                    .size(40.dp)
+                    .clickable { onSignOutClick() },
+                shape = RoundedCornerShape(12.dp),
+                color = Color.White.copy(alpha = 0.08f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_outline_sensor_door),
+                        contentDescription = "Sign out",
+                        tint = Color.White.copy(alpha = 0.75f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
         }
 
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // ── User name ──────────────────────────────────────────────────────
         Text(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            text = "User Name",  // TODO: Get from user repository when migrated
-            color = Color.White
+            modifier = Modifier.padding(horizontal = 20.dp),
+            text = displayName,
+            color = Color.White,
+            fontSize = 17.sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
-        Text(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
-            text = "user@example.com",  // TODO: Get from user repository when migrated
-            color = Color.Gray
-        )
+
+        // ── Email ──────────────────────────────────────────────────────────
+        if (email.isNotEmpty()) {
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 2.dp),
+                text = email,
+                color = Color.White.copy(alpha = 0.55f),
+                fontSize = 13.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
-/**
- * Drawer menu items
- */
-@Composable
-private fun DrawerMenuItems(
-    onSkuListClick: () -> Unit,
-    onPipClick: () -> Unit,
-    onSettingsClick: () -> Unit
-) {
-    Spacer(modifier = Modifier.height(16.dp))
+// ── Drawer Menu Item ──────────────────────────────────────────────────────────
 
-    // SKU List / History
-    DrawerMenuItem(
-        text = "History Pays",  // Original: R.string.history_pays
-        iconResource = Res.drawable.ic_baseline_payment_24,
-        onClick = onSkuListClick
-    )
-
-    // PIP (Picture in Picture / Camera)
-    DrawerMenuItem(
-        text = "PIP",  // Original: R.string.pip
-        iconResource = Res.drawable.ic_baseline_camera_alt_24,
-        onClick = onPipClick
-    )
-
-    // Settings
-    DrawerMenuItem(
-        text = "Settings",  // Original: R.string.setting
-        iconResource = Res.drawable.ic_baseline_settings_24,
-        onClick = onSettingsClick
-    )
-}
-
-/**
- * Individual drawer menu item
- */
 @Composable
 private fun DrawerMenuItem(
     text: String,
-    iconResource: org.jetbrains.compose.resources.DrawableResource,
+    iconRes: org.jetbrains.compose.resources.DrawableResource,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(horizontal = 24.dp, vertical = 12.dp),
+            .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(iconResource),
+            painter = painterResource(iconRes),
             contentDescription = text,
-            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
-            modifier = Modifier.size(24.dp)
+            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White.copy(alpha = 0.85f)),
+            modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = text,
-            color = Color.White
+            color = Color.White.copy(alpha = 0.85f),
+            fontSize = 15.sp
         )
     }
 }
 
-/**
- * Main toolbar with menu icon and title
- */
+// ── Top Bar ───────────────────────────────────────────────────────────────���───
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainToolbar(onMenuClick: () -> Unit) {
@@ -288,7 +317,7 @@ private fun MainToolbar(onMenuClick: () -> Unit) {
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = NavigationColors.colorPrimary
+            containerColor = NavColors.primary
         )
     )
 }

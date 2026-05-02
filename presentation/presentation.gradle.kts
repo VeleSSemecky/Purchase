@@ -220,9 +220,6 @@ dependencies {
     implementation(libs.compose.fragment)
     implementation(libs.compose.lifecycle.viewmodel)
     implementation(libs.compose.constraintlayout)
-    implementation(libs.compose.accompanist.pager)
-    implementation(libs.compose.accompanist.flowlayout)
-
     // CameraX
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)

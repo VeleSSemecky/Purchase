@@ -189,7 +189,7 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
                         .size(100.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.FillBounds,
-                    imageModel = user.photoUrl?.ifEmpty { R.mipmap.ic_launcher_round },
+                    imageModel = { user.photoUrl?.ifEmpty { R.mipmap.ic_launcher_round } },
                     loading = {
                         CircularCenterProgressIndicator()
                     },
@@ -206,7 +206,7 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
                         }
                         .padding(24.dp)
                         .size(24.dp),
-                    imageModel = R.drawable.ic_outline_sensor_door
+                    imageModel = { R.drawable.ic_outline_sensor_door }
                 )
             }
             Text(
@@ -264,7 +264,7 @@ class NavigationFragment : BaseFragment(), MenuItemSelected {
                     .size(24.dp)
                     .align(Alignment.CenterVertically),
                 contentScale = ContentScale.FillBounds,
-                imageModel = drawerItem.resImage,
+                imageModel = { drawerItem.resImage },
                 colorFilter = tint(Color.White)
             )
             Spacer(modifier = Modifier.padding(8.dp))

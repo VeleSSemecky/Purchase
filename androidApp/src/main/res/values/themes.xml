@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.PurchaseKMP" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@android:color/holo_blue_dark</item>
-        <item name="colorPrimaryVariant">@android:color/holo_blue_light</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@android:color/holo_green_dark</item>
-        <item name="colorSecondaryVariant">@android:color/holo_green_light</item>
-        <item name="colorOnSecondary">@android:color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    <style name="Theme.PurchaseKMP" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- App brand colors -->
+        <item name="colorPrimary">#38A186</item>
+        <item name="colorPrimaryVariant">#2D8A70</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#4ACFAC</item>
+        <item name="colorOnSecondary">#000000</item>
+
+        <!-- Dark window background — eliminates white flash between screens -->
+        <item name="android:windowBackground">#FF121212</item>
+        <item name="android:colorBackground">#FF121212</item>
+
+        <!-- Edge-to-edge: let Compose handle status/nav bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Splash screen theme — shows dark bg before first frame -->
+    <style name="Theme.PurchaseKMP.Splash" parent="Theme.PurchaseKMP">
+        <item name="android:windowBackground">#FF121212</item>
     </style>
 </resources>
 

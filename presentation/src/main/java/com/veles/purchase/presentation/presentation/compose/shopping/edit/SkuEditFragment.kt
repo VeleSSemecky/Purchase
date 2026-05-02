@@ -294,7 +294,7 @@ class SkuEditFragment : BaseFragment() {
                                 )
                             },
                         contentScale = ContentScale.FillBounds,
-                        imageModel = skuPhotoEntity.skuPhotoUri,
+                        imageModel = { skuPhotoEntity.skuPhotoUri },
                         loading = {
                             CircularProgressIndicator(
                                 modifier = Modifier.fillMaxSize()

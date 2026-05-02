@@ -61,7 +61,7 @@ plugins {
 //    }
 // }
 
-tasks.dokkaGfmMultiModule {
+tasks.dokkaHtmlMultiModule {
     outputDirectory.set(file("${project.rootDir}/docs"))
 }
 

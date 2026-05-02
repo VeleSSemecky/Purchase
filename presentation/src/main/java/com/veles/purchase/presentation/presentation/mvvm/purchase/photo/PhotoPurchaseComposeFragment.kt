@@ -100,7 +100,7 @@ class PhotoPurchaseComposeFragment : BaseFragment() {
                 modifier = modifier,
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                imageModel = imageModel,
+                imageModel = { imageModel },
                 loading = {
                     CircularCenterProgressIndicator()
                 }

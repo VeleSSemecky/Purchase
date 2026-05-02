@@ -12,6 +12,7 @@ import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditViewModel
 import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
 import com.veles.purchase.presentation.mvvm.sku.statistics.OutlayGraphViewModel
 import com.veles.purchase.presentation.viewmodel.login.LoginViewModel
+import com.veles.purchase.presentation.viewmodel.main.MainViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -25,6 +26,14 @@ val viewModelModule = module {
     viewModel {
         LoginViewModel(
             authRepository = get()
+        )
+    }
+
+    // Main ViewModel — user info + logout
+    viewModel {
+        MainViewModel(
+            auth = get(),
+            logoutRepository = get()
         )
     }
 

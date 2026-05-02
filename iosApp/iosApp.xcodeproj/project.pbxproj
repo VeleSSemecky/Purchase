@@ -22,7 +22,8 @@
 		3DF95A5D2EFCE87D00070111 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A5C2EFCE87D00070111 /* FirebaseMessaging */; };
 		3DF95A5F2EFCE87D00070111 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 3DF95A5E2EFCE87D00070111 /* FirebaseStorage */; };
 		7dc577a2301341d6b6c7ecf4388cb813 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3cbe560ef57947ebac18222841d2051e /* ContentView.swift */; };
-/* End PBXBuildFile section */
+		AA000001000000000000AA02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000AA01 /* Assets.xcassets */; };
+		/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1c478cc7cd274ee191b10eb9687f69b2 /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
@@ -31,7 +32,8 @@
 		3cbe560ef57947ebac18222841d2051e /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5bdc0a8392c949b5bf5db20f059b05fd /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		e500fee6415d40f2ab4014458af6b7c5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-/* End PBXFileReference section */
+		AA000001000000000000AA01 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4142ddb5a3fd4656bcb310f11e984177 /* Frameworks */ = {
@@ -76,6 +78,7 @@
 			children = (
 				3DF95A4B2EFCE72000070111 /* GoogleService-Info.plist */,
 				GSIB00002 /* GoogleSignInBridge.swift */,
+				AA000001000000000000AA01 /* Assets.xcassets */,
 				1c478cc7cd274ee191b10eb9687f69b2 /* iOSApp.swift */,
 				3cbe560ef57947ebac18222841d2051e /* ContentView.swift */,
 				e500fee6415d40f2ab4014458af6b7c5 /* Info.plist */,
@@ -162,6 +165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3DF95A4C2EFCE72000070111 /* GoogleService-Info.plist in Resources */,
+				AA000001000000000000AA02 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

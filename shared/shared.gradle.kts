@@ -66,23 +66,23 @@ kotlin {
                 implementation(libs.room.runtime)
                 implementation(libs.sqlite.bundled)
 
-                // Date/Time - using version catalog (0.9.0 - latest)
+                // Date/Time - using version catalog
                 implementation(libs.kotlinx.datetime)
 
                 // Koin for DI
-                implementation("io.insert-koin:koin-core:4.1.1")
-                implementation("io.insert-koin:koin-compose:4.1.1")
-                implementation("io.insert-koin:koin-compose-viewmodel:4.1.1")
-                implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.9.6")
-                implementation("org.jetbrains.androidx.savedstate:savedstate:1.3.6")
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+                implementation(libs.lifecycle.viewmodel.compose.kmp)
+                implementation(libs.savedstate.kmp)
 
                 // Navigation
-                implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
+                implementation(libs.navigation.compose.kmp)
 
                 // Serialization
                 implementation(libs.kotlinx.serialization.json)
 
-                // Ktor Client (Network) - 3.0.2
+                // Ktor Client (Network)
                 implementation(libs.ktor.core)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
@@ -105,34 +105,31 @@ kotlin {
                 implementation(libs.androidx.activity)
 
                 // ConstraintLayout Compose (Android only)
-                implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0")
+                implementation(libs.compose.constraintlayout)
 
                 // Lifecycle ViewModel (Android only)
-                implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+                implementation(libs.androidx.lifecycle.viewmodel)
 
                 // Navigation Compose (Android only - iOS has savedstate issues)
-                implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
+                implementation(libs.navigation.compose.kmp)
 
                 // Koin Android
-                implementation("io.insert-koin:koin-core:4.0.0")
-                implementation("io.insert-koin:koin-compose:4.0.0")
-                implementation("io.insert-koin:koin-android:4.0.0")
-                implementation("io.insert-koin:koin-androidx-compose:4.0.0")
-                implementation("io.insert-koin:koin-compose-viewmodel:4.0.0")
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.android)
+                implementation(libs.koin.androidx.compose)
+                implementation(libs.koin.compose.viewmodel)
 
                 // DateTime - explicit for Android to ensure it's included in APK
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                implementation(libs.kotlinx.datetime)
 
                 // Biometric Authentication
-                implementation("androidx.biometric:biometric:1.2.0-alpha05")
-
-                // Firebase (for FCM notifications)
-                implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
+                implementation(libs.biometric)
 
                 // Google Sign-In / Credential Manager
-                implementation("androidx.credentials:credentials:1.3.0")
-                implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
-                implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+                implementation(libs.credentials)
+                implementation(libs.credentials.play.services.auth)
+                implementation(libs.identity)
 
                 // Room Database (Android)
                 implementation(libs.room.runtime)
@@ -142,7 +139,7 @@ kotlin {
                 implementation(libs.ktor.client.okhttp)
 
                 // Activity Compose
-                implementation("androidx.activity:activity-compose:1.9.3")
+                implementation(libs.compose.activity)
 
                 implementation(project.dependencies.platform(libs.firebase.bom))
                 implementation(libs.bundles.firebase.data)

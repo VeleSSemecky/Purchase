@@ -143,7 +143,7 @@ class PhotoListFragment : BaseFragment() {
                     },
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
-                imageModel = uri,
+                imageModel = { uri },
                 loading = {
                     CircularProgressIndicator()
                 }
