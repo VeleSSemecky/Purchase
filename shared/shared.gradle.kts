@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.androidLibrary
-
 plugins {
     alias(libs.plugins.android.library)
     kotlin("multiplatform")
@@ -20,13 +18,13 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
 
-    androidLibrary {
+    android {
         namespace = "com.example.shared"
         compileSdk = libs.versions.compileSdk.get().toInt()
         androidResources.enable = true
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_19)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
         }
     }
 //    androidTarget {
@@ -44,7 +42,7 @@ kotlin {
         it.binaries.framework {
             baseName = "shared"
             isStatic = true  // Static framework for KMP Compose
-            export(compose.components.resources)
+            export(libs.compose.multiplatform.resources)
         }
     }
 
@@ -53,13 +51,13 @@ kotlin {
             dependencies {
                 // Phase 5 Complete - Using real implementations instead of mocks
 
-                implementation(compose.runtime)
-                implementation(compose.ui)
-                implementation(compose.material3)
-                implementation(compose.materialIconsExtended)
-                implementation(compose.foundation)
-                implementation(compose.animation)
-                api(compose.components.resources)  // API instead of implementation for iOS export
+                implementation(libs.compose.multiplatform.runtime)
+                implementation(libs.compose.multiplatform.ui)
+                implementation(libs.compose.multiplatform.material3)
+                implementation(libs.compose.multiplatform.materialIconsExtended)
+                implementation(libs.compose.multiplatform.foundation)
+                implementation(libs.compose.multiplatform.animation)
+                api(libs.compose.multiplatform.resources)  // API instead of implementation for iOS export
                 implementation(libs.coroutines.core)
 
                 // Room KMP Database

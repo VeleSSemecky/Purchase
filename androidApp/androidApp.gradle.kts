@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
 
     alias(libs.plugins.jetbrains.kotlin.parcelize)
@@ -55,13 +54,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlin {
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_19
+            jvmTarget = JvmTarget.JVM_21
         }
     }
 
@@ -80,6 +79,9 @@ android {
 dependencies {
     // Shared KMP module
     implementation(project(":shared"))
+
+    // Compose BOM
+    implementation(platform(libs.compose.bom))
 
     // Koin for Android
     implementation("io.insert-koin:koin-android:4.0.0")

@@ -1,20 +1,21 @@
 [versions]
 
 #Plugins
-androidGradle = "8.11.2"
+androidGradle = "9.2.0"
 kotlin = "2.3.21"
 dokka = "2.2.0"
 ksp = "2.3.4"
 navigation = "2.9.7"
 # JetBrains KMP navigation wrapper has separate versioning from AndroidX
 navigationComposeKmp = "2.9.2"
-googleServices = "4.4.2"
-firebaseCrashlytics = "3.0.3"
-firebaseAppDistribution = "5.1.1"
+googleServices = "4.4.4"
+firebaseCrashlytics = "3.0.7"
+firebaseAppDistribution = "5.2.1"
 
 #Kotlin Multiplatform
 kotlinMultiplatform = "2.3.21"
 composeMultiplatform = "1.10.3"
+composeMaterial3 = "1.10.0-alpha05"
 kotlinx-datetime = "0.7.1"
 
 #android
@@ -215,6 +216,15 @@ compose-activity = { group = "androidx.activity", name = "activity-compose", ver
 compose-fragment = { group = "androidx.fragment", name = "fragment-compose", version.ref = "composeFragment" }
 compose-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeLifecycleViewmodel" }
 compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "composeConstraintlayout" }
+
+# Compose Multiplatform
+compose-multiplatform-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
+compose-multiplatform-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
+compose-multiplatform-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+compose-multiplatform-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
+compose-multiplatform-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "composeMultiplatform" }
+compose-multiplatform-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+compose-multiplatform-materialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
 
 #Image
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
