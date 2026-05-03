@@ -11,10 +11,24 @@ import com.veles.purchase.domain.usecase.purchase.DeletePurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.GetPurchasesUseCase
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
+import com.veles.purchase.presentation.model.sort.SortPurchase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+
+/**
+ * UI State for Purchase List Screen
+ */
+data class PurchaseListUiState(
+    val collection: PurchaseCollectionModel = PurchaseCollectionModel.EMPTY,
+    val purchases: List<PurchaseModel> = emptyList(),
+    val searchText: String = "",
+    val newNamePurchase: String = "",
+    val sortPurchase: SortPurchase = SortPurchase.SORTING_UNCHECK,
+    val settings: PurchaseSetting = PurchaseSetting(),
+    val progress: ListPurchaseViewModel.ProgressState = ListPurchaseViewModel.ProgressState.End
+)
 
 /**
  * ViewModel for Purchase List Screen
@@ -30,71 +44,52 @@ class ListPurchaseViewModel(
     private val getSettingUseCase: GetSettingUseCase
 ) : ViewModel() {
 
-    private val _flowProgress = MutableStateFlow(ProgressState.End)
-    val flowProgress: StateFlow<ProgressState> = _flowProgress.asStateFlow()
-
-    private val _flowListPurchaseModels = MutableStateFlow<List<PurchaseModel>>(emptyList())
-    val flowListPurchaseModels: StateFlow<List<PurchaseModel>> = _flowListPurchaseModels.asStateFlow()
-
-    private val _flowSearchText = MutableStateFlow("")
-    val flowSearchText: StateFlow<String> = _flowSearchText.asStateFlow()
-
-    private val _flowCollectionPurchase = MutableStateFlow(PurchaseCollectionModel.EMPTY)
-    val flowCollectionPurchase: StateFlow<PurchaseCollectionModel> = _flowCollectionPurchase.asStateFlow()
-
-    private val _flowNewNamePurchase = MutableStateFlow("")
-    val flowNewNamePurchase: StateFlow<String> = _flowNewNamePurchase.asStateFlow()
-
-    private val _flowPurchaseSetting = MutableStateFlow(PurchaseSetting())
-    val flowPurchaseSetting: StateFlow<PurchaseSetting> = _flowPurchaseSetting.asStateFlow()
-
-    private val _flowSortByChecked = MutableStateFlow(false)
-    val flowSortByChecked: StateFlow<Boolean> = _flowSortByChecked.asStateFlow()
+    private val _uiState = MutableStateFlow(PurchaseListUiState())
+    val uiState: StateFlow<PurchaseListUiState> = _uiState.asStateFlow()
 
     init {
         loadCollection()
-        loadPurchases()
-        loadSettings()
+        observePurchases()
+        observeSettings()
     }
 
     private fun loadCollection() {
         viewModelScope.launch {
             val collection = getCollectionPurchaseUseCase(collectionId)
             if (collection != null) {
-                _flowCollectionPurchase.emit(collection)
+                _uiState.update { it.copy(collection = collection) }
             }
         }
     }
 
-    private fun loadPurchases() {
-        viewModelScope.launch {
-            _flowProgress.emit(ProgressState.Start)
-            getPurchasesUseCase(collectionId, _flowSearchText.value).collect { purchases ->
-                _flowListPurchaseModels.emit(purchases)
-                _flowProgress.emit(ProgressState.End)
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    private fun observePurchases() {
+        _uiState
+            .map { it.searchText }
+            .distinctUntilChanged()
+            .flatMapLatest { query ->
+                getPurchasesUseCase(collectionId, query)
             }
-        }
+            .onEach { purchases ->
+                _uiState.update { it.copy(purchases = purchases) }
+            }
+            .launchIn(viewModelScope)
     }
 
-    private fun loadSettings() {
-        viewModelScope.launch {
-            getSettingUseCase().collect { settings ->
-                _flowPurchaseSetting.emit(settings)
+    private fun observeSettings() {
+        getSettingUseCase()
+            .onEach { settings ->
+                _uiState.update { it.copy(settings = settings) }
             }
-        }
+            .launchIn(viewModelScope)
     }
 
     fun updateSearchText(text: String) {
-        viewModelScope.launch {
-            _flowSearchText.emit(text)
-            loadPurchases()
-        }
+        _uiState.update { it.copy(searchText = text) }
     }
 
     fun onNewNamePurchaseChanged(text: String) {
-        viewModelScope.launch {
-            _flowNewNamePurchase.emit(text)
-        }
+        _uiState.update { it.copy(newNamePurchase = text) }
     }
 
     fun onChecked(purchase: PurchaseModel) {
@@ -112,6 +107,8 @@ class ListPurchaseViewModel(
     @OptIn(ExperimentalUuidApi::class)
     fun insertAdd(name: String) {
         viewModelScope.launch {
+            _uiState.update { it.copy(progress = ProgressState.Start) }
+            
             val newPurchase = PurchaseModel(
                 createId = Uuid.random().toString().uppercase(),
                 text = name,
@@ -123,15 +120,17 @@ class ListPurchaseViewModel(
                 purchaseCategoryModel = null
             )
             savePurchaseUseCase(newPurchase, collectionId)
-            _flowNewNamePurchase.emit("")
+            
+            _uiState.update { it.copy(
+                newNamePurchase = "",
+                searchText = "", // Reset search after adding? Optional
+                progress = ProgressState.End
+            ) }
         }
     }
 
-
-    fun toggleSortByChecked() {
-        viewModelScope.launch {
-            _flowSortByChecked.emit(!_flowSortByChecked.value)
-        }
+    fun setSortPurchase(sortPurchase: SortPurchase) {
+        _uiState.update { it.copy(sortPurchase = sortPurchase) }
     }
 
     enum class ProgressState {
@@ -139,4 +138,3 @@ class ListPurchaseViewModel(
         End
     }
 }
-

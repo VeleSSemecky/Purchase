@@ -9,13 +9,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -30,35 +35,23 @@ import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseComposeViewModel
 import com.veles.purchase.shared.resources.Res
+import com.veles.purchase.shared.resources.ic_delete_black_24dp
 import com.veles.purchase.shared.resources.ic_purchase_collections
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Collection List Screen - shows all purchase collections
- *
- * Migrated from: /presentation/.../mvvm/purchase/collection/list/CollectionPurchaseComposeFragment.kt
- *
- * Features:
- * - 2-column staggered grid
- * - Green collection cards (#38A186)
- * - Swipe to delete (Custom SwipeToDismiss with 0.7f threshold)
- * - Long press shows delete dialog
- * - FAB to add new collection
- * - Loading indicator
- *
- * Phase 2.5 - Collection feature migration
- * FIXED: Now using custom components matching pattern exactly
  */
 
-// Specific teal color for collection cards (matches original)
+// Specific teal color for collection cards (matches original design style)
 private val CollectionCardColor = Color(0xFF38A186)
 
 @Composable
 fun CollectionListScreen(
     viewModel: CollectionPurchaseComposeViewModel = koinViewModel(),
     onNavigateToCollection: (String) -> Unit = {},
-    onNavigateToAddCollection: () -> Unit = {}
+    onNavigateToAddCollection: () -> Unit = {},
 ) {
     Scaffold(
         containerColor = Colors.surface,
@@ -70,7 +63,7 @@ fun CollectionListScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+//                .padding(paddingValues)
         ) {
             Content(
                 viewModel = viewModel,
@@ -86,7 +79,8 @@ fun CollectionListScreen(
 private fun FAB(onNavigateToAddCollection: () -> Unit) {
     FloatingActionButton(
         onClick = onNavigateToAddCollection,
-        containerColor = Colors.gr
+        containerColor = Colors.gr,
+        shape = RoundedCornerShape(16.dp)
     ) {
         Icon(
             Icons.Filled.Add,
@@ -104,7 +98,7 @@ private fun Progress(viewModel: CollectionPurchaseComposeViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Colors.progress)
+            .background(Color.Black.copy(alpha = 0.3f))
             .clickable(enabled = false) {},
         contentAlignment = Alignment.Center
     ) {
@@ -121,14 +115,14 @@ private fun Content(
     val list by viewModel.stateFlowListPurchaseCollections.collectAsState()
 
     if (list.isEmpty()) {
-        // Empty state
+        // Simple Empty state matching original style
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = "No collections yet",
@@ -145,8 +139,8 @@ private fun Content(
     } else {
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
-            verticalItemSpacing = 20.dp,
+            contentPadding = PaddingValues(16.dp), // Proportional padding
+            verticalItemSpacing = 16.dp,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
@@ -167,11 +161,32 @@ private fun Content(
                         .fillMaxWidth()
                         .animateItem(),
                     state = dismissState,
-                    background = {},
+                    background = {
+                        val color = when (dismissState.dismissDirection) {
+                            DismissDirection.EndToStart -> Color(0xFFE57373)
+                            DismissDirection.StartToEnd -> Color(0xFFE57373)
+                            else -> Color.Transparent
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(color),
+                            contentAlignment = if (dismissState.dismissDirection == DismissDirection.StartToEnd)
+                                Alignment.CenterStart else Alignment.CenterEnd
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_delete_black_24dp),
+                                contentDescription = "Delete",
+                                tint = Color.White,
+                                modifier = Modifier.padding(horizontal = 24.dp)
+                            )
+                        }
+                    },
                     dismissThresholds = { FractionalThreshold(0.7f) }
                 ) {
                     val elevation = animateDpAsState(
-                        if (dismissState.dismissDirection == null) 6.dp else 10.dp
+                        if (dismissState.dismissDirection == null) 4.dp else 0.dp
                     ).value
 
                     ItemPurchaseCollection(
@@ -196,44 +211,83 @@ private fun ItemPurchaseCollection(
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
+        shape = RoundedCornerShape(12.dp), // Original simple shape
+        colors = CardDefaults.elevatedCardColors(containerColor = CollectionCardColor),
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .background(CollectionCardColor)
                 .fillMaxWidth()
                 .combinedClickable(
                     onClick = onClick,
                     onLongClick = onLongClick
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                )
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                textAlign = TextAlign.Start,
-                text = item.name,
-                fontSize = 16.sp,
-                style = textStyle1(),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 12.dp,
-                        bottom = 12.dp
-                    )
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = item.name,
+                    fontSize = 17.sp,
+                    style = textStyle1(), // Using app's original text style
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
 
-            Icon(
-                modifier = Modifier.padding(8.dp),
-                painter = painterResource(Res.drawable.ic_purchase_collections),
-                contentDescription = "Purchase Collections Icon",
-                tint = Color.White
-            )
+                Icon(
+                    painter = painterResource(Res.drawable.ic_purchase_collections),
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.8f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Categories count
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.List,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.8f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = item.categoryModels.size.toString(),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                }
+
+                // Members count
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Groups,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.8f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = item.listMembers.size.toString(),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                }
+            }
         }
     }
 }

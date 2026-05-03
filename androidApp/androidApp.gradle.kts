@@ -44,9 +44,13 @@ android {
     productFlavors {
         create("configProduction") {
             applicationIdSuffix = ".configProduction"
+            buildConfigField("String", "DB_KEY", "\"${project.findProperty("PROD_DB_KEY")}\"")
+            buildConfigField("String", "SERVER_CLIENT_ID", "\"${project.findProperty("SERVER_CLIENT_ID")}\"")
         }
         create("configTest") {
             applicationIdSuffix = ".configTest"
+            buildConfigField("String", "DB_KEY", "\"${project.findProperty("TEST_DB_KEY")}\"")
+            buildConfigField("String", "SERVER_CLIENT_ID", "\"${project.findProperty("SERVER_CLIENT_ID")}\"")
         }
     }
 
@@ -63,6 +67,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {

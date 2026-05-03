@@ -60,10 +60,12 @@ fun CollectionEditScreen(
 
     val scope = rememberCoroutineScope()
 
+    val isNewCollection = viewModel.isNewCollection
+
     Scaffold(
         topBar = {
             ToolBar(
-                title = if (viewModel.isNewCollection) "Create Collection" else "Edit Collection",
+                title = if (isNewCollection) "Create Collection" else "Edit Collection",
                 onNavigateBack = onNavigateBack,
                 onSaveClicked = {
                     scope.launch {
@@ -83,6 +85,7 @@ fun CollectionEditScreen(
                 paddingValues = paddingValues,
                 collectionName = collectionName,
                 isNameError = isNameError,
+                isNewCollection = isNewCollection,
                 onCollectionNameChange = viewModel::onCollectionNameChange,
                 onCategoryClicked = { onNavigateToCategory(collectionId) },
                 onHistoryClicked = { onNavigateToHistory(collectionId) }
@@ -152,6 +155,7 @@ private fun Content(
     paddingValues: PaddingValues,
     collectionName: String,
     isNameError: Boolean,
+    isNewCollection: Boolean,
     onCollectionNameChange: (String) -> Unit,
     onCategoryClicked: () -> Unit,
     onHistoryClicked: () -> Unit
@@ -173,17 +177,16 @@ private fun Content(
 
         Spacer(modifier = Modifier.padding(8.dp))
 
-        // Category Settings Button
+        // Category Settings Button (always visible)
         ComponentCategory(onCategoryClicked)
 
+        // History Button — only visible when editing an existing collection
+        if (!isNewCollection) {
+            Spacer(modifier = Modifier.padding(8.dp))
+            ComponentHistory(onHistoryClicked)
+        }
+
         Spacer(modifier = Modifier.padding(8.dp))
-
-        // History Button
-        ComponentHistory(onHistoryClicked)
-
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        // TODO Phase 2.9+: Add user selection list here when user management is implemented
     }
 }
 

@@ -5,12 +5,23 @@ import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseUseCase
+import com.veles.purchase.domain.model.history.HistoryType
 import com.veles.purchase.domain.usecase.purchase.GetPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+
+/**
+ * UI State for Purchase Edit Screen
+ */
+data class PurchaseEditUiState(
+    val purchase: PurchaseModel = PurchaseModel.EMPTY,
+    val categories: List<PurchaseCategoryModel> = emptyList(),
+    val progress: EditPurchaseViewModel.ProgressState = EditPurchaseViewModel.ProgressState.End,
+    val isNewPurchase: Boolean = false
+)
 
 /**
  * ViewModel for Purchase Edit/Add Screen
@@ -24,36 +35,8 @@ class EditPurchaseViewModel(
     private val getCollectionPurchaseUseCase: GetCollectionPurchaseUseCase
 ) : ViewModel() {
 
-    private val _flowProgress = MutableStateFlow(ProgressState.End)
-    val flowProgress: StateFlow<ProgressState> = _flowProgress.asStateFlow()
-
-    private val _flowPurchaseModel = MutableStateFlow(PurchaseModel.EMPTY)
-
-    val flowPurchaseName: StateFlow<String> = _flowPurchaseModel
-        .map { it.text }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
-
-    val flowPurchaseComment: StateFlow<String> = _flowPurchaseModel
-        .map { it.count }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
-
-    val flowPurchasePrice: StateFlow<String> = _flowPurchaseModel
-        .map { it.price }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
-
-    val flowPurchaseIsChecked: StateFlow<Boolean> = _flowPurchaseModel
-        .map { it.isChecked }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
-    val flowPurchaseCategory: StateFlow<PurchaseCategoryModel?> = _flowPurchaseModel
-        .map { it.purchaseCategoryModel }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-
-    private val _flowCategories = MutableStateFlow<List<PurchaseCategoryModel>>(emptyList())
-    val flowCategories: StateFlow<List<PurchaseCategoryModel>> = _flowCategories.asStateFlow()
-
-    val isNewPurchase: Boolean
-        get() = purchaseId.isEmpty()
+    private val _uiState = MutableStateFlow(PurchaseEditUiState(isNewPurchase = purchaseId.isEmpty()))
+    val uiState: StateFlow<PurchaseEditUiState> = _uiState.asStateFlow()
 
     init {
         loadPurchase()
@@ -63,12 +46,12 @@ class EditPurchaseViewModel(
     @OptIn(ExperimentalUuidApi::class)
     private fun loadPurchase() {
         viewModelScope.launch {
-            _flowProgress.emit(ProgressState.Start)
+            _uiState.update { it.copy(progress = ProgressState.Start) }
 
             if (purchaseId.isNotEmpty()) {
                 val purchase = getPurchaseUseCase(collectionId, purchaseId)
                 if (purchase != null) {
-                    _flowPurchaseModel.emit(purchase)
+                    _uiState.update { it.copy(purchase = purchase) }
                 }
             } else {
                 val newPurchase = PurchaseModel(
@@ -81,10 +64,10 @@ class EditPurchaseViewModel(
                     listImage = emptyList(),
                     purchaseCategoryModel = null
                 )
-                _flowPurchaseModel.emit(newPurchase)
+                _uiState.update { it.copy(purchase = newPurchase) }
             }
 
-            _flowProgress.emit(ProgressState.End)
+            _uiState.update { it.copy(progress = ProgressState.End) }
         }
     }
 
@@ -92,49 +75,41 @@ class EditPurchaseViewModel(
         viewModelScope.launch {
             val collection = getCollectionPurchaseUseCase(collectionId)
             if (collection != null) {
-                _flowCategories.emit(collection.categoryModels)
+                _uiState.update { it.copy(categories = collection.categoryModels) }
             }
         }
     }
 
     fun onTitleChange(title: String) {
-        viewModelScope.launch {
-            _flowPurchaseModel.update { it.copy(text = title) }
-        }
+        _uiState.update { it.copy(purchase = it.purchase.copy(text = title)) }
     }
 
     fun onPriceChange(price: String) {
-        viewModelScope.launch {
-            _flowPurchaseModel.update { it.copy(price = price) }
-        }
+        _uiState.update { it.copy(purchase = it.purchase.copy(price = price)) }
     }
 
     fun onCommentChange(comment: String) {
-        viewModelScope.launch {
-            _flowPurchaseModel.update { it.copy(count = comment) }
-        }
+        _uiState.update { it.copy(purchase = it.purchase.copy(count = comment)) }
     }
 
     fun onCheckedChange(isChecked: Boolean) {
-        viewModelScope.launch {
-            _flowPurchaseModel.update { it.copy(isChecked = isChecked) }
-        }
+        _uiState.update { it.copy(purchase = it.purchase.copy(isChecked = isChecked)) }
     }
 
     fun onCategorySelected(category: PurchaseCategoryModel?) {
-        viewModelScope.launch {
-            _flowPurchaseModel.update { it.copy(purchaseCategoryModel = category) }
-        }
+        _uiState.update { it.copy(purchase = it.purchase.copy(purchaseCategoryModel = category)) }
     }
 
     suspend fun onSaveClicked(): Boolean {
-        if (_flowPurchaseModel.value.text.isBlank()) {
+        val currentPurchase = _uiState.value.purchase
+        if (currentPurchase.text.isBlank()) {
             return false
         }
 
-        _flowProgress.emit(ProgressState.Start)
-        savePurchaseUseCase(_flowPurchaseModel.value, collectionId)
-        _flowProgress.emit(ProgressState.End)
+        _uiState.update { it.copy(progress = ProgressState.Start) }
+        val historyType = if (_uiState.value.isNewPurchase) HistoryType.ADD else HistoryType.CHANGE
+        savePurchaseUseCase(currentPurchase, collectionId, historyType)
+        _uiState.update { it.copy(progress = ProgressState.End) }
         return true
     }
 
@@ -143,4 +118,3 @@ class EditPurchaseViewModel(
         End
     }
 }
-

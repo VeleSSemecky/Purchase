@@ -45,9 +45,9 @@ val useCaseModule = module {
     // Purchase UseCases
     single { GetPurchasesUseCase(purchaseRepository = get()) }
     single { GetPurchaseUseCase(purchaseRepository = get()) }
-    single { SavePurchaseUseCase(purchaseRepository = get()) }
+    single { SavePurchaseUseCase(purchaseRepository = get(), historyRepository = get()) }
     single { DeletePurchaseUseCase(purchaseRepository = get(), historyRepository = get()) }
-    single { CheckPurchaseUseCase(purchaseRepository = get()) }
+    single { CheckPurchaseUseCase(purchaseRepository = get(), historyRepository = get()) }
     single { AddLazyPurchaseUseCase(purchaseRepository = get(), historyRepository = get()) }
     single { MoveForLaterPurchaseUseCase(purchaseRepository = get()) }
     single { FirebasePurchaseSendUseCase(purchaseRepository = get()) }
