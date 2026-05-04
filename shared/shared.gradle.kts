@@ -35,7 +35,6 @@ kotlin {
 
     // iOS targets with framework configuration
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -75,7 +74,8 @@ kotlin {
                 implementation(libs.savedstate.kmp)
 
                 // Navigation
-                implementation(libs.navigation.compose.kmp)
+                implementation(libs.nav3.ui)
+                implementation(libs.nav3.lifecycle.viewmodel)
 
                 // Serialization
                 implementation(libs.kotlinx.serialization.json)
@@ -109,7 +109,7 @@ kotlin {
                 implementation(libs.androidx.lifecycle.viewmodel)
 
                 // Navigation Compose (Android only - iOS has savedstate issues)
-                implementation(libs.navigation.compose.kmp)
+                implementation(libs.nav3.ui)
 
                 // Koin Android
                 implementation(libs.koin.core)
@@ -163,7 +163,6 @@ dependencies {
     // Phase 5: Enable KSP for all platforms - migrating to real Room database
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosX64", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
 }
 
@@ -206,7 +205,7 @@ tasks.register<Copy>("copyComposeResourcesToIosFramework") {
     // Source: prepared resources from commonMain
     from(layout.buildDirectory.dir("generated/compose/resourceGenerator/preparedResources/commonMain"))
 
-    listOf("iosX64", "iosArm64", "iosSimulatorArm64").forEach { target ->
+    listOf("iosArm64", "iosSimulatorArm64").forEach { target ->
         // Copy to framework compose-resources root
         into(layout.buildDirectory.dir("bin/$target/${buildTypeLower}Framework/shared.framework/compose-resources"))
 

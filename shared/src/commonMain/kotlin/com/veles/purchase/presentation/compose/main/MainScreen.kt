@@ -46,7 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.veles.purchase.presentation.compose.purchase.collection.CollectionListScreen
 import com.veles.purchase.presentation.navigation.Route
 import com.veles.purchase.presentation.viewmodel.main.MainViewModel
@@ -70,7 +69,8 @@ private object NavColors {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    navController: NavHostController,
+    onNavigateToRoute: (Route) -> Unit,
+    onLogout: () -> Unit,
     viewModel: MainViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -87,21 +87,19 @@ fun MainScreen(
                 initials = state.initials,
                 onSkuListClick = {
                     scope.launch { drawerState.close() }
-                    navController.navigate(Route.Sku.List)
+                    onNavigateToRoute(Route.Sku.List)
                 },
                 onPipClick = {
                     scope.launch { drawerState.close() }
                 },
                 onSettingsClick = {
                     scope.launch { drawerState.close() }
-                    navController.navigate(Route.Settings.Purchase)
+                    onNavigateToRoute(Route.Settings.Purchase)
                 },
                 onSignOutClick = {
                     scope.launch { drawerState.close() }
                     viewModel.logout {
-                        navController.navigate(Route.Login) {
-                            popUpTo(0) { inclusive = true }
-                        }
+                        onLogout()
                     }
                 }
             )
@@ -115,10 +113,10 @@ fun MainScreen(
             Box(modifier = Modifier.padding(paddingValues)) {
                 CollectionListScreen(
                     onNavigateToCollection = { collectionId ->
-                        navController.navigate(Route.Purchase.List(collectionId))
+                        onNavigateToRoute(Route.Purchase.List(collectionId))
                     },
                     onNavigateToAddCollection = {
-                        navController.navigate(Route.Collection.Edit())
+                        onNavigateToRoute(Route.Collection.Edit())
                     }
                 )
             }

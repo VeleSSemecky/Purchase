@@ -1,6 +1,7 @@
 package com.veles.purchase.presentation.navigation
 
 import kotlinx.serialization.Serializable
+import androidx.navigation3.runtime.NavKey
 
 /**
  * Type-safe navigation routes using kotlinx-serialization
@@ -9,7 +10,7 @@ import kotlinx.serialization.Serializable
  * with a more Kotlin-idiomatic solution for KMP.
  */
 @Serializable
-sealed class Route {
+sealed class Route : NavKey {
 
     /**
      * Login screen route
