@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.domain.model.setting.PurchaseSetting
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.DismissDirection
 import com.veles.purchase.presentation.compose.DismissValue
@@ -51,7 +52,7 @@ fun PurchaseListScreen(
     onNavigateToPurchaseDetail: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val searchWidgetState = remember { mutableStateOf(SearchWidgetState.CLOSED) }
+    var searchWidgetState by remember { mutableStateOf(SearchWidgetState.CLOSED) }
     var showSortSheet by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -62,6 +63,7 @@ fun PurchaseListScreen(
                 title = uiState.collection.name,
                 searchText = uiState.searchText,
                 searchWidgetState = searchWidgetState,
+                onSearchWidgetStateChanged = { searchWidgetState = it },
                 onSearchTextChanged = viewModel::updateSearchText,
                 onBackClick = onNavigateBack,
                 onSettingsClick = onNavigateToSettings
@@ -74,7 +76,11 @@ fun PurchaseListScreen(
                 .padding(paddingValues)
         ) {
             PurchaseListContent(
-                uiState = uiState,
+                purchases = uiState.purchases,
+                sortPurchase = uiState.sortPurchase,
+                searchText = uiState.searchText,
+                settings = uiState.settings,
+                newNamePurchase = uiState.newNamePurchase,
                 onChecked = viewModel::onChecked,
                 onDelete = viewModel::deletePurchase,
                 onItemClick = onNavigateToPurchaseDetail,
@@ -106,96 +112,159 @@ fun PurchaseListScreen(
 private fun PurchaseListTopBar(
     title: String,
     searchText: String,
-    searchWidgetState: MutableState<SearchWidgetState>,
+    searchWidgetState: SearchWidgetState,
+    onSearchWidgetStateChanged: (SearchWidgetState) -> Unit,
     onSearchTextChanged: (String) -> Unit,
     onBackClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    SearchTopAppBar(
-        searchTextState = searchText,
-        searchWidgetState = searchWidgetState,
-        onTextChange = onSearchTextChanged,
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White
-                )
-            }
-        },
-        title = {
-            Text(
-                text = title,
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                color = Color.White,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        actions = { widgetState ->
-            IconButton(onClick = { widgetState.value = SearchWidgetState.OPENED }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.White)
-            }
-            IconButton(onClick = onSettingsClick) {
-                Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
-            }
+    val searchWidgetStateMutable = remember { mutableStateOf(searchWidgetState) }
+
+    LaunchedEffect(searchWidgetState) {
+        if (searchWidgetStateMutable.value != searchWidgetState) {
+            searchWidgetStateMutable.value = searchWidgetState
         }
-    )
+    }
+
+    Box(modifier = modifier) {
+        SearchTopAppBar(
+            searchTextState = searchText,
+            searchWidgetState = searchWidgetStateMutable,
+            onTextChange = onSearchTextChanged,
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            actions = { widgetState ->
+                IconButton(onClick = {
+                    widgetState.value = SearchWidgetState.OPENED
+                    onSearchWidgetStateChanged(SearchWidgetState.OPENED)
+                }) {
+                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.White)
+                }
+                IconButton(onClick = onSettingsClick) {
+                    Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
+                }
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun PurchaseListContent(
-    uiState: PurchaseListUiState,
+    purchases: List<PurchaseModel>,
+    sortPurchase: SortPurchase,
+    searchText: String,
+    settings: PurchaseSetting,
+    newNamePurchase: String,
     onChecked: (PurchaseModel) -> Unit,
     onDelete: (PurchaseModel) -> Unit,
     onItemClick: (String) -> Unit,
     onShowSortSheet: () -> Unit,
     onNewNameChange: (String) -> Unit,
-    onAddPurchase: (String) -> Unit
+    onAddPurchase: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val sortedPurchases = remember(uiState.purchases, uiState.sortPurchase) {
-        uiState.purchases.sortedWith(uiState.sortPurchase.toPurchaseComparator())
+    val sortedPurchases = remember(purchases, sortPurchase) {
+        purchases.sortedWith(sortPurchase.toPurchaseComparator())
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         val listState = rememberLazyListState()
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            stickyHeader(key = "sort_header", contentType = "header") {
-                SortIndicator(
-                    sortPurchase = uiState.sortPurchase,
-                    onSortClick = onShowSortSheet
-                )
-            }
+        if (sortedPurchases.isEmpty()) {
+            EmptyListPlaceholder(
+                isSearchMode = searchText.isNotEmpty(),
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                stickyHeader(key = "sort_header", contentType = "header") {
+                    SortIndicator(
+                        sortPurchase = sortPurchase,
+                        onSortClick = onShowSortSheet
+                    )
+                }
 
-            items(
-                items = sortedPurchases,
-                key = { it.createId },
-                contentType = { "purchase_item" }
-            ) { purchase ->
-                SwipeablePurchaseItem(
-                    modifier = Modifier.animateItem(),
-                    purchase = purchase,
-                    isImageSettingEnabled = uiState.settings.isImage,
-                    onChecked = { onChecked(purchase) },
-                    onDelete = { onDelete(purchase) },
-                    onItemClick = { onItemClick(purchase.createId) }
-                )
+                items(
+                    items = sortedPurchases,
+                    key = { it.createId },
+                    contentType = { "purchase_item" }
+                ) { purchase ->
+                    SwipeablePurchaseItem(
+                        modifier = Modifier.animateItem(),
+                        purchase = purchase,
+                        isImageSettingEnabled = settings.isImage,
+                        onChecked = { onChecked(purchase) },
+                        onDelete = { onDelete(purchase) },
+                        onItemClick = { onItemClick(purchase.createId) }
+                    )
+                }
             }
         }
 
         CreatePurchaseInput(
-            value = uiState.newNamePurchase,
+            value = newNamePurchase,
             onValueChange = onNewNameChange,
             onAdd = onAddPurchase
         )
+    }
+}
+
+@Composable
+private fun EmptyListPlaceholder(
+    isSearchMode: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(32.dp)
+        ) {
+            val emptyTitle = if (!isSearchMode) "No purchases yet" else "No matches found"
+            val emptySubTitle = if (!isSearchMode) 
+                "Type a name below to add your first item" 
+            else 
+                "Try a different search term"
+
+            Text(
+                text = emptyTitle,
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.Gray,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = emptySubTitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

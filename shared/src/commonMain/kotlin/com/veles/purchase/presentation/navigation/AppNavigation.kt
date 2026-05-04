@@ -3,6 +3,9 @@ package com.veles.purchase.presentation.navigation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavBackStack
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -38,18 +41,15 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(Route.Collection.Category::class)
             subclass(Route.Collection.History::class)
             subclass(Route.Purchase.List::class)
-            subclass(Route.Purchase.Detail::class)
             subclass(Route.Purchase.Edit::class)
             subclass(Route.Purchase.History::class)
             subclass(Route.Purchase.Later::class)
             subclass(Route.Sku.List::class)
-            subclass(Route.Sku.Detail::class)
             subclass(Route.Sku.Edit::class)
             subclass(Route.Sku.Statistics::class)
             subclass(Route.Settings.Main::class)
             subclass(Route.Settings.Purchase::class)
             subclass(Route.Settings.Appearance::class)
-            subclass(Route.Auth.Login::class)
             subclass(Route.Auth.Biometric::class)
         }
     }
@@ -64,142 +64,173 @@ fun AppNavigation(
     activity: Any? = null
 ) {
     val backStack = rememberNavBackStack(navSavedStateConfiguration, startDestination)
+    val navigator = remember(backStack) { Navigator(backStack) }
 
     NavDisplay(
         backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
+        onBack = { navigator.goBack() },
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
         entryProvider = entryProvider {
-            entry<Route.Login> {
-                LoginScreen(
-                    activity = activity,
-                    onLoginSuccess = {
-                        backStack.clear()
-                        backStack.add(Route.Main)
-                    }
-                )
-            }
-            entry<Route.Main> {
-                MainScreen(
-                    onNavigateToRoute = { backStack.add(it) },
-                    onLogout = {
-                        backStack.clear()
-                        backStack.add(Route.Login)
-                    }
-                )
-            }
-            entry<Route.Collection.List> {
-                CollectionListScreen(
-                    onNavigateToCollection = { collectionId ->
-                        backStack.add(Route.Purchase.List(collectionId))
-                    },
-                    onNavigateToAddCollection = {
-                        backStack.add(Route.Collection.Edit())
-                    }
-                )
-            }
-            entry<Route.Collection.Edit> { route ->
-                CollectionEditScreen(
-                    collectionId = route.collectionId,
-                    onNavigateBack = { backStack.removeLastOrNull() },
-                    onNavigateToCategory = { collectionId ->
-                        backStack.add(Route.Collection.Category(collectionId))
-                    },
-                    onNavigateToHistory = { collectionId ->
-                        backStack.add(Route.Collection.History(collectionId))
-                    }
-                )
-            }
-            entry<Route.Collection.Category> { route ->
-                CategoryScreen(
-                    collectionId = route.collectionId,
-                    onNavigateBack = { backStack.removeLastOrNull() }
-                )
-            }
-
-            entry<Route.Collection.History> { route ->
-                HistoryScreen(
-                    collectionId = route.collectionId,
-                    onNavigateBack = { backStack.removeLastOrNull() }
-                )
-            }
-
-            entry<Route.Purchase.List> { route ->
-                PurchaseListScreen(
-                    collectionId = route.collectionId,
-                    onNavigateBack = { backStack.removeLastOrNull() },
-                    onNavigateToSettings = {
-                        backStack.add(Route.Collection.Edit(route.collectionId))
-                    },
-                    onNavigateToPurchaseDetail = { purchaseId ->
-                        backStack.add(Route.Purchase.Edit(purchaseId, route.collectionId))
-                    }
-                )
-            }
-            entry<Route.Purchase.Detail> { route ->
-                PlaceholderScreen("Purchase Detail: ${route.purchaseId}")
-            }
-            entry<Route.Purchase.Edit> { route ->
-                PurchaseEditScreen(
-                    collectionId = route.collectionId,
-                    purchaseId = route.purchaseId ?: "",
-                    onNavigateBack = { backStack.removeLastOrNull() }
-                )
-            }
-            entry<Route.Purchase.Later> { route ->
-                ListLaterScreen(
-                    collectionId = route.collectionId,
-                    onNavigateBack = { backStack.removeLastOrNull() },
-                    onNavigateToPurchaseEdit = { purchaseId ->
-                        backStack.add(Route.Purchase.Edit(purchaseId, route.collectionId))
-                    }
-                )
-            }
-            entry<Route.Sku.List> {
-                SkuListScreen(
-                    onNavigateToSkuEdit = { skuId ->
-                        backStack.add(if (skuId != null) Route.Sku.Edit(skuId) else Route.Sku.Edit())
-                    },
-                    onNavigateBack = { backStack.removeLastOrNull() },
-                    onNavigateToStatistics = {
-                        backStack.add(Route.Sku.Statistics)
-                    }
-                )
-            }
-            entry<Route.Sku.Detail> { route ->
-                PlaceholderScreen("SKU Detail: ${route.skuId}")
-            }
-            entry<Route.Sku.Edit> { route ->
-                SkuEditScreen(
-                    skuId = route.skuId ?: "",
-                    onNavigateBack = { backStack.removeLastOrNull() }
-                )
-            }
-            entry<Route.Sku.Statistics> {
-                com.veles.purchase.presentation.compose.sku.statistics.SkuStatisticsScreen(
-                    onNavigateBack = { backStack.removeLastOrNull() }
-                )
-            }
-            entry<Route.Settings.Main> {
-                PlaceholderScreen("Settings - Coming Soon")
-            }
-            entry<Route.Settings.Purchase> {
-                SettingsPurchaseScreen(
-                    onNavigateBack = { backStack.removeLastOrNull() }
-                )
-            }
-            entry<Route.Auth.Login> {
-                PlaceholderScreen("Login - Coming Soon")
-            }
-            entry<Route.Auth.Biometric> {
-                PlaceholderScreen("Biometric - Coming Soon")
-
-            }
+            authDestinations(navigator, activity)
+            mainDestinations(navigator)
+            collectionDestinations(navigator)
+            purchaseDestinations(navigator)
+            skuDestinations(navigator)
+            settingsDestinations(navigator)
         }
     )
+}
+
+/**
+ * Navigator handles navigation actions by updating the [NavBackStack].
+ */
+class Navigator(private val backStack: NavBackStack<NavKey>) {
+    fun navigate(route: NavKey) {
+        backStack.add(route)
+    }
+
+    fun goBack() {
+        backStack.removeLastOrNull()
+    }
+
+    fun clearAndNavigate(route: NavKey) {
+        backStack.clear()
+        backStack.add(route)
+    }
+}
+
+private fun EntryProviderScope<NavKey>.authDestinations(navigator: Navigator, activity: Any?) {
+    entry<Route.Login> {
+        LoginScreen(
+            activity = activity,
+            onLoginSuccess = { navigator.clearAndNavigate(Route.Main) }
+        )
+    }
+    entry<Route.Auth.Biometric> {
+        PlaceholderScreen("Biometric - Coming Soon")
+    }
+}
+
+private fun EntryProviderScope<NavKey>.mainDestinations(navigator: Navigator) {
+    entry<Route.Main> {
+        MainScreen(
+            onNavigateToRoute = { navigator.navigate(it) },
+            onLogout = { navigator.clearAndNavigate(Route.Login) }
+        )
+    }
+}
+
+private fun EntryProviderScope<NavKey>.collectionDestinations(navigator: Navigator) {
+    entry<Route.Collection.List> {
+        CollectionListScreen(
+            onNavigateToCollection = { collectionId ->
+                navigator.navigate(Route.Purchase.List(collectionId))
+            },
+            onNavigateToAddCollection = {
+                navigator.navigate(Route.Collection.Edit())
+            }
+        )
+    }
+    entry<Route.Collection.Edit> { route ->
+        CollectionEditScreen(
+            collectionId = route.collectionId,
+            onNavigateBack = { navigator.goBack() },
+            onNavigateToCategory = { collectionId ->
+                navigator.navigate(Route.Collection.Category(collectionId))
+            },
+            onNavigateToHistory = { collectionId ->
+                navigator.navigate(Route.Collection.History(collectionId))
+            }
+        )
+    }
+    entry<Route.Collection.Category> { route ->
+        CategoryScreen(
+            collectionId = route.collectionId,
+            onNavigateBack = { navigator.goBack() }
+        )
+    }
+    entry<Route.Collection.History> { route ->
+        HistoryScreen(
+            collectionId = route.collectionId,
+            onNavigateBack = { navigator.goBack() }
+        )
+    }
+}
+
+private fun EntryProviderScope<NavKey>.purchaseDestinations(navigator: Navigator) {
+    entry<Route.Purchase.List> { route ->
+        PurchaseListScreen(
+            collectionId = route.collectionId,
+            onNavigateBack = { navigator.goBack() },
+            onNavigateToSettings = {
+                navigator.navigate(Route.Collection.Edit(route.collectionId))
+            },
+            onNavigateToPurchaseDetail = { purchaseId ->
+                navigator.navigate(Route.Purchase.Edit(purchaseId, route.collectionId))
+            }
+        )
+    }
+    entry<Route.Purchase.Edit> { route ->
+        PurchaseEditScreen(
+            collectionId = route.collectionId,
+            purchaseId = route.purchaseId ?: "",
+            onNavigateBack = { navigator.goBack() }
+        )
+    }
+    entry<Route.Purchase.Later> { route ->
+        ListLaterScreen(
+            collectionId = route.collectionId,
+            onNavigateBack = { navigator.goBack() },
+            onNavigateToPurchaseEdit = { purchaseId ->
+                navigator.navigate(Route.Purchase.Edit(purchaseId, route.collectionId))
+            }
+        )
+    }
+    entry<Route.Purchase.History> { route ->
+        PlaceholderScreen("Purchase History: ${route.collectionId}")
+    }
+}
+
+private fun EntryProviderScope<NavKey>.skuDestinations(navigator: Navigator) {
+    entry<Route.Sku.List> {
+        SkuListScreen(
+            onNavigateToSkuEdit = { skuId ->
+                navigator.navigate(Route.Sku.Edit(skuId))
+            },
+            onNavigateBack = { navigator.goBack() },
+            onNavigateToStatistics = {
+                navigator.navigate(Route.Sku.Statistics)
+            }
+        )
+    }
+    entry<Route.Sku.Edit> { route ->
+        SkuEditScreen(
+            skuId = route.skuId ?: "",
+            onNavigateBack = { navigator.goBack() }
+        )
+    }
+    entry<Route.Sku.Statistics> {
+        com.veles.purchase.presentation.compose.sku.statistics.SkuStatisticsScreen(
+            onNavigateBack = { navigator.goBack() }
+        )
+    }
+}
+
+private fun EntryProviderScope<NavKey>.settingsDestinations(navigator: Navigator) {
+    entry<Route.Settings.Main> {
+        PlaceholderScreen("Settings - Coming Soon")
+    }
+    entry<Route.Settings.Purchase> {
+        SettingsPurchaseScreen(
+            onNavigateBack = { navigator.goBack() }
+        )
+    }
+    entry<Route.Settings.Appearance> {
+        PlaceholderScreen("Appearance - Coming Soon")
+    }
 }
 
 /**

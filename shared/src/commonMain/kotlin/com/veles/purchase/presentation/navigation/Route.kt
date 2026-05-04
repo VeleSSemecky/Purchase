@@ -51,9 +51,6 @@ sealed class Route : NavKey {
         data class List(val collectionId: String) : Purchase()
 
         @Serializable
-        data class Detail(val purchaseId: String, val collectionId: String) : Purchase()
-
-        @Serializable
         data class Edit(
             val purchaseId: String? = null,
             val collectionId: String
@@ -73,9 +70,6 @@ sealed class Route : NavKey {
     sealed class Sku : Route() {
         @Serializable
         data object List : Sku()
-
-        @Serializable
-        data class Detail(val skuId: String) : Sku()
 
         @Serializable
         data class Edit(val skuId: String? = null) : Sku()
@@ -104,9 +98,6 @@ sealed class Route : NavKey {
      */
     @Serializable
     sealed class Auth : Route() {
-        @Serializable
-        data object Login : Auth()
-
         @Serializable
         data object Biometric : Auth()
     }
