@@ -6,10 +6,7 @@ import com.veles.purchase.domain.model.purchase.createPurchaseTable
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 
-class SavePurchaseUseCase(
-    private val purchaseRepository: PurchaseRepository,
-    private val historyRepository: HistoryRepository
-) {
+class SavePurchaseUseCase(private val purchaseRepository: PurchaseRepository, private val historyRepository: HistoryRepository) {
 
     suspend operator fun invoke(
         purchaseModel: PurchaseModel,

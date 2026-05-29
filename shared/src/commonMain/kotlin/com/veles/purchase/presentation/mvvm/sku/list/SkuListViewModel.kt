@@ -23,10 +23,7 @@ import kotlinx.coroutines.launch
  * SKU = Stock Keeping Unit - represents items you buy frequently
  * with price tracking over time
  */
-class SkuListViewModel(
-    private val getSkuUseCase: GetSkuUseCase,
-    private val deleteSkuUseCase: DeleteSkuUseCase
-) : ViewModel() {
+class SkuListViewModel(private val getSkuUseCase: GetSkuUseCase, private val deleteSkuUseCase: DeleteSkuUseCase) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SkuListUiState())
     val uiState: StateFlow<SkuListUiState> = _uiState.asStateFlow()
@@ -96,7 +93,7 @@ data class SkuListUiState(
         } else {
             skus.filter {
                 it.skuName.contains(searchQuery, ignoreCase = true) ||
-                        it.skuComment.contains(searchQuery, ignoreCase = true)
+                    it.skuComment.contains(searchQuery, ignoreCase = true)
             }
         }
 }

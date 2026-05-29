@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.google.firebase.crashlytics) apply false
     alias(libs.plugins.google.firebase.appdistribution) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.ktlint) apply false
 }
 
 tasks.dokkaHtmlMultiModule {
@@ -27,6 +28,7 @@ subprojects {
     project.plugins.configure(project)
 
     apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     buildscript {
         apply(from = rootProject.file("repositories.gradle.kts"))

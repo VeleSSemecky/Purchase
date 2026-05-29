@@ -18,4 +18,3 @@ expect class GoogleSignInHelper {
  * Must be implemented in platform-specific code
  */
 expect fun createGoogleSignInHelper(activity: Any?, serverClientId: String): GoogleSignInHelper?
-

@@ -29,11 +29,7 @@ import kotlinx.coroutines.launch
  * - Removed currency picker (hardcoded for now)
  * - Direct validation instead of TextFieldModel wrapper
  */
-class SkuEditViewModel(
-    private val skuId: String?,
-    private val getSkuUseCase: GetSkuUseCase,
-    private val setSkuUseCase: SetSkuUseCase
-) : ViewModel() {
+class SkuEditViewModel(private val skuId: String?, private val getSkuUseCase: GetSkuUseCase, private val setSkuUseCase: SetSkuUseCase) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SkuEditUiState())
     val uiState: StateFlow<SkuEditUiState> = _uiState.asStateFlow()

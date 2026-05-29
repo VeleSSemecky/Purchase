@@ -20,4 +20,3 @@ object LocalDateTimeConverter {
     fun toLocalDateTime(epochMilli: Long): LocalDateTime =
         Instant.fromEpochMilliseconds(epochMilli).toLocalDateTime(TimeZone.currentSystemDefault())
 }
-

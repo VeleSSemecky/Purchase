@@ -12,9 +12,7 @@ import kotlinx.coroutines.flow.map
  * Room-based implementation of HistoryRepository
  * Uses PurchaseDAO to store purchase history
  */
-class HistoryRepositoryImpl(
-    private val purchaseDAO: PurchaseDAO
-) : HistoryRepository {
+class HistoryRepositoryImpl(private val purchaseDAO: PurchaseDAO) : HistoryRepository {
 
     override suspend fun insert(purchaseTable: PurchaseTableModel) {
         purchaseDAO.insert(purchaseTable.toPurchaseTable())
@@ -28,4 +26,3 @@ class HistoryRepositoryImpl(
             list.map { it.toPurchaseTableModel() }
         }
 }
-

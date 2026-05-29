@@ -21,8 +21,5 @@ actual class FirebaseInitializer {
         }
     }
 
-    actual fun getApp(): FirebaseApp {
-        return Firebase.app
-    }
+    actual fun getApp(): FirebaseApp = Firebase.app
 }
-

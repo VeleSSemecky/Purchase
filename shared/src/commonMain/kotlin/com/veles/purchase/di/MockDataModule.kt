@@ -24,4 +24,3 @@ val mockDataModule = module {
     // No mock dependencies needed anymore!
     // All repositories are real implementations now
 }
-

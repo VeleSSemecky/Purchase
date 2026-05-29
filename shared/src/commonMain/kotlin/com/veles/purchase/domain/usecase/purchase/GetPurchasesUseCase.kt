@@ -7,9 +7,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
-class GetPurchasesUseCase(
-    private val purchaseRepository: PurchaseRepository
-) {
+class GetPurchasesUseCase(private val purchaseRepository: PurchaseRepository) {
 
     operator fun invoke(
         collectionId: String,
@@ -32,4 +30,3 @@ class GetPurchasesUseCase(
         }
     }
 }
-

@@ -13,8 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,8 +22,8 @@ import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
-import com.veles.purchase.presentation.mvvm.purchase.setting.SettingPurchaseComposeViewModel
 import com.veles.purchase.presentation.mvvm.purchase.setting.CornerSetting
+import com.veles.purchase.presentation.mvvm.purchase.setting.SettingPurchaseComposeViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -452,4 +450,3 @@ private fun ShowImageCheckbox(
         )
     }
 }
-

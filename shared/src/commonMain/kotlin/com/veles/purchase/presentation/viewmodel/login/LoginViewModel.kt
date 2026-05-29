@@ -16,9 +16,7 @@ import kotlinx.coroutines.launch
  * Note: signInWithGoogle requires platform-specific activity/context
  * which is passed at call time, not injection time
  */
-class LoginViewModel(
-    private val authRepository: AuthWithGoogleRepository
-) : ViewModel() {
+class LoginViewModel(private val authRepository: AuthWithGoogleRepository) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state.asStateFlow()
@@ -50,9 +48,4 @@ class LoginViewModel(
     }
 }
 
-data class LoginState(
-    val isLoading: Boolean = false,
-    val isSuccess: Boolean = false,
-    val error: String? = null
-)
-
+data class LoginState(val isLoading: Boolean = false, val isSuccess: Boolean = false, val error: String? = null)

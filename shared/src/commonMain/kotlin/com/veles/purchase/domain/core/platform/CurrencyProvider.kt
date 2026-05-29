@@ -11,4 +11,3 @@ package com.veles.purchase.domain.core.platform
  * 3. Use third-party library (none mature yet)
  */
 expect fun getDefaultCurrencyCode(): String
-

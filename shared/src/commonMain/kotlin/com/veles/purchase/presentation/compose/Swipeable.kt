@@ -37,16 +37,16 @@ import com.veles.purchase.presentation.compose.DismissDirection.EndToStart
 import com.veles.purchase.presentation.compose.DismissDirection.StartToEnd
 import com.veles.purchase.presentation.compose.SwipeableDefaults.VelocityThreshold
 import com.veles.purchase.presentation.compose.SwipeableDefaults.resistanceConfig
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.roundToInt
-import kotlin.math.sign
-import kotlin.math.sin
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.roundToInt
+import kotlin.math.sign
+import kotlin.math.sin
 
 /**
  * Custom Swipeable implementation for KMP
@@ -411,12 +411,8 @@ open class SwipeableState<T>(
  * Must be between `0` and `1`.
  */
 @Immutable
-class SwipeProgress<T>(
-    val from: T,
-    val to: T,
-    /*@FloatRange(from = 0.0, to = 1.0)*/
-    val fraction: Float
-) {
+class SwipeProgress<T>(val from: T, val to: T,
+    /*@FloatRange(from = 0.0, to = 1.0)*/ val fraction: Float) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SwipeProgress<*>) return false
@@ -435,9 +431,7 @@ class SwipeProgress<T>(
         return result
     }
 
-    override fun toString(): String {
-        return "SwipeProgress(from=$from, to=$to, fraction=$fraction)"
-    }
+    override fun toString(): String = "SwipeProgress(from=$from, to=$to, fraction=$fraction)"
 }
 
 /**
@@ -452,19 +446,17 @@ fun <T : Any> rememberSwipeableState(
     initialValue: T,
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     confirmStateChange: (newValue: T) -> Boolean = { true }
-): SwipeableState<T> {
-    return rememberSaveable(
-        saver = SwipeableState.Saver(
-            animationSpec = animationSpec,
-            confirmStateChange = confirmStateChange
-        )
-    ) {
-        SwipeableState(
-            initialValue = initialValue,
-            animationSpec = animationSpec,
-            confirmStateChange = confirmStateChange
-        )
-    }
+): SwipeableState<T> = rememberSaveable(
+    saver = SwipeableState.Saver(
+        animationSpec = animationSpec,
+        confirmStateChange = confirmStateChange
+    )
+) {
+    SwipeableState(
+        initialValue = initialValue,
+        animationSpec = animationSpec,
+        confirmStateChange = confirmStateChange
+    )
 }
 
 /**
@@ -582,12 +574,8 @@ interface ThresholdConfig {
  */
 @Immutable
 data class FractionalThreshold(
-    /*@FloatRange(from = 0.0, to = 1.0)*/
-    private val fraction: Float
-) : ThresholdConfig {
-    override fun Density.computeThreshold(fromValue: Float, toValue: Float): Float {
-        return lerp(fromValue, toValue, fraction)
-    }
+    /*@FloatRange(from = 0.0, to = 1.0)*/private val fraction: Float) : ThresholdConfig {
+    override fun Density.computeThreshold(fromValue: Float, toValue: Float): Float = lerp(fromValue, toValue, fraction)
 }
 
 /**
@@ -597,9 +585,7 @@ data class FractionalThreshold(
  */
 @Immutable
 data class FixedThreshold(private val offset: Dp) : ThresholdConfig {
-    override fun Density.computeThreshold(fromValue: Float, toValue: Float): Float {
-        return fromValue + offset.toPx() * sign(toValue - fromValue)
-    }
+    override fun Density.computeThreshold(fromValue: Float, toValue: Float): Float = fromValue + offset.toPx() * sign(toValue - fromValue)
 }
 
 /**
@@ -658,9 +644,7 @@ class ResistanceConfig(
         return result
     }
 
-    override fun toString(): String {
-        return "ResistanceConfig(basis=$basis, factorAtMin=$factorAtMin, factorAtMax=$factorAtMax)"
-    }
+    override fun toString(): String = "ResistanceConfig(basis=$basis, factorAtMin=$factorAtMin, factorAtMax=$factorAtMax)"
 }
 
 /**
@@ -722,9 +706,7 @@ private fun computeTarget(
     }
 }
 
-private fun <T> Map<Float, T>.getOffset(state: T): Float? {
-    return entries.firstOrNull { it.value == state }?.key
-}
+private fun <T> Map<Float, T>.getOffset(state: T): Float? = entries.firstOrNull { it.value == state }?.key
 
 /**
  * Contains useful defaults for [swipeable] and [SwipeableState].
@@ -760,13 +742,11 @@ object SwipeableDefaults {
         anchors: Set<Float>,
         factorAtMin: Float = StandardResistanceFactor,
         factorAtMax: Float = StandardResistanceFactor
-    ): ResistanceConfig? {
-        return if (anchors.size <= 1) {
-            null
-        } else {
-            val basis = anchors.maxOrNull()!! - anchors.minOrNull()!!
-            ResistanceConfig(basis, factorAtMin, factorAtMax)
-        }
+    ): ResistanceConfig? = if (anchors.size <= 1) {
+        null
+    } else {
+        val basis = anchors.maxOrNull()!! - anchors.minOrNull()!!
+        ResistanceConfig(basis, factorAtMin, factorAtMax)
     }
 }
 
@@ -808,10 +788,8 @@ enum class DismissValue {
  * @param initialValue The initial value of the state.
  * @param confirmStateChange Optional callback invoked to confirm or veto a pending state change.
  */
-class DismissState(
-    initialValue: DismissValue,
-    confirmStateChange: (DismissValue) -> Boolean = { true }
-) : SwipeableState<DismissValue>(initialValue, confirmStateChange = confirmStateChange) {
+class DismissState(initialValue: DismissValue, confirmStateChange: (DismissValue) -> Boolean = { true }) :
+    SwipeableState<DismissValue>(initialValue, confirmStateChange = confirmStateChange) {
     /**
      * The direction (if any) in which the composable has been or is being dismissed.
      *
@@ -819,16 +797,22 @@ class DismissState(
      * change the background of the [SwipeToDismiss] if you want different actions on each side.
      */
     val dismissDirection: DismissDirection?
-        get() = if (offset.value == 0f) null else if (offset.value > 0f) StartToEnd else EndToStart
+        get() = if (offset.value == 0f) {
+            null
+        } else if (offset.value > 0f) {
+            StartToEnd
+        } else {
+            EndToStart
+        }
 
     /**
      * Whether the component has been dismissed in the given [direction].
      *
      * @param direction The dismiss direction.
      */
-    fun isDismissed(direction: DismissDirection): Boolean {
-        return currentValue == if (direction == StartToEnd) DismissValue.DismissedToEnd else DismissValue.DismissedToStart
-    }
+    fun isDismissed(
+        direction: DismissDirection
+    ): Boolean = currentValue == if (direction == StartToEnd) DismissValue.DismissedToEnd else DismissValue.DismissedToStart
 
     /**
      * Reset the component to the default position with animation and suspend until it if fully
@@ -874,10 +858,8 @@ class DismissState(
 fun rememberDismissState(
     initialValue: DismissValue = DismissValue.Default,
     confirmStateChange: (DismissValue) -> Boolean = { true }
-): DismissState {
-    return rememberSaveable(saver = DismissState.Saver(confirmStateChange)) {
-        DismissState(initialValue, confirmStateChange)
-    }
+): DismissState = rememberSaveable(saver = DismissState.Saver(confirmStateChange)) {
+    DismissState(initialValue, confirmStateChange)
 }
 
 /**
@@ -944,27 +926,23 @@ fun SwipeToDismiss(
     }
 }
 
-private fun getDismissDirection(from: DismissValue, to: DismissValue): DismissDirection? {
-    return when {
-        // settled at the default state
-        from == to && from == DismissValue.Default -> null
-        // has been dismissed to the end
-        from == to && from == DismissValue.DismissedToEnd -> StartToEnd
-        // has been dismissed to the start
-        from == to && from == DismissValue.DismissedToStart -> EndToStart
-        // is currently being dismissed to the end
-        from == DismissValue.Default && to == DismissValue.DismissedToEnd -> StartToEnd
-        // is currently being dismissed to the start
-        from == DismissValue.Default && to == DismissValue.DismissedToStart -> EndToStart
-        // has been dismissed to the end but is now animated back to default
-        from == DismissValue.DismissedToEnd && to == DismissValue.Default -> StartToEnd
-        // has been dismissed to the start but is now animated back to default
-        from == DismissValue.DismissedToStart && to == DismissValue.Default -> EndToStart
-        else -> null
-    }
+private fun getDismissDirection(from: DismissValue, to: DismissValue): DismissDirection? = when {
+    // settled at the default state
+    from == to && from == DismissValue.Default -> null
+    // has been dismissed to the end
+    from == to && from == DismissValue.DismissedToEnd -> StartToEnd
+    // has been dismissed to the start
+    from == to && from == DismissValue.DismissedToStart -> EndToStart
+    // is currently being dismissed to the end
+    from == DismissValue.Default && to == DismissValue.DismissedToEnd -> StartToEnd
+    // is currently being dismissed to the start
+    from == DismissValue.Default && to == DismissValue.DismissedToStart -> EndToStart
+    // has been dismissed to the end but is now animated back to default
+    from == DismissValue.DismissedToEnd && to == DismissValue.Default -> StartToEnd
+    // has been dismissed to the start but is now animated back to default
+    from == DismissValue.DismissedToStart && to == DismissValue.Default -> EndToStart
+    else -> null
 }
 
 // Helper function to linearly interpolate between two values
-private fun lerp(start: Float, stop: Float, fraction: Float): Float {
-    return start + fraction * (stop - start)
-}
+private fun lerp(start: Float, stop: Float, fraction: Float): Float = start + fraction * (stop - start)

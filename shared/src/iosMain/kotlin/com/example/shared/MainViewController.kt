@@ -16,10 +16,8 @@ fun MainViewController(): UIViewController {
 
     // Create the UIViewController
     val viewController = ComposeUIViewController {
-        App(activity = null)  // activity is not used directly for iOS sign-in
+        App(activity = null) // activity is not used directly for iOS sign-in
     }
-
 
     return viewController
 }
-

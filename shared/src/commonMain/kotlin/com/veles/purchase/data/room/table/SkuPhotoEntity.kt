@@ -12,7 +12,7 @@ data class SkuPhotoEntity(
     @ColumnInfo(name = "SkuPhotoId")
     val skuPhotoId: String = createPrimaryIDKey(),
     @ColumnInfo(name = "SkuPhotoUri")
-    val skuPhotoUri: String = "",  // Changed from Uri to String for KMP compatibility
+    val skuPhotoUri: String = "", // Changed from Uri to String for KMP compatibility
     @ColumnInfo(name = "SkuId")
     val skuId: String
 )
@@ -30,5 +30,3 @@ fun SkuPhotoModel.toSkuPhotoEntity(): SkuPhotoEntity =
         skuPhotoUri = skuPhotoUri,
         skuId = skuId
     )
-
-

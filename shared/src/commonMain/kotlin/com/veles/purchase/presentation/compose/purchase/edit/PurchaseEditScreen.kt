@@ -21,7 +21,7 @@ import org.koin.core.parameter.parametersOf
 
 /**
  * Purchase Edit/Add Screen - Modernized version
- * 
+ *
  * Improvements:
  * - Single UI State subscription
  * - Keyboard navigation (ImeAction.Next/Done)
@@ -53,8 +53,11 @@ fun PurchaseEditScreen(
     val onPriceChange = remember(viewModel) { { text: String -> viewModel.onPriceChange(text) } }
     val onCommentChange = remember(viewModel) { { text: String -> viewModel.onCommentChange(text) } }
     val onCheckedChange = remember(viewModel) { { checked: Boolean -> viewModel.onCheckedChange(checked) } }
-    val onCategorySelected = remember(viewModel) { { category: com.veles.purchase.domain.model.purchase.PurchaseCategoryModel? -> viewModel.onCategorySelected(category) } }
-    
+    val onCategorySelected =
+        remember(viewModel) {
+            { category: com.veles.purchase.domain.model.purchase.PurchaseCategoryModel? -> viewModel.onCategorySelected(category) }
+        }
+
     val onSaveClicked = remember(viewModel, onNavigateBack) {
         {
             scope.launch {
@@ -69,7 +72,7 @@ fun PurchaseEditScreen(
     val isSaveEnabled by remember {
         derivedStateOf { uiState.purchase.text.isNotBlank() }
     }
-    
+
     val isLoading by remember {
         derivedStateOf { uiState.progress == EditPurchaseViewModel.ProgressState.Start }
     }

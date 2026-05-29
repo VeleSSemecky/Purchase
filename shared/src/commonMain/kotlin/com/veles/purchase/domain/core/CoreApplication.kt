@@ -9,7 +9,7 @@ import kotlinx.coroutines.withTimeout
  */
 suspend inline fun <T> suspendCancellableCoroutineWithTimeout(
     timeout: Long = 5000L, // 5 seconds in milliseconds
-    crossinline block: suspend () -> T,
+    crossinline block: suspend () -> T
 ): T =
     try {
         withTimeout(timeout) {

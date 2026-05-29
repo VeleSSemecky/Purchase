@@ -9,9 +9,7 @@ import dev.gitlive.firebase.firestore.FirebaseFirestore
  * Firebase KMP implementation of FirebaseMessageTokenRepository
  * Manages FCM tokens in Firestore
  */
-class FirebaseMessageTokenRepositoryImpl(
-    private val firestore: FirebaseFirestore
-) : FirebaseMessageTokenRepository {
+class FirebaseMessageTokenRepositoryImpl(private val firestore: FirebaseFirestore) : FirebaseMessageTokenRepository {
 
     override suspend fun sendMessageToken(userUid: String, messageToken: String) {
         // Use set with merge to update the FCM token field

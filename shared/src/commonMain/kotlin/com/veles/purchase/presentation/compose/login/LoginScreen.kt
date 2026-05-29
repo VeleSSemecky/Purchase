@@ -68,7 +68,6 @@ fun LoginScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-
         // ── 1. Tiled pattern background ────────────────────────────────────
         Box(modifier = Modifier.fillMaxSize().background(bgBrush))
 
@@ -82,7 +81,6 @@ fun LoginScreen(
                 .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             // ── Top spacer pushes hero section to vertical center ────────────
             Spacer(modifier = Modifier.weight(1f))
 

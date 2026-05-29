@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
-import com.veles.purchase.presentation.mvvm.purchase.category.CategoryScreenState
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
 import com.veles.purchase.presentation.mvvm.purchase.category.DialogState
 import kotlinx.coroutines.launch

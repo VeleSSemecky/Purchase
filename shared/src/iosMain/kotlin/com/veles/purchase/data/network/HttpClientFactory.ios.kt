@@ -13,29 +13,28 @@ import kotlinx.serialization.json.Json
 /**
  * iOS implementation using Darwin engine (NSURLSession)
  */
-actual fun createHttpClient(): HttpClient {
-    return HttpClient(Darwin) {
-        // JSON serialization
-        install(ContentNegotiation) {
-            json(Json {
+actual fun createHttpClient(): HttpClient = HttpClient(Darwin) {
+    // JSON serialization
+    install(ContentNegotiation) {
+        json(
+            Json {
                 prettyPrint = true
                 isLenient = true
                 ignoreUnknownKeys = true
-            })
-        }
-
-        // Logging
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.INFO
-        }
-
-        // Engine configuration
-        engine {
-            configureRequest {
-                setAllowsCellularAccess(true)
             }
+        )
+    }
+
+    // Logging
+    install(Logging) {
+        logger = Logger.DEFAULT
+        level = LogLevel.INFO
+    }
+
+    // Engine configuration
+    engine {
+        configureRequest {
+            setAllowsCellularAccess(true)
         }
     }
 }
-

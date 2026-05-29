@@ -12,10 +12,7 @@ import dev.gitlive.firebase.firestore.FirebaseFirestore
  * Firebase KMP implementation of CollectionPurchaseRepository
  * Handles collection CRUD operations in Firestore
  */
-class CollectionPurchaseRepositoryImpl(
-    private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
-) : CollectionPurchaseRepository {
+class CollectionPurchaseRepositoryImpl(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) : CollectionPurchaseRepository {
 
     override suspend fun setCollectionPurchase(
         purchaseCollection: PurchaseCollectionModel
@@ -47,4 +44,3 @@ class CollectionPurchaseRepositoryImpl(
             .set(updatedCollection.toPurchaseCollectionDto())
     }
 }
-

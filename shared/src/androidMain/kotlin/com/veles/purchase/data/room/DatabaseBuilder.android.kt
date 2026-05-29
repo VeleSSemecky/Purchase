@@ -8,14 +8,11 @@ import androidx.room.Room
  * Creates Room database for Android platform
  */
 actual class DatabaseBuilder(private val context: Context) {
-    actual fun build(): AppDatabase {
-        return Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java,
-            "purchase_database.db"
-        )
-            .fallbackToDestructiveMigration() // TODO: Add proper migrations
-            .build()
-    }
+    actual fun build(): AppDatabase = Room.databaseBuilder(
+        context.applicationContext,
+        AppDatabase::class.java,
+        "purchase_database.db"
+    )
+        .fallbackToDestructiveMigration() // TODO: Add proper migrations
+        .build()
 }
-

@@ -37,7 +37,7 @@ data class PurchaseCollectionModel(
                 PurchaseCategoryModel(
                     id = Uuid.random().toString(),
                     name = "Meat"
-                ),
+                )
             )
         )
     }

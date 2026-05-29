@@ -7,11 +7,8 @@ import java.util.Locale
  * Android implementation of currency provider
  * Uses Android's Currency API to get the default currency
  */
-actual fun getDefaultCurrencyCode(): String {
-    return try {
-        Currency.getInstance(Locale.getDefault()).currencyCode
-    } catch (e: Exception) {
-        "USD" // Fallback to USD if currency detection fails
-    }
+actual fun getDefaultCurrencyCode(): String = try {
+    Currency.getInstance(Locale.getDefault()).currencyCode
+} catch (e: Exception) {
+    "USD" // Fallback to USD if currency detection fails
 }
-

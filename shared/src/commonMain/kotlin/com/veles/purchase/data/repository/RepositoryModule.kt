@@ -98,4 +98,3 @@ val repositoryModule = module {
         SettingRepositoryImpl()
     }
 }
-

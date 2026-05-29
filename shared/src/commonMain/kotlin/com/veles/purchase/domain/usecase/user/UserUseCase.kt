@@ -4,9 +4,7 @@ import com.veles.purchase.domain.model.user.UserPurchaseModel
 import com.veles.purchase.domain.repository.user.FirebaseGetUserRepository
 import kotlinx.coroutines.flow.Flow
 
-class UserUseCase(
-    private val firebaseGetUserRepository: FirebaseGetUserRepository
-) {
+class UserUseCase(private val firebaseGetUserRepository: FirebaseGetUserRepository) {
 
     suspend fun getUserPurchase(): UserPurchaseModel? =
         firebaseGetUserRepository.apiGetUserPurchase()
@@ -16,4 +14,3 @@ class UserUseCase(
     suspend operator fun invoke(): Flow<List<UserPurchaseModel>> =
         firebaseGetUserRepository.apiFirebaseFirestore()
 }
-

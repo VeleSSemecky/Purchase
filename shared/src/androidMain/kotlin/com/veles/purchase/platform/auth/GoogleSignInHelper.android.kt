@@ -11,10 +11,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
  * Android implementation of GoogleSignInHelper
  * Uses Credential Manager API for Google Sign-In
  */
-actual class GoogleSignInHelper(
-    private val activity: Activity,
-    private val serverClientId: String
-) {
+actual class GoogleSignInHelper(private val activity: Activity, private val serverClientId: String) {
     actual suspend fun signIn(): Pair<String, String?> {
         val googleIdOption = GetSignInWithGoogleOption.Builder(serverClientId)
             .build()
@@ -46,4 +43,3 @@ actual class GoogleSignInHelper(
         }
     }
 }
-

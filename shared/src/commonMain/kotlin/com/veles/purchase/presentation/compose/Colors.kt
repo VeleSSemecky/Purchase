@@ -18,7 +18,7 @@ object Colors {
     val colorPrimary = Color(0xff212121)
     val colorPrimaryDark = Color(0xff303030)
     val colorAccent = Color(0xff424242)
-    val gr = Color(0xff4ACFAC)  // Green accent color
+    val gr = Color(0xff4ACFAC) // Green accent color
     val surface = Color(0xFF121212)
     val progress = Color(0x99000000)
 }
@@ -32,7 +32,7 @@ fun textStyle2() = TextStyle(color = Color.White.copy(alpha = 0.6f))
 
 @Composable
 fun MyTheme(
-    darkTheme: Boolean = true,  // Always dark theme for now
+    darkTheme: Boolean = true, // Always dark theme for now
     content: @Composable () -> Unit
 ) {
     androidx.compose.material3.MaterialTheme(

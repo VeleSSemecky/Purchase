@@ -35,4 +35,3 @@ val firebaseModule = module {
         Firebase.storage
     }
 }
-

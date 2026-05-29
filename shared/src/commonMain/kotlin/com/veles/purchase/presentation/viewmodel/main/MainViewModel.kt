@@ -17,10 +17,7 @@ data class MainUiState(
     val initials: String = "?"
 )
 
-class MainViewModel(
-    private val auth: FirebaseAuth,
-    private val logoutRepository: LogoutRepository
-) : ViewModel() {
+class MainViewModel(private val auth: FirebaseAuth, private val logoutRepository: LogoutRepository) : ViewModel() {
 
     private val _state = MutableStateFlow(buildState())
     val state: StateFlow<MainUiState> = _state.asStateFlow()

@@ -9,10 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 
-class DeletePurchaseUseCase(
-    private val purchaseRepository: PurchaseRepository,
-    private val historyRepository: HistoryRepository
-) {
+class DeletePurchaseUseCase(private val purchaseRepository: PurchaseRepository, private val historyRepository: HistoryRepository) {
 
     suspend operator fun invoke(
         purchaseModel: PurchaseModel,
@@ -33,4 +30,3 @@ class DeletePurchaseUseCase(
         true
     }
 }
-

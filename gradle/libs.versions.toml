@@ -23,7 +23,7 @@ kotlinx-datetime = "0.8.0"
 #android
 minSdk = "26"
 targetSdk = "36"
-compileSdk = "36"
+compileSdk = "37"
 versionCode = "3"
 versionName = "1.0.2"
 applicationId = "com.veles.kotlinmvvm"
@@ -103,6 +103,9 @@ camera = "1.5.3"
 credentials= "1.5.0"
 identity = "1.1.1"
 
+#AppFunctions
+appfunctions = "1.0.0-alpha09"
+
 #Testing
 jUnit = "5.13.3"
 mockK = "1.14.4"
@@ -115,6 +118,9 @@ robolectric = "4.15.1"
 koin = "4.2.1"
 koinCompose = "4.2.1"
 coreKtxVersion = "1.6.1"
+
+#Ktlint
+ktlint = "14.2.0"
 
 [libraries]
 #AndroidCore
@@ -272,6 +278,11 @@ credentials = { group = "androidx.credentials", name = "credentials", version.re
 credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 identity = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "identity" }
 
+#AppFunctions
+androidx-appfunctions = { group = "androidx.appfunctions", name = "appfunctions", version.ref = "appfunctions" }
+androidx-appfunctions-service = { group = "androidx.appfunctions", name = "appfunctions-service", version.ref = "appfunctions" }
+androidx-appfunctions-compiler = { group = "androidx.appfunctions", name = "appfunctions-compiler", version.ref = "appfunctions" }
+
 #Testing
 junit = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "jUnit" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
@@ -310,6 +321,7 @@ jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serializati
 # Add Kotlin Multiplatform plugins
 jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinMultiplatform" }
 jetbrains-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 
 [bundles]
 firebase-data = [

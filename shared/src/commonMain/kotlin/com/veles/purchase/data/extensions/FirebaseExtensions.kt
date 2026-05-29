@@ -1,7 +1,7 @@
 package com.veles.purchase.data.extensions
 
-import dev.gitlive.firebase.firestore.FirebaseFirestore
 import com.veles.purchase.config.EnvironmentConfig
+import dev.gitlive.firebase.firestore.FirebaseFirestore
 
 /**
  * Extension property to get the collection purchase reference
@@ -25,4 +25,3 @@ val FirebaseFirestore.userPurchase
 fun FirebaseFirestore.purchase(collectionId: String) = collectionPurchase
     .document(collectionId)
     .collection(EnvironmentConfig.PURCHASE)
-

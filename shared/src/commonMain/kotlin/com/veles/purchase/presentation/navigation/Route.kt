@@ -1,7 +1,7 @@
 package com.veles.purchase.presentation.navigation
 
-import kotlinx.serialization.Serializable
 import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 
 /**
  * Type-safe navigation routes using kotlinx-serialization
@@ -42,10 +42,7 @@ sealed class Route : NavKey {
         data class History(val collectionId: String) : Collection()
 
         @Serializable
-        data class Members(
-            val collectionId: String,
-            val selectedIds: kotlin.collections.List<String>
-        ) : Collection()
+        data class Members(val collectionId: String, val selectedIds: kotlin.collections.List<String>) : Collection()
     }
 
     /**
@@ -57,10 +54,7 @@ sealed class Route : NavKey {
         data class List(val collectionId: String) : Purchase()
 
         @Serializable
-        data class Edit(
-            val purchaseId: String? = null,
-            val collectionId: String
-        ) : Purchase()
+        data class Edit(val purchaseId: String? = null, val collectionId: String) : Purchase()
 
         @Serializable
         data class History(val collectionId: String) : Purchase()
@@ -108,5 +102,3 @@ sealed class Route : NavKey {
         data object Biometric : Auth()
     }
 }
-
-

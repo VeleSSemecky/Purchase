@@ -12,4 +12,3 @@ actual fun createAppDatabase(): AppDatabase {
     val context = getKoin().get<Context>()
     return DatabaseBuilder(context).build()
 }
-

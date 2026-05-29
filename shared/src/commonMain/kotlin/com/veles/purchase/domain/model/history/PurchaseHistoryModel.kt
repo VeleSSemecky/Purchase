@@ -26,23 +26,19 @@ data class PurchaseHistoryModel(
 /**
  * Convert PurchaseTableModel to PurchaseHistoryModel
  */
-fun PurchaseTableModel.toHistoryModel(): PurchaseHistoryModel {
-    return PurchaseHistoryModel(
-        id = id,
-        purchaseId = id,
-        purchaseName = text,
-        purchaseComment = "", // Not stored in PurchaseTableModel
-        isChecked = check,
-        hasImages = false, // Not tracked in PurchaseTableModel yet
-        historyType = typeHistory,
-        timestamp = time,
-        collectionId = collectionId
-    )
-}
+fun PurchaseTableModel.toHistoryModel(): PurchaseHistoryModel = PurchaseHistoryModel(
+    id = id,
+    purchaseId = id,
+    purchaseName = text,
+    purchaseComment = "", // Not stored in PurchaseTableModel
+    isChecked = check,
+    hasImages = false, // Not tracked in PurchaseTableModel yet
+    historyType = typeHistory,
+    timestamp = time,
+    collectionId = collectionId
+)
 
 /**
  * Convert list of PurchaseTableModel to list of PurchaseHistoryModel
  */
-fun List<PurchaseTableModel>.toHistoryModels(): List<PurchaseHistoryModel> {
-    return map { it.toHistoryModel() }
-}
+fun List<PurchaseTableModel>.toHistoryModels(): List<PurchaseHistoryModel> = map { it.toHistoryModel() }

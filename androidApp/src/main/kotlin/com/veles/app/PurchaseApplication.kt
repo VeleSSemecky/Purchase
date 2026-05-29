@@ -16,7 +16,7 @@ class PurchaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        
+
         // Initialize Environment Config from BuildConfig
         EnvironmentConfig.initialize(
             dbKey = BuildConfig.DB_KEY,

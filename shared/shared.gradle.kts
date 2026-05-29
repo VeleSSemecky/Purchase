@@ -17,7 +17,6 @@ kotlin {
     // Enable default hierarchy template for proper iOS support
     applyDefaultHierarchyTemplate()
 
-
     android {
         namespace = "com.example.shared"
         compileSdk = libs.versions.compileSdk.get().toInt()
@@ -40,7 +39,7 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
-            isStatic = true  // Static framework for KMP Compose
+            isStatic = true // Static framework for KMP Compose
             export(libs.compose.multiplatform.resources)
         }
     }
@@ -56,7 +55,7 @@ kotlin {
                 implementation(libs.compose.multiplatform.materialIconsExtended)
                 implementation(libs.compose.multiplatform.foundation)
                 implementation(libs.compose.multiplatform.animation)
-                api(libs.compose.multiplatform.resources)  // API instead of implementation for iOS export
+                api(libs.compose.multiplatform.resources) // API instead of implementation for iOS export
                 implementation(libs.coroutines.core)
 
                 // Room KMP Database
@@ -143,7 +142,6 @@ kotlin {
                 implementation(libs.bundles.firebase.data)
                 implementation(libs.firebase.ui.auth)
                 implementation(libs.firebase.ui.storage)
-
             }
         }
 
@@ -166,7 +164,7 @@ dependencies {
     add("kspIosArm64", libs.room.compiler)
 }
 
-//android {
+// android {
 //    namespace = "com.example.shared"
 //    compileSdk = libs.versions.compileSdk.get().toInt()
 //
@@ -182,7 +180,7 @@ dependencies {
 //    buildFeatures {
 //        compose = true
 //    }
-//}
+// }
 
 // Ensure resource generation happens before Kotlin compilation
 tasks.configureEach {

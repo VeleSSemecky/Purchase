@@ -14,10 +14,8 @@ import kotlinx.coroutines.launch
  * ViewModel for Purchase Settings screen
  * Migrated from presentation module - original name: SettingPurchaseComposeViewModel
  */
-class SettingPurchaseComposeViewModel(
-    private val getSettingUseCase: GetSettingUseCase,
-    private val setSettingUseCase: SetSettingUseCase
-) : ViewModel() {
+class SettingPurchaseComposeViewModel(private val getSettingUseCase: GetSettingUseCase, private val setSettingUseCase: SetSettingUseCase) :
+    ViewModel() {
 
     private val _flowPurchaseSetting = MutableStateFlow(PurchaseSetting())
     val flowPurchaseSetting: StateFlow<PurchaseSetting>
@@ -103,12 +101,7 @@ class SettingPurchaseComposeViewModel(
         .launchIn(viewModelScope)
 }
 
-data class CornerSetting(
-    val topStart: Float = 0f,
-    val topEnd: Float = 0f,
-    val bottomStart: Float = 0f,
-    val bottomEnd: Float = 0f
-) {
+data class CornerSetting(val topStart: Float = 0f, val topEnd: Float = 0f, val bottomStart: Float = 0f, val bottomEnd: Float = 0f) {
     constructor(allCorners: Float) : this(allCorners, allCorners, allCorners, allCorners)
 }
 
@@ -122,21 +115,18 @@ private fun PurchaseSetting.toCornerSetting() = CornerSetting(
 private fun PurchaseSetting.applyCorners(
     allCorner: CornerSetting,
     sideCorner: CornerSetting
-): PurchaseSetting {
-    return if (isSymmetry) {
-        copy(
-            topStart = allCorner.topStart,
-            topEnd = allCorner.topEnd,
-            bottomStart = allCorner.bottomStart,
-            bottomEnd = allCorner.bottomEnd
-        )
-    } else {
-        copy(
-            topStart = sideCorner.topStart,
-            topEnd = sideCorner.topEnd,
-            bottomStart = sideCorner.bottomStart,
-            bottomEnd = sideCorner.bottomEnd
-        )
-    }
+): PurchaseSetting = if (isSymmetry) {
+    copy(
+        topStart = allCorner.topStart,
+        topEnd = allCorner.topEnd,
+        bottomStart = allCorner.bottomStart,
+        bottomEnd = allCorner.bottomEnd
+    )
+} else {
+    copy(
+        topStart = sideCorner.topStart,
+        topEnd = sideCorner.topEnd,
+        bottomStart = sideCorner.bottomStart,
+        bottomEnd = sideCorner.bottomEnd
+    )
 }
-

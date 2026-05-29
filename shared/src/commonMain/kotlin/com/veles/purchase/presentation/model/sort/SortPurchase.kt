@@ -1,8 +1,8 @@
 package com.veles.purchase.presentation.model.sort
 
 import com.veles.purchase.domain.model.purchase.PurchaseModel
-import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.*
+import com.veles.purchase.shared.resources.Res
 import org.jetbrains.compose.resources.StringResource
 
 enum class SortPurchase(val resId: StringResource) {
@@ -14,19 +14,17 @@ enum class SortPurchase(val resId: StringResource) {
     SORTING_UNCHECK(Res.string.sorting_uncheck)
 }
 
-fun SortPurchase.toPurchaseComparator(): Comparator<PurchaseModel> {
-    return when (this) {
-        SortPurchase.SORTING_A_Z -> compareBy(PurchaseModel::text)
-            .thenBy(PurchaseModel::isChecked)
-            .thenByDescending(PurchaseModel::createId)
-        SortPurchase.SORTING_Z_A -> compareByDescending(PurchaseModel::text)
-            .thenBy(PurchaseModel::isChecked)
-            .thenByDescending(PurchaseModel::createId)
-        SortPurchase.SORTING_DATA_NEW -> compareByDescending(PurchaseModel::createId)
-        SortPurchase.SORTING_DATA_OLD -> compareBy(PurchaseModel::createId)
-        SortPurchase.SORTING_CHECK -> compareByDescending(PurchaseModel::isChecked)
-            .thenByDescending(PurchaseModel::createId)
-        SortPurchase.SORTING_UNCHECK -> compareBy(PurchaseModel::isChecked)
-            .thenByDescending(PurchaseModel::createId)
-    }
+fun SortPurchase.toPurchaseComparator(): Comparator<PurchaseModel> = when (this) {
+    SortPurchase.SORTING_A_Z -> compareBy(PurchaseModel::text)
+        .thenBy(PurchaseModel::isChecked)
+        .thenByDescending(PurchaseModel::createId)
+    SortPurchase.SORTING_Z_A -> compareByDescending(PurchaseModel::text)
+        .thenBy(PurchaseModel::isChecked)
+        .thenByDescending(PurchaseModel::createId)
+    SortPurchase.SORTING_DATA_NEW -> compareByDescending(PurchaseModel::createId)
+    SortPurchase.SORTING_DATA_OLD -> compareBy(PurchaseModel::createId)
+    SortPurchase.SORTING_CHECK -> compareByDescending(PurchaseModel::isChecked)
+        .thenByDescending(PurchaseModel::createId)
+    SortPurchase.SORTING_UNCHECK -> compareBy(PurchaseModel::isChecked)
+        .thenByDescending(PurchaseModel::createId)
 }

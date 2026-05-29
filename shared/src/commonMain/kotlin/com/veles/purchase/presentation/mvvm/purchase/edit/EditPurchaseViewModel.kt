@@ -2,10 +2,10 @@ package com.veles.purchase.presentation.mvvm.purchase.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.veles.purchase.domain.model.history.HistoryType
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseUseCase
-import com.veles.purchase.domain.model.history.HistoryType
 import com.veles.purchase.domain.usecase.purchase.GetPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import kotlinx.coroutines.flow.*

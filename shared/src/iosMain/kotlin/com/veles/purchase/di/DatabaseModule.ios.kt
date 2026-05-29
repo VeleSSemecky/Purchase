@@ -4,6 +4,4 @@ import com.veles.purchase.data.room.DatabaseBuilder
 /**
  * iOS implementation of database creation
  */
-actual fun createAppDatabase(): AppDatabase {
-    return DatabaseBuilder().build()
-}
+actual fun createAppDatabase(): AppDatabase = DatabaseBuilder().build()

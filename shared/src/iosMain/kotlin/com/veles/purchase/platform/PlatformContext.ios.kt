@@ -12,9 +12,7 @@ actual class PlatformContext
 /**
  * Get string resource by key from iOS Bundle
  */
-actual fun PlatformContext.getString(key: String): String {
-    return NSBundle.mainBundle.localizedStringForKey(key, key, null)
-}
+actual fun PlatformContext.getString(key: String): String = NSBundle.mainBundle.localizedStringForKey(key, key, null)
 
 /**
  * Get string resource with arguments (iOS doesn't have direct equivalent)
@@ -32,4 +30,3 @@ actual object Platform {
     actual val name: String = "iOS"
     actual val version: String = UIDevice.currentDevice.systemVersion
 }
-

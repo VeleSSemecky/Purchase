@@ -16,9 +16,7 @@ import kotlinx.coroutines.flow.map
  * Firebase KMP implementation of PurchaseRepository
  * Handles purchase CRUD operations in Firestore
  */
-class PurchaseRepositoryImpl(
-    private val firestore: FirebaseFirestore
-) : PurchaseRepository {
+class PurchaseRepositoryImpl(private val firestore: FirebaseFirestore) : PurchaseRepository {
 
     override suspend fun getPurchase(
         collectionId: String,
@@ -50,15 +48,13 @@ class PurchaseRepositoryImpl(
 
     override fun getPurchaseFlow(
         collectionId: String
-    ): Flow<List<PurchaseModel>> {
-        return firestore.purchase(collectionId)
-            .snapshots
-            .map { snapshot ->
-                snapshot.documents.mapNotNull {
-                    it.data<PurchaseDto>().toPurchaseModel()
-                }
+    ): Flow<List<PurchaseModel>> = firestore.purchase(collectionId)
+        .snapshots
+        .map { snapshot ->
+            snapshot.documents.mapNotNull {
+                it.data<PurchaseDto>().toPurchaseModel()
             }
-    }
+        }
 
     override suspend fun deletePurchase(
         purchaseId: String,
@@ -82,4 +78,3 @@ class PurchaseRepositoryImpl(
             .set(purchaseModel.toPurchaseDto(), merge = true)
     }
 }
-

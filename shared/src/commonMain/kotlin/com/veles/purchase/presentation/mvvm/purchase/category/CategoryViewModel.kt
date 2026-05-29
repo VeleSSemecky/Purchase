@@ -122,9 +122,7 @@ class CategoryViewModel(
     /**
      * Check if categories have changed
      */
-    fun hasChanges(): Boolean {
-        return originalCategories != _uiState.value.categories
-    }
+    fun hasChanges(): Boolean = originalCategories != _uiState.value.categories
 
     /**
      * Show confirm leave dialog

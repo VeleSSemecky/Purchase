@@ -79,8 +79,8 @@ fun CollectionEditScreen(
                 onCollectionNameChange = viewModel::onCollectionNameChange,
                 onCategoryClicked = { onNavigateToCategory(collectionModel.id) },
                 onHistoryClicked = { onNavigateToHistory(collectionModel.id) },
-                onMembersClicked = { 
-                    onNavigateToMembers(collectionModel.id, collectionModel.listMembers) 
+                onMembersClicked = {
+                    onNavigateToMembers(collectionModel.id, collectionModel.listMembers)
                 }
             )
 

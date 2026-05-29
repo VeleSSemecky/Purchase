@@ -45,4 +45,3 @@ fun UserPurchaseModel.toUserDto() = UserDto(
     fcmToken = fcmToken,
     photoUrl = photoUrl
 )
-

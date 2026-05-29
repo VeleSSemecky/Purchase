@@ -18,13 +18,13 @@ expect val platformModule: Module
  * Phase 6 Complete - using real Firebase + Room implementations + UseCases
  */
 val appModules = listOf(
-    mockDataModule,  // Empty now, kept for backward compatibility
+    mockDataModule, // Empty now, kept for backward compatibility
     platformModule,
-    firebaseModule,  // Phase 5.5: Firebase KMP services
-    databaseModule,  // Phase 6: Room database and DAOs
-    repositoryModule,  // Phase 6: All repositories (Firebase + Room)
-    useCaseModule,   // Phase 6: Use cases layer
-    viewModelModule  // Phase 2.2: ViewModels migrated
+    firebaseModule, // Phase 5.5: Firebase KMP services
+    databaseModule, // Phase 6: Room database and DAOs
+    repositoryModule, // Phase 6: All repositories (Firebase + Room)
+    useCaseModule, // Phase 6: Use cases layer
+    viewModelModule // Phase 2.2: ViewModels migrated
 )
 
 /**

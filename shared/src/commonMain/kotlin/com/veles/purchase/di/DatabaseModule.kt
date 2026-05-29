@@ -33,4 +33,3 @@ val databaseModule = module {
         get<AppDatabase>().getSkuPhotoDAO()
     }
 }
-

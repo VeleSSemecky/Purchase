@@ -9,7 +9,6 @@ import com.veles.purchase.data.room.core.createPrimaryIDKey
 import com.veles.purchase.domain.model.SkuModel
 import com.veles.purchase.domain.utill.emptyString
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.ExperimentalTime
@@ -28,7 +27,7 @@ data class SkuEntity(
     @ColumnInfo(name = "SkuPrice")
     val skuPrice: String = emptyString(),
     @ColumnInfo(name = "SkuCurrencyCode")
-    val skuCurrencyCode: String = "USD"  // Default currency, can be changed by user
+    val skuCurrencyCode: String = "USD" // Default currency, can be changed by user
 )
 
 fun SkuEntity.toSkuModel(): SkuModel =

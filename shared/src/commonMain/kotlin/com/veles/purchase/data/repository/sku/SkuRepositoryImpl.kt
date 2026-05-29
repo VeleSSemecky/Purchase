@@ -10,9 +10,7 @@ import com.veles.purchase.domain.model.SkuPhotoModel
 import com.veles.purchase.domain.model.SkuSumMonthModel
 import com.veles.purchase.domain.repository.sku.SkuRepository
 
-class SkuRepositoryImpl(
-    private val skuDAO: SkuDAO
-) : SkuRepository {
+class SkuRepositoryImpl(private val skuDAO: SkuDAO) : SkuRepository {
 
     override suspend fun getSkuModel(skuId: String): SkuModel? =
         skuDAO.getSkuEntity(skuId)?.toSkuModel()
@@ -33,4 +31,3 @@ class SkuRepositoryImpl(
             .sortedByDescending { it.skuMonth }
             .map { it.toSkuSumMonthModel() }
 }
-

@@ -7,4 +7,3 @@ package com.veles.purchase.data.room
 expect class DatabaseBuilder {
     fun build(): AppDatabase
 }
-

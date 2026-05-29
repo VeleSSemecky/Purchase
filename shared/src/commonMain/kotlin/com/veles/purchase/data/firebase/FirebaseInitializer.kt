@@ -19,4 +19,3 @@ expect class FirebaseInitializer {
      */
     fun getApp(): FirebaseApp
 }
-

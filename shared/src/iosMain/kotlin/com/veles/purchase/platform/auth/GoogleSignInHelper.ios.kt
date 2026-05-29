@@ -1,7 +1,7 @@
 package com.veles.purchase.platform.auth
 
-import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSLog
+import platform.Foundation.NSNotificationCenter
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -13,10 +13,7 @@ import kotlin.coroutines.suspendCoroutine
  * This implementation uses NotificationCenter to communicate with Swift.
  * Swift side handles the actual Google Sign-In via GoogleSignInBridge.
  */
-actual class GoogleSignInHelper(
-    private val viewController: Any?,
-    private val serverClientId: String
-) {
+actual class GoogleSignInHelper(private val viewController: Any?, private val serverClientId: String) {
     init {
         NSLog("GoogleSignInHelper: init() called")
     }
@@ -72,8 +69,4 @@ actual class GoogleSignInHelper(
 /**
  * Factory function to create GoogleSignInHelper on iOS
  */
-actual fun createGoogleSignInHelper(activity: Any?, serverClientId: String): GoogleSignInHelper? {
-    return GoogleSignInHelper(activity, serverClientId)
-}
-
-
+actual fun createGoogleSignInHelper(activity: Any?, serverClientId: String): GoogleSignInHelper? = GoogleSignInHelper(activity, serverClientId)

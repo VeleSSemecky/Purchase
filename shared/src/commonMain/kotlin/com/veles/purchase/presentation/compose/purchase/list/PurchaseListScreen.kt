@@ -251,10 +251,11 @@ private fun EmptyListPlaceholder(
             modifier = Modifier.padding(32.dp)
         ) {
             val emptyTitle = if (!isSearchMode) "No purchases yet" else "No matches found"
-            val emptySubTitle = if (!isSearchMode) 
-                "Type a name below to add your first item" 
-            else 
+            val emptySubTitle = if (!isSearchMode) {
+                "Type a name below to add your first item"
+            } else {
                 "Try a different search term"
+            }
 
             Text(
                 text = emptyTitle,

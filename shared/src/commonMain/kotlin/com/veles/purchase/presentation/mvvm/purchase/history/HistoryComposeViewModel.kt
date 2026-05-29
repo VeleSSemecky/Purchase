@@ -14,10 +14,7 @@ import kotlinx.coroutines.flow.stateIn
  * ViewModel for History Screen
  * Migrated from presentation module - original name: HistoryComposeViewModel
  */
-class HistoryComposeViewModel(
-    private val collectionId: String,
-    private val getPurchaseHistoryUseCase: GetPurchaseHistoryUseCase
-) : ViewModel() {
+class HistoryComposeViewModel(private val collectionId: String, private val getPurchaseHistoryUseCase: GetPurchaseHistoryUseCase) : ViewModel() {
 
     val historyList: StateFlow<List<PurchaseHistoryModel>> = getPurchaseHistoryUseCase(collectionId)
         .map { it.toHistoryModels() }
@@ -27,4 +24,3 @@ class HistoryComposeViewModel(
             emptyList()
         )
 }
-

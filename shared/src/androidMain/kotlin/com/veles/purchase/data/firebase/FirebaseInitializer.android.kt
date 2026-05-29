@@ -16,8 +16,5 @@ actual class FirebaseInitializer {
         Firebase.initialize(androidContext as Context)
     }
 
-    actual fun getApp(): FirebaseApp {
-        return Firebase.app
-    }
+    actual fun getApp(): FirebaseApp = Firebase.app
 }
-

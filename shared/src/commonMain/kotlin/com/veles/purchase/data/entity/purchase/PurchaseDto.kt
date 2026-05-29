@@ -1,11 +1,11 @@
 package com.veles.purchase.data.entity.purchase
 
-import com.veles.purchase.domain.model.purchase.PurchaseModel
-import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
-import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
 import com.veles.purchase.domain.model.purchase.PhotoStatus
-import com.veles.purchase.domain.utill.emptyString
+import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
+import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
 import com.veles.purchase.domain.utill.createPrimaryIDKey
+import com.veles.purchase.domain.utill.emptyString
 import kotlinx.serialization.Serializable
 
 /**
@@ -33,10 +33,7 @@ data class PurchasePhotoDto(
 )
 
 @Serializable
-data class PurchaseCategoryDto(
-    val id: String = emptyString(),
-    val name: String = emptyString()
-)
+data class PurchaseCategoryDto(val id: String = emptyString(), val name: String = emptyString())
 
 /**
  * Convert PurchaseDto to domain model
@@ -92,4 +89,3 @@ fun PurchaseCategoryModel.toPurchaseCategoryDto() = PurchaseCategoryDto(
     id = id,
     name = name
 )
-

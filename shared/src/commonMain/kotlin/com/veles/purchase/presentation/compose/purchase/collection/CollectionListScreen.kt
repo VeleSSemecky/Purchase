@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +50,7 @@ private val CollectionCardColor = Color(0xFF38A186)
 fun CollectionListScreen(
     viewModel: CollectionPurchaseComposeViewModel = koinViewModel(),
     onNavigateToCollection: (String) -> Unit = {},
-    onNavigateToAddCollection: () -> Unit = {},
+    onNavigateToAddCollection: () -> Unit = {}
 ) {
     Scaffold(
         containerColor = Colors.surface,
@@ -172,8 +171,11 @@ private fun Content(
                                 .fillMaxSize()
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(color),
-                            contentAlignment = if (dismissState.dismissDirection == DismissDirection.StartToEnd)
-                                Alignment.CenterStart else Alignment.CenterEnd
+                            contentAlignment = if (dismissState.dismissDirection == DismissDirection.StartToEnd) {
+                                Alignment.CenterStart
+                            } else {
+                                Alignment.CenterEnd
+                            }
                         ) {
                             Icon(
                                 painter = painterResource(Res.drawable.ic_delete_black_24dp),

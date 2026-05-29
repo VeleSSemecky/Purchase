@@ -27,12 +27,9 @@ class SettingRepositoryImpl : SettingRepository {
         )
     )
 
-    override fun getFlowSettingsPurchase(): Flow<PurchaseSetting> {
-        return settings.asStateFlow()
-    }
+    override fun getFlowSettingsPurchase(): Flow<PurchaseSetting> = settings.asStateFlow()
 
     override suspend fun saveSettingsPurchase(purchaseSetting: PurchaseSetting) {
         settings.value = purchaseSetting
     }
 }
-

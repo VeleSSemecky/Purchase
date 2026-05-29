@@ -108,7 +108,7 @@ class ListPurchaseViewModel(
     fun insertAdd(name: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(progress = ProgressState.Start) }
-            
+
             val newPurchase = PurchaseModel(
                 createId = Uuid.random().toString().uppercase(),
                 text = name,
@@ -120,12 +120,14 @@ class ListPurchaseViewModel(
                 purchaseCategoryModel = null
             )
             savePurchaseUseCase(newPurchase, collectionId)
-            
-            _uiState.update { it.copy(
-                newNamePurchase = "",
-                searchText = "", // Reset search after adding? Optional
-                progress = ProgressState.End
-            ) }
+
+            _uiState.update {
+                it.copy(
+                    newNamePurchase = "",
+                    searchText = "", // Reset search after adding? Optional
+                    progress = ProgressState.End
+                )
+            }
         }
     }
 

@@ -11,9 +11,7 @@ import kotlinx.coroutines.launch
  * ViewModel for SKU Statistics Screen (Outlay Graph)
  * Migrated from presentation module - original name: OutlayGraphViewModel
  */
-class OutlayGraphViewModel(
-    private val getSkuSumMontUseCase: GetSkuSumMontUseCase
-) : ViewModel() {
+class OutlayGraphViewModel(private val getSkuSumMontUseCase: GetSkuSumMontUseCase) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         OutlayGraphUiState(
@@ -97,4 +95,3 @@ data class OutlayGraphUiState(
             "$monthName $year"
         }
 }
-

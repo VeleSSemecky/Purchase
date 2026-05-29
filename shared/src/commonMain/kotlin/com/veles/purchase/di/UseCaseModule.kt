@@ -74,4 +74,3 @@ val useCaseModule = module {
     // Price UseCase
     single { PriceUseCase() }
 }
-

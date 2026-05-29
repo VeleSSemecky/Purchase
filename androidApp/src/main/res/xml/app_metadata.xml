@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppFunctionAppMetadata
+    xmlns:appfn="http://schemas.android.com/apk/androidx.appfunctions"
+    appfn:description="Цей додаток є приватним менеджером списку покупок та обліку витрат. Він дозволяє користувачеві додавати товари, переглядати історію та аналізувати циклічні покупки."
+    appfn:displayDescription="@string/app_ai_description" />

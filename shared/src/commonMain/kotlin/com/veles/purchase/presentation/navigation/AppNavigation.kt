@@ -3,24 +3,21 @@ package com.veles.purchase.presentation.navigation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.navigation3.runtime.EntryProviderScope
-import androidx.navigation3.runtime.NavBackStack
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import com.veles.purchase.presentation.compose.login.LoginScreen
 import com.veles.purchase.presentation.compose.main.MainScreen
 import com.veles.purchase.presentation.compose.purchase.category.CategoryScreen
@@ -35,6 +32,9 @@ import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchase
 import com.veles.purchase.presentation.compose.sku.edit.SkuEditScreen
 import com.veles.purchase.presentation.compose.sku.list.SkuListScreen
 import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -96,10 +96,7 @@ fun AppNavigation(
 /**
  * Navigator handles navigation actions by updating the [NavBackStack].
  */
-class Navigator(
-    private val backStack: NavBackStack<NavKey>,
-    private val resultStore: ResultStore
-) {
+class Navigator(private val backStack: NavBackStack<NavKey>, private val resultStore: ResultStore) {
     fun navigate(route: NavKey) {
         backStack.add(route)
     }
@@ -119,9 +116,7 @@ class Navigator(
         resultStore.setResult(key, value)
     }
 
-    fun <T> consumeResult(key: String): T? {
-        return resultStore.consumeResult(key)
-    }
+    fun <T> consumeResult(key: String): T? = resultStore.consumeResult(key)
 }
 
 /**
@@ -136,18 +131,17 @@ class ResultStore(initialMap: Map<String, Any?> = emptyMap()) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> consumeResult(key: String): T? {
-        return results.remove(key) as? T
-    }
+    fun <T> consumeResult(key: String): T? = results.remove(key) as? T
 
     fun toMap(): Map<String, Any?> = HashMap(results)
 }
 
 val ResultStoreSaver: Saver<ResultStore, *> = Saver(
-    save = { 
+    save = {
         val map = it.toMap()
-        if (map.isEmpty()) null 
-        else {
+        if (map.isEmpty()) {
+            null
+        } else {
             val list = ArrayList<ArrayList<Any?>>()
             map.forEach { (k, v) ->
                 list.add(arrayListOf(k, v))
@@ -155,7 +149,7 @@ val ResultStoreSaver: Saver<ResultStore, *> = Saver(
             list
         }
     },
-    restore = { 
+    restore = {
         val list = it as? List<List<Any?>>
         val map = list?.associate { inner -> (inner[0] as String) to inner[1] } ?: emptyMap()
         ResultStore(map)
@@ -163,10 +157,8 @@ val ResultStoreSaver: Saver<ResultStore, *> = Saver(
 )
 
 @Composable
-fun rememberResultStore(): ResultStore {
-    return rememberSaveable(saver = ResultStoreSaver) {
-        ResultStore()
-    }
+fun rememberResultStore(): ResultStore = rememberSaveable(saver = ResultStoreSaver) {
+    ResultStore()
 }
 
 private fun EntryProviderScope<NavKey>.authDestinations(navigator: Navigator, activity: Any?) {

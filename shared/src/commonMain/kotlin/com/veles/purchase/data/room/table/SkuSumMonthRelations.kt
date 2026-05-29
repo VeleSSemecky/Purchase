@@ -12,7 +12,7 @@ data class SkuSumMonthRelations(
     @ColumnInfo(name = "SkuLocalData")
     val skuLocalData: LocalDateTime?,
     @ColumnInfo(name = "SkuCurrencyCode")
-    val skuCurrencyCode: String = "USD"  // Default currency
+    val skuCurrencyCode: String = "USD" // Default currency
 )
 
 fun SkuSumMonthRelations.toSkuSumMonthModel() = SkuSumMonthModel(

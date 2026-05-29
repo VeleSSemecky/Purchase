@@ -21,5 +21,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <property
+            android:name="android.app.appfunctions.app_metadata"
+            android:resource="@xml/app_metadata" />
+
+        <service
+            android:name="androidx.appfunctions.service.AppFunctionService"
+            android:permission="android.permission.BIND_APP_FUNCTION_SERVICE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.appfunctions.service.AppFunctionService" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

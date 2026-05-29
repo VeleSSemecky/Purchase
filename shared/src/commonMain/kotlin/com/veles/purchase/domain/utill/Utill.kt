@@ -15,6 +15,4 @@ fun zeroInt() = 0
 
 fun createPrimaryIDKey() = Uuid.random().toString().uppercase()
 
-fun <T : Any> T?.default(default: T): T {
-    return this ?: default
-}
+fun <T : Any> T?.default(default: T): T = this ?: default

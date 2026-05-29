@@ -1,8 +1,6 @@
 package com.veles.purchase.di
 
-import com.veles.purchase.data.firebase.FirebaseInitializer
 import com.veles.purchase.platform.auth.GoogleSignInHelper
-import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -38,4 +36,3 @@ actual val platformModule: Module = module {
     // - File storage
     // - Permissions manager
 }
-

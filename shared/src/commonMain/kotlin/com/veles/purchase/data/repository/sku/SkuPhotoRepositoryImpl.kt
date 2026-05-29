@@ -5,9 +5,7 @@ import com.veles.purchase.data.room.table.toSkuPhotoModel
 import com.veles.purchase.domain.model.SkuPhotoModel
 import com.veles.purchase.domain.repository.sku.SkuPhotoRepository
 
-class SkuPhotoRepositoryImpl(
-    private val skuPhotoDAO: SkuPhotoDAO
-) : SkuPhotoRepository {
+class SkuPhotoRepositoryImpl(private val skuPhotoDAO: SkuPhotoDAO) : SkuPhotoRepository {
 
     override suspend fun getSkuPhotoModelList(skuId: String): List<SkuPhotoModel> =
         skuPhotoDAO.getSkuPhotoEntityList(skuId).map { it.toSkuPhotoModel() }
@@ -15,4 +13,3 @@ class SkuPhotoRepositoryImpl(
     override suspend fun deletePhoto(skuPhotoId: String) =
         skuPhotoDAO.deleteSkuPhotoEntityWithPhotoId(skuPhotoId)
 }
-

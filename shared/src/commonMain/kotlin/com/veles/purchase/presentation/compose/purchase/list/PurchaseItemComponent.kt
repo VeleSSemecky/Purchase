@@ -28,8 +28,8 @@ import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
 import com.veles.purchase.presentation.compose.textStyle2
-import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.*
+import com.veles.purchase.shared.resources.Res
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -200,7 +200,7 @@ fun CategoryChip(categoryName: String?) {
                 color = Colors.gr,
                 fontWeight = FontWeight.Bold
             ),
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
         )
     }
 }

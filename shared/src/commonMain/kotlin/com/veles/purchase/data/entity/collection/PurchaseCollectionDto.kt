@@ -54,4 +54,3 @@ fun PurchaseCollectionModel.toPurchaseCollectionDto() = PurchaseCollectionDto(
     listMembers = listMembers,
     categoryModels = categoryModels.map { it.toPurchaseCategoryDto() }
 )
-

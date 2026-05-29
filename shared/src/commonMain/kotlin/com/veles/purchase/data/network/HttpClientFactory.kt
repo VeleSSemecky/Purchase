@@ -7,4 +7,3 @@ import io.ktor.client.HttpClient
  * Each platform provides its own optimized engine
  */
 expect fun createHttpClient(): HttpClient
-

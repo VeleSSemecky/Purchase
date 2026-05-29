@@ -10,23 +10,14 @@ import kotlinx.coroutines.launch
 /**
  * UI State for the Collection Members screen
  */
-data class CollectionMembersUiState(
-    val members: List<MemberItem> = emptyList(),
-    val isLoading: Boolean = false
-)
+data class CollectionMembersUiState(val members: List<MemberItem> = emptyList(), val isLoading: Boolean = false)
 
-data class MemberItem(
-    val user: UserPurchaseModel,
-    val isSelected: Boolean
-)
+data class MemberItem(val user: UserPurchaseModel, val isSelected: Boolean)
 
 /**
  * ViewModel for managing collection members.
  */
-class CollectionMembersViewModel(
-    initialSelectedIds: List<String>,
-    private val userUseCase: UserUseCase
-) : ViewModel() {
+class CollectionMembersViewModel(initialSelectedIds: List<String>, private val userUseCase: UserUseCase) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
     private val _selectedIds = MutableStateFlow(initialSelectedIds.toSet())

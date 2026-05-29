@@ -2,8 +2,8 @@ package com.veles.purchase.di
 
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionMembersViewModel
-import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseComposeViewModel
+import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
 import com.veles.purchase.presentation.mvvm.purchase.edit.EditPurchaseViewModel
 import com.veles.purchase.presentation.mvvm.purchase.history.HistoryComposeViewModel
 import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterPurchaseViewModel
@@ -112,7 +112,6 @@ val viewModelModule = module {
             getPurchaseHistoryUseCase = get()
         )
     }
-
 
     // ListLaterPurchaseViewModel
     viewModel { parameters ->

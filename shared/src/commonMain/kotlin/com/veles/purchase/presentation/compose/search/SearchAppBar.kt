@@ -116,7 +116,7 @@ fun SearchAppBar(
                     cursorColor = Color.White.copy(alpha = 0.38f),
                     focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent,
-                    disabledBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent
                 )
             )
         },
@@ -134,7 +134,7 @@ fun DefaultAppBar(
     },
     title: @Composable (searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
     navigationIcon: @Composable (searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
-    actions: @Composable RowScope.(searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
+    actions: @Composable RowScope.(searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {}
 ) {
     TopAppBar(
         title = {
@@ -163,7 +163,7 @@ fun SearchWidgetAppBar(
     onSearchClicked: (String) -> Unit = {},
     title: @Composable (searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
     navigationIcon: @Composable (searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
-    actions: @Composable RowScope.(searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
+    actions: @Composable RowScope.(searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {}
 ) {
     when (searchWidgetState.value) {
         SearchWidgetState.CLOSED -> {
@@ -196,7 +196,7 @@ fun SearchTopAppBar(
     onSearchClicked: (String) -> Unit = {},
     title: @Composable (searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
     navigationIcon: @Composable (searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
-    actions: @Composable RowScope.(searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {},
+    actions: @Composable RowScope.(searchWidgetState: MutableState<SearchWidgetState>) -> Unit = {}
 ) {
     SearchWidgetAppBar(
         searchWidgetState = searchWidgetState,

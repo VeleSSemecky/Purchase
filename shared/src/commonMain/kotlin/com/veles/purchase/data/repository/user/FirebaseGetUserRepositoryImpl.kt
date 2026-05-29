@@ -16,24 +16,19 @@ import kotlinx.coroutines.flow.map
  * Firebase KMP implementation of FirebaseGetUserRepository
  * Uses GitLive Firebase KMP SDK for cross-platform support
  */
-class FirebaseGetUserRepositoryImpl(
-    private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
-) : FirebaseGetUserRepository {
+class FirebaseGetUserRepositoryImpl(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) : FirebaseGetUserRepository {
 
-    override suspend fun apiFirebaseFirestore(): Flow<List<UserPurchaseModel>> {
-        return firestore.userPurchase
-            .snapshots
-            .map { snapshot ->
-                snapshot.documents.mapNotNull { document ->
-                    document.data<UserDto>().toUserPurchaseModel()
-                }
+    override suspend fun apiFirebaseFirestore(): Flow<List<UserPurchaseModel>> = firestore.userPurchase
+        .snapshots
+        .map { snapshot ->
+            snapshot.documents.mapNotNull { document ->
+                document.data<UserDto>().toUserPurchaseModel()
             }
-            .map { users ->
-                // Filter out current user from the list
-                users.filterNot { it.uid == auth.currentUser?.uid }
-            }
-    }
+        }
+        .map { users ->
+            // Filter out current user from the list
+            users.filterNot { it.uid == auth.currentUser?.uid }
+        }
 
     override suspend fun apiGetUserPurchase(): UserPurchaseModel? {
         val currentUserId = auth.currentUser?.uid ?: return null
@@ -47,8 +42,5 @@ class FirebaseGetUserRepositoryImpl(
         return snapshot.documents.firstOrNull()?.data<UserDto>()?.toUserPurchaseModel()
     }
 
-    override fun isNeedLogin(): Boolean {
-        return auth.currentUser == null
-    }
+    override fun isNeedLogin(): Boolean = auth.currentUser == null
 }
-
