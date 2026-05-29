@@ -1,7 +1,7 @@
 [versions]
 
 #Plugins
-androidGradle = "9.2.0"
+androidGradle = "9.2.1"
 kotlin = "2.3.21"
 dokka = "2.2.0"
 ksp = "2.3.4"
@@ -14,11 +14,11 @@ firebaseAppDistribution = "5.2.1"
 
 #Kotlin Multiplatform
 kotlinMultiplatform = "2.3.21"
-composeMultiplatform = "1.10.3"
+composeMultiplatform = "1.11.0"
 composeMaterial3 = "1.10.0-alpha05"
-multiplatform-nav3 = "1.1.0"
+multiplatform-nav3 = "1.1.1"
 jetbrains-lifecycle = "2.10.0"
-kotlinx-datetime = "0.7.1"
+kotlinx-datetime = "0.8.0"
 
 #android
 minSdk = "26"
@@ -29,7 +29,7 @@ versionName = "1.0.2"
 applicationId = "com.veles.kotlinmvvm"
 
 #AndroidCore
-coreKtx = "1.16.0"
+coreKtx = "1.18.0"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntime = "2.10.0"
@@ -44,7 +44,7 @@ inject = "1"
 dagger = "2.59.2"
 
 #Coroutines
-coroutines = "1.10.2"
+coroutines = "1.11.0"
 
 #Room
 room = "2.8.4"
@@ -66,19 +66,19 @@ firebaseUI = "9.0.0"
 firebaseKmp = "2.4.0"
 
 #UI
-materialComponents = "1.12.0"
-appCompat = "1.7.0"
+materialComponents = "1.14.0"
+appCompat = "1.7.1"
 constraintLayout = "2.2.1"
-swiperefreshLayout = "1.1.0"
+swiperefreshLayout = "1.2.0"
 viewPager = "1.1.0"
-paging = "3.4.1"
-workRuntime = "2.10.1"
+paging = "3.5.0"
+workRuntime = "2.11.2"
 
 #Compose
-composeBom = "2026.03.01"
-composeActivity = "1.10.1"
-composeFragment = "1.8.6"
-composeLifecycleViewmodel = "2.9.6"
+composeBom = "2026.05.01"
+composeActivity = "1.13.0"
+composeFragment = "1.8.9"
+composeLifecycleViewmodel = "2.10.0"
 composeConstraintlayout = "1.1.1"
 
 #Image

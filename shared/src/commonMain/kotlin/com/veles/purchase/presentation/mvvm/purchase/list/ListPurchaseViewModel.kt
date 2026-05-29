@@ -112,7 +112,7 @@ class ListPurchaseViewModel(
             val newPurchase = PurchaseModel(
                 createId = Uuid.random().toString().uppercase(),
                 text = name,
-                count = "1",
+                count = "",
                 isChecked = false,
                 price = "",
                 userList = emptyList(),
