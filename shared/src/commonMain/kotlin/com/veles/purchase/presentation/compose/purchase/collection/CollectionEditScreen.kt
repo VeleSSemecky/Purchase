@@ -3,10 +3,12 @@ package com.veles.purchase.presentation.compose.purchase.collection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,26 +32,15 @@ import org.koin.core.parameter.parametersOf
 
 /**
  * Collection Edit/Add Screen
- *
- * Migrated from: EditCollectionComposeFragment.kt
- *
- * Displays:
- * - Form fields: collection name
- * - Category settings button (navigate to category screen)
- * - History button (navigate to history screen)
- * - Save button in toolbar
- * - Loading indicator during save
- *
- * Phase 2.8 - Simplified version (no user selection list)
- * FIXED: Now using custom components matching pattern exactly
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionEditScreen(
     collectionId: String = "", // Empty for new collection
     onNavigateBack: () -> Unit = {},
-    onNavigateToCategory: (String) -> Unit = {}, // TODO: Navigate to category screen
-    onNavigateToHistory: (String) -> Unit = {}, // TODO: Navigate to history screen
+    onNavigateToCategory: (String) -> Unit = {},
+    onNavigateToHistory: (String) -> Unit = {},
+    onNavigateToMembers: (String, List<String>) -> Unit = { _, _ -> },
     viewModel: EditCollectionComposeViewModel = koinViewModel(
         parameters = { parametersOf(collectionId) }
     )
@@ -57,9 +48,9 @@ fun CollectionEditScreen(
     val progress by viewModel.flowProgress.collectAsState()
     val collectionName by viewModel.flowCollectionName.collectAsState()
     val isNameError by viewModel.flowIsNameError.collectAsState()
+    val collectionModel by viewModel.flowCollectionModel.collectAsState()
 
     val scope = rememberCoroutineScope()
-
     val isNewCollection = viewModel.isNewCollection
 
     Scaffold(
@@ -80,18 +71,19 @@ fun CollectionEditScreen(
         containerColor = Colors.surface
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
-            // Content
             Content(
                 paddingValues = paddingValues,
                 collectionName = collectionName,
                 isNameError = isNameError,
                 isNewCollection = isNewCollection,
                 onCollectionNameChange = viewModel::onCollectionNameChange,
-                onCategoryClicked = { onNavigateToCategory(collectionId) },
-                onHistoryClicked = { onNavigateToHistory(collectionId) }
+                onCategoryClicked = { onNavigateToCategory(collectionModel.id) },
+                onHistoryClicked = { onNavigateToHistory(collectionModel.id) },
+                onMembersClicked = { 
+                    onNavigateToMembers(collectionModel.id, collectionModel.listMembers) 
+                }
             )
 
-            // Progress overlay
             if (progress == EditCollectionComposeViewModel.ProgressState.Start) {
                 Box(
                     modifier = Modifier
@@ -158,35 +150,41 @@ private fun Content(
     isNewCollection: Boolean,
     onCollectionNameChange: (String) -> Unit,
     onCategoryClicked: () -> Unit,
-    onHistoryClicked: () -> Unit
+    onHistoryClicked: () -> Unit,
+    onMembersClicked: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxSize()
             .padding(paddingValues = paddingValues)
     ) {
-        Spacer(modifier = Modifier.padding(16.dp))
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                ComponentName(
+                    collectionName = collectionName,
+                    isError = isNameError,
+                    onNameChange = onCollectionNameChange
+                )
+            }
 
-        // Collection Name Field
-        ComponentName(
-            collectionName = collectionName,
-            isError = isNameError,
-            onNameChange = onCollectionNameChange
-        )
+            item {
+                ComponentCategory(onCategoryClicked)
+            }
 
-        Spacer(modifier = Modifier.padding(8.dp))
+            item {
+                ComponentMembers(onMembersClicked)
+            }
 
-        // Category Settings Button (always visible)
-        ComponentCategory(onCategoryClicked)
-
-        // History Button — only visible when editing an existing collection
-        if (!isNewCollection) {
-            Spacer(modifier = Modifier.padding(8.dp))
-            ComponentHistory(onHistoryClicked)
+            if (!isNewCollection) {
+                item {
+                    ComponentHistory(onHistoryClicked)
+                }
+            }
         }
-
-        Spacer(modifier = Modifier.padding(8.dp))
     }
 }
 
@@ -199,102 +197,99 @@ private fun ComponentName(
     OutlinedTextField(
         colors = collectionEditTextFieldColors(),
         textStyle = textStyle(),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                start = 20.dp,
-                end = 20.dp
-            ),
+        modifier = Modifier.fillMaxWidth(),
         isError = isError,
         value = collectionName,
-        onValueChange = { onNameChange(it) },
+        onValueChange = onNameChange,
         label = {
-            Text(
-                text = "Title",
-                color = Color.White
-            )
-        }
+            Text(text = "Title", color = Color.White.copy(alpha = 0.7f))
+        },
+        singleLine = true
     )
 }
 
 @Composable
 private fun ComponentCategory(onCategoryClicked: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = 20.dp)
-            .clickable { onCategoryClicked() },
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors().copy(
-            containerColor = Colors.colorAccent
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    MenuCard(
+        icon = {
             Icon(
                 painter = painterResource(Res.drawable.ic_category),
                 contentDescription = "Category",
                 tint = Colors.gr,
                 modifier = Modifier.size(24.dp)
             )
-            Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp),
-                text = "Category settings",
-                color = Color.White
-            )
+        },
+        title = "Category settings",
+        onClick = onCategoryClicked
+    )
+}
+
+@Composable
+private fun ComponentMembers(onMembersClicked: () -> Unit) {
+    MenuCard(
+        icon = {
             Icon(
-                painter = painterResource(Res.drawable.ic_navigate_next),
-                contentDescription = "Next",
+                imageVector = Icons.Default.Groups,
+                contentDescription = "Members",
                 tint = Colors.gr,
                 modifier = Modifier.size(24.dp)
             )
-        }
-    }
+        },
+        title = "Members",
+        onClick = onMembersClicked
+    )
 }
 
 @Composable
 private fun ComponentHistory(onHistoryClicked: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = 20.dp)
-            .clickable { onHistoryClicked() },
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors().copy(
-            containerColor = Colors.colorAccent
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    MenuCard(
+        icon = {
             Icon(
                 painter = painterResource(Res.drawable.ic_baseline_history_24),
                 contentDescription = "History",
                 tint = Colors.gr,
                 modifier = Modifier.size(24.dp)
             )
+        },
+        title = "History",
+        onClick = onHistoryClicked
+    )
+}
+
+@Composable
+private fun MenuCard(
+    icon: @Composable () -> Unit,
+    title: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Colors.colorAccent
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            icon()
             Text(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 8.dp),
-                text = "History",
+                    .padding(horizontal = 12.dp),
+                text = title,
                 color = Color.White
             )
             Icon(
                 painter = painterResource(Res.drawable.ic_navigate_next),
                 contentDescription = "Next",
-                tint = Colors.gr,
+                tint = Color.White.copy(alpha = 0.5f),
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -312,11 +307,11 @@ private fun collectionEditTextFieldColors() = OutlinedTextFieldDefaults.colors(
     unfocusedTextColor = Color.White,
     disabledTextColor = Color.White.copy(alpha = 0.38f),
     errorTextColor = Color.White,
-    focusedBorderColor = Color.White,
+    focusedBorderColor = Colors.gr,
     unfocusedBorderColor = Color.White.copy(alpha = 0.38f),
     errorBorderColor = Color.Red.copy(alpha = 0.7f),
-    focusedLabelColor = Color.White,
+    focusedLabelColor = Colors.gr,
     unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
     errorLabelColor = Color.Red.copy(alpha = 0.7f),
-    cursorColor = Color.White
+    cursorColor = Colors.gr
 )

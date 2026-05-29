@@ -1,6 +1,7 @@
 package com.veles.purchase.di
 
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
+import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionMembersViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseComposeViewModel
 import com.veles.purchase.presentation.mvvm.purchase.edit.EditPurchaseViewModel
@@ -58,7 +59,16 @@ val viewModelModule = module {
         EditCollectionComposeViewModel(
             collectionId = parameters.get(),
             getCollectionPurchaseUseCase = get(),
-            setCollectionPurchaseUseCase = get()
+            setCollectionPurchaseUseCase = get(),
+            savedStateHandle = get()
+        )
+    }
+
+    // CollectionMembersViewModel
+    viewModel { parameters ->
+        CollectionMembersViewModel(
+            initialSelectedIds = parameters.get(),
+            userUseCase = get()
         )
     }
 

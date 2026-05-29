@@ -1,5 +1,6 @@
 package com.veles.purchase.presentation.mvvm.purchase.collection
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
@@ -12,18 +13,19 @@ import kotlin.uuid.Uuid
 
 /**
  * ViewModel for Collection Edit/Add Screen
- * Migrated from presentation module - original name: EditCollectionComposeViewModel
  */
 class EditCollectionComposeViewModel(
     private val collectionId: String,
     private val getCollectionPurchaseUseCase: GetCollectionPurchaseUseCase,
-    private val setCollectionPurchaseUseCase: SetCollectionPurchaseUseCase
+    private val setCollectionPurchaseUseCase: SetCollectionPurchaseUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _flowProgress = MutableStateFlow(ProgressState.End)
     val flowProgress: StateFlow<ProgressState> = _flowProgress.asStateFlow()
 
     private val _flowCollectionModel = MutableStateFlow(PurchaseCollectionModel.EMPTY)
+    val flowCollectionModel: StateFlow<PurchaseCollectionModel> = _flowCollectionModel.asStateFlow()
 
     val flowCollectionName: StateFlow<String> = _flowCollectionModel
         .map { it.name }
@@ -49,8 +51,9 @@ class EditCollectionComposeViewModel(
                     _flowCollectionModel.emit(collection)
                 }
             } else {
+                val newId = Uuid.random().toString().uppercase()
                 val newCollection = PurchaseCollectionModel(
-                    id = Uuid.random().toString().uppercase(),
+                    id = newId,
                     name = "",
                     creator = com.veles.purchase.domain.model.user.UserPurchaseModel.EMPTY,
                     categoryModels = emptyList(),
@@ -61,6 +64,10 @@ class EditCollectionComposeViewModel(
 
             _flowProgress.emit(ProgressState.End)
         }
+    }
+
+    fun onMembersSelected(selectedIds: List<String>) {
+        _flowCollectionModel.update { it.copy(listMembers = selectedIds) }
     }
 
     fun onCollectionNameChange(name: String) {
@@ -87,4 +94,3 @@ class EditCollectionComposeViewModel(
         End
     }
 }
-

@@ -13,6 +13,8 @@ import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * ViewModel for List Later Purchases Screen
@@ -84,12 +86,13 @@ class ListLaterPurchaseViewModel(
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     fun onCreatePurchase(name: String) {
         if (name.isBlank()) return
 
         viewModelScope.launch {
             val newPurchase = PurchaseModel(
-                createId = "",
+                createId = Uuid.random().toString().uppercase(),
                 text = name.trim(),
                 count = "1",
                 isChecked = false,

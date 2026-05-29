@@ -40,6 +40,12 @@ sealed class Route : NavKey {
 
         @Serializable
         data class History(val collectionId: String) : Collection()
+
+        @Serializable
+        data class Members(
+            val collectionId: String,
+            val selectedIds: kotlin.collections.List<String>
+        ) : Collection()
     }
 
     /**

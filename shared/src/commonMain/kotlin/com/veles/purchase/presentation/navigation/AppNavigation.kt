@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.compose.ui.Alignment
@@ -23,6 +26,7 @@ import com.veles.purchase.presentation.compose.main.MainScreen
 import com.veles.purchase.presentation.compose.purchase.category.CategoryScreen
 import com.veles.purchase.presentation.compose.purchase.collection.CollectionEditScreen
 import com.veles.purchase.presentation.compose.purchase.collection.CollectionListScreen
+import com.veles.purchase.presentation.compose.purchase.collection.CollectionMembersScreen
 import com.veles.purchase.presentation.compose.purchase.edit.PurchaseEditScreen
 import com.veles.purchase.presentation.compose.purchase.history.HistoryScreen
 import com.veles.purchase.presentation.compose.purchase.later.ListLaterScreen
@@ -30,6 +34,9 @@ import com.veles.purchase.presentation.compose.purchase.list.PurchaseListScreen
 import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchaseScreen
 import com.veles.purchase.presentation.compose.sku.edit.SkuEditScreen
 import com.veles.purchase.presentation.compose.sku.list.SkuListScreen
+import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -40,6 +47,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(Route.Collection.Edit::class)
             subclass(Route.Collection.Category::class)
             subclass(Route.Collection.History::class)
+            subclass(Route.Collection.Members::class)
             subclass(Route.Purchase.List::class)
             subclass(Route.Purchase.Edit::class)
             subclass(Route.Purchase.History::class)
@@ -64,7 +72,8 @@ fun AppNavigation(
     activity: Any? = null
 ) {
     val backStack = rememberNavBackStack(navSavedStateConfiguration, startDestination)
-    val navigator = remember(backStack) { Navigator(backStack) }
+    val resultStore = rememberResultStore()
+    val navigator = remember(backStack, resultStore) { Navigator(backStack, resultStore) }
 
     NavDisplay(
         backStack = backStack,
@@ -87,18 +96,76 @@ fun AppNavigation(
 /**
  * Navigator handles navigation actions by updating the [NavBackStack].
  */
-class Navigator(private val backStack: NavBackStack<NavKey>) {
+class Navigator(
+    private val backStack: NavBackStack<NavKey>,
+    private val resultStore: ResultStore
+) {
     fun navigate(route: NavKey) {
         backStack.add(route)
     }
 
     fun goBack() {
-        backStack.removeLastOrNull()
+        if (backStack.size > 1) {
+            backStack.removeLastOrNull()
+        }
     }
 
     fun clearAndNavigate(route: NavKey) {
         backStack.clear()
         backStack.add(route)
+    }
+
+    fun setResult(key: String, value: Any?) {
+        resultStore.setResult(key, value)
+    }
+
+    fun <T> consumeResult(key: String): T? {
+        return resultStore.consumeResult(key)
+    }
+}
+
+/**
+ * ResultStore manages results between destinations.
+ * Based on: https://developer.android.com/guide/navigation/navigation-3/recipes/results-state
+ */
+class ResultStore(initialMap: Map<String, Any?> = emptyMap()) {
+    private val results = mutableStateMapOf<String, Any?>().apply { putAll(initialMap) }
+
+    fun setResult(key: String, value: Any?) {
+        results[key] = value
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> consumeResult(key: String): T? {
+        return results.remove(key) as? T
+    }
+
+    fun toMap(): Map<String, Any?> = HashMap(results)
+}
+
+val ResultStoreSaver: Saver<ResultStore, *> = Saver(
+    save = { 
+        val map = it.toMap()
+        if (map.isEmpty()) null 
+        else {
+            val list = ArrayList<ArrayList<Any?>>()
+            map.forEach { (k, v) ->
+                list.add(arrayListOf(k, v))
+            }
+            list
+        }
+    },
+    restore = { 
+        val list = it as? List<List<Any?>>
+        val map = list?.associate { inner -> (inner[0] as String) to inner[1] } ?: emptyMap()
+        ResultStore(map)
+    }
+)
+
+@Composable
+fun rememberResultStore(): ResultStore {
+    return rememberSaveable(saver = ResultStoreSaver) {
+        ResultStore()
     }
 }
 
@@ -123,7 +190,9 @@ private fun EntryProviderScope<NavKey>.mainDestinations(navigator: Navigator) {
     }
 }
 
-private fun EntryProviderScope<NavKey>.collectionDestinations(navigator: Navigator) {
+private fun EntryProviderScope<NavKey>.collectionDestinations(
+    navigator: Navigator
+) {
     entry<Route.Collection.List> {
         CollectionListScreen(
             onNavigateToCollection = { collectionId ->
@@ -135,7 +204,17 @@ private fun EntryProviderScope<NavKey>.collectionDestinations(navigator: Navigat
         )
     }
     entry<Route.Collection.Edit> { route ->
+        val viewModel: EditCollectionComposeViewModel = koinViewModel(
+            parameters = { parametersOf(route.collectionId) }
+        )
+
+        // Handle results from other screens
+        navigator.consumeResult<List<String>>("members_selection")?.let { selectedIds ->
+            viewModel.onMembersSelected(selectedIds)
+        }
+
         CollectionEditScreen(
+            viewModel = viewModel,
             collectionId = route.collectionId,
             onNavigateBack = { navigator.goBack() },
             onNavigateToCategory = { collectionId ->
@@ -143,6 +222,9 @@ private fun EntryProviderScope<NavKey>.collectionDestinations(navigator: Navigat
             },
             onNavigateToHistory = { collectionId ->
                 navigator.navigate(Route.Collection.History(collectionId))
+            },
+            onNavigateToMembers = { collectionId, selectedIds ->
+                navigator.navigate(Route.Collection.Members(collectionId, selectedIds))
             }
         )
     }
@@ -156,6 +238,16 @@ private fun EntryProviderScope<NavKey>.collectionDestinations(navigator: Navigat
         HistoryScreen(
             collectionId = route.collectionId,
             onNavigateBack = { navigator.goBack() }
+        )
+    }
+    entry<Route.Collection.Members> { route ->
+        CollectionMembersScreen(
+            initialSelectedIds = route.selectedIds,
+            onNavigateBack = { navigator.goBack() },
+            onConfirm = { selectedIds ->
+                navigator.setResult("members_selection", ArrayList(selectedIds))
+                navigator.goBack()
+            }
         )
     }
 }

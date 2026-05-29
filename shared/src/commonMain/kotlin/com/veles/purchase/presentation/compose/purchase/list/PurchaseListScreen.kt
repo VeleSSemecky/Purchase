@@ -38,7 +38,6 @@ import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.model.sort.toPurchaseComparator
 import com.veles.purchase.presentation.mvvm.purchase.list.ListPurchaseViewModel
-import com.veles.purchase.presentation.mvvm.purchase.list.PurchaseListUiState
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -56,17 +55,35 @@ fun PurchaseListScreen(
     var showSortSheet by remember { mutableStateOf(false) }
 
     Scaffold(
-        modifier = Modifier.navigationBarsPadding(),
+        modifier = Modifier.fillMaxSize(),
         containerColor = Colors.surface,
         topBar = {
-            PurchaseListTopBar(
-                title = uiState.collection.name,
-                searchText = uiState.searchText,
-                searchWidgetState = searchWidgetState,
-                onSearchWidgetStateChanged = { searchWidgetState = it },
-                onSearchTextChanged = viewModel::updateSearchText,
-                onBackClick = onNavigateBack,
-                onSettingsClick = onNavigateToSettings
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Colors.colorPrimary)
+                    .statusBarsPadding()
+            ) {
+                PurchaseListTopBar(
+                    title = uiState.collection.name,
+                    searchText = uiState.searchText,
+                    searchWidgetState = searchWidgetState,
+                    onSearchWidgetStateChanged = { searchWidgetState = it },
+                    onSearchTextChanged = viewModel::updateSearchText,
+                    onBackClick = onNavigateBack,
+                    onSettingsClick = onNavigateToSettings
+                )
+            }
+        },
+        bottomBar = {
+            CreatePurchaseInput(
+                modifier = Modifier
+                    .background(Colors.surface)
+                    .navigationBarsPadding()
+                    .imePadding(),
+                value = uiState.newNamePurchase,
+                onValueChange = viewModel::onNewNamePurchaseChanged,
+                onAdd = viewModel::insertAdd
             )
         }
     ) { paddingValues ->
@@ -76,19 +93,17 @@ fun PurchaseListScreen(
                 .padding(paddingValues)
         ) {
             PurchaseListContent(
+                modifier = Modifier.fillMaxSize(),
                 purchases = uiState.purchases,
                 sortPurchase = uiState.sortPurchase,
                 searchText = uiState.searchText,
                 settings = uiState.settings,
-                newNamePurchase = uiState.newNamePurchase,
                 onChecked = viewModel::onChecked,
                 onDelete = viewModel::deletePurchase,
                 onItemClick = onNavigateToPurchaseDetail,
-                onShowSortSheet = { showSortSheet = true },
-                onNewNameChange = viewModel::onNewNamePurchaseChanged,
-                onAddPurchase = viewModel::insertAdd
+                onShowSortSheet = { showSortSheet = true }
             )
-            
+
             if (uiState.progress == ListPurchaseViewModel.ProgressState.Start) {
                 LoadingOverlay()
             }
@@ -173,62 +188,51 @@ private fun PurchaseListContent(
     sortPurchase: SortPurchase,
     searchText: String,
     settings: PurchaseSetting,
-    newNamePurchase: String,
     onChecked: (PurchaseModel) -> Unit,
     onDelete: (PurchaseModel) -> Unit,
     onItemClick: (String) -> Unit,
     onShowSortSheet: () -> Unit,
-    onNewNameChange: (String) -> Unit,
-    onAddPurchase: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val sortedPurchases = remember(purchases, sortPurchase) {
         purchases.sortedWith(sortPurchase.toPurchaseComparator())
     }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        val listState = rememberLazyListState()
+    val listState = rememberLazyListState()
 
-        if (sortedPurchases.isEmpty()) {
-            EmptyListPlaceholder(
-                isSearchMode = searchText.isNotEmpty(),
-                modifier = Modifier.weight(1f)
-            )
-        } else {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                stickyHeader(key = "sort_header", contentType = "header") {
-                    SortIndicator(
-                        sortPurchase = sortPurchase,
-                        onSortClick = onShowSortSheet
-                    )
-                }
+    if (sortedPurchases.isEmpty()) {
+        EmptyListPlaceholder(
+            isSearchMode = searchText.isNotEmpty(),
+            modifier = modifier
+        )
+    } else {
+        LazyColumn(
+            state = listState,
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            stickyHeader(key = "sort_header", contentType = "header") {
+                SortIndicator(
+                    sortPurchase = sortPurchase,
+                    onSortClick = onShowSortSheet
+                )
+            }
 
-                items(
-                    items = sortedPurchases,
-                    key = { it.createId },
-                    contentType = { "purchase_item" }
-                ) { purchase ->
-                    SwipeablePurchaseItem(
-                        modifier = Modifier.animateItem(),
-                        purchase = purchase,
-                        isImageSettingEnabled = settings.isImage,
-                        onChecked = { onChecked(purchase) },
-                        onDelete = { onDelete(purchase) },
-                        onItemClick = { onItemClick(purchase.createId) }
-                    )
-                }
+            items(
+                items = sortedPurchases,
+                key = { it.createId },
+                contentType = { "purchase_item" }
+            ) { purchase ->
+                SwipeablePurchaseItem(
+                    modifier = Modifier.animateItem(),
+                    purchase = purchase,
+                    isImageSettingEnabled = settings.isImage,
+                    onChecked = { onChecked(purchase) },
+                    onDelete = { onDelete(purchase) },
+                    onItemClick = { onItemClick(purchase.createId) }
+                )
             }
         }
-
-        CreatePurchaseInput(
-            value = newNamePurchase,
-            onValueChange = onNewNameChange,
-            onAdd = onAddPurchase
-        )
     }
 }
 
@@ -320,21 +324,15 @@ private fun LoadingOverlay() {
 private fun CreatePurchaseInput(
     value: String,
     onValueChange: (String) -> Unit,
-    onAdd: (String) -> Unit
+    onAdd: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val label = @Composable {
-        Text(
-            modifier = Modifier.alpha(0.60f),
-            text = "Search or create purchase",
-            color = Color.White.copy(alpha = 0.87f)
-        )
-    }
-
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth().imePadding(),
-        label = if (value.isNotEmpty()) label else null,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp),
         placeholder = {
             Text(
                 modifier = Modifier.alpha(0.60f),

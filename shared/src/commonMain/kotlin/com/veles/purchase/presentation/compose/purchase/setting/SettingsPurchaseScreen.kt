@@ -169,7 +169,7 @@ private fun ToolBar(
 @Composable
 private fun PreviewCard(
     purchaseSetting: PurchaseSetting,
-    item: PurchaseModel = PurchaseModel.TEST
+    item: PurchaseModel = PurchaseModel.EMPTY
 ) {
     Card(
         colors = CardDefaults.cardColors().copy(
@@ -233,7 +233,7 @@ private fun PreviewCard(
 @Composable
 private fun ShapeTypeRow(
     shapeType: ShapeType,
-    settings: com.veles.purchase.domain.model.setting.PurchaseSetting,
+    settings: PurchaseSetting,
     viewModel: SettingPurchaseComposeViewModel
 ) {
     Row(
