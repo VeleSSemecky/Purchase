@@ -12,7 +12,7 @@ class SavePurchaseUseCase(private val purchaseRepository: PurchaseRepository, pr
         purchaseModel: PurchaseModel,
         purchaseCollectionId: String,
         historyType: HistoryType = HistoryType.ADD
-    ) {
+    ): Result<Unit> = runCatching {
         purchaseRepository.setPurchase(purchaseModel, purchaseCollectionId)
         historyRepository.insert(purchaseModel.createPurchaseTable(historyType, purchaseCollectionId))
     }

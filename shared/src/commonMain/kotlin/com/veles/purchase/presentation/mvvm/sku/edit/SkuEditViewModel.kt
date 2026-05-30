@@ -6,6 +6,8 @@ import com.veles.purchase.domain.model.SkuModel
 import com.veles.purchase.domain.usecase.sku.GetSkuUseCase
 import com.veles.purchase.domain.usecase.sku.SetSkuUseCase
 import com.veles.purchase.domain.utill.createPrimaryIDKey
+import com.veles.purchase.presentation.model.UiEvent
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -13,26 +15,14 @@ import kotlinx.coroutines.launch
  * ViewModel for SKU Edit Screen
  *
  * Migrated from: SkuEditViewModel.kt (Phase 6 - UseCase migration)
- *
- * Manages:
- * - Loading existing SKU for editing
- * - Creating new SKU
- * - Form validation
- * - Save operations
- *
- * Phase 6 - Migrated to UseCases (Clean Architecture)
- *
- * Simplified for KMP:
- * - Removed SharedFlowBus event system
- * - Removed SavedStateHandle navigation args
- * - Removed photo functionality (can add later)
- * - Removed currency picker (hardcoded for now)
- * - Direct validation instead of TextFieldModel wrapper
  */
 class SkuEditViewModel(private val skuId: String?, private val getSkuUseCase: GetSkuUseCase, private val setSkuUseCase: SetSkuUseCase) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SkuEditUiState())
     val uiState: StateFlow<SkuEditUiState> = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<UiEvent> = _events.asSharedFlow()
 
     init {
         if (!skuId.isNullOrEmpty()) {
@@ -56,20 +46,14 @@ class SkuEditViewModel(private val skuId: String?, private val getSkuUseCase: Ge
                         )
                     }
                 } else {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = "SKU not found"
-                        )
-                    }
+                    _uiState.update { it.copy(isLoading = false) }
+                    _events.emit(UiEvent.ShowError("SKU not found"))
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e.message
-                    )
-                }
+                _uiState.update { it.copy(isLoading = false) }
+                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load SKU"))
             }
         }
     }
@@ -84,7 +68,6 @@ class SkuEditViewModel(private val skuId: String?, private val getSkuUseCase: Ge
     }
 
     fun onPriceChanged(price: String) {
-        // Validate price format (only numbers and one decimal point)
         if (price.isEmpty() || price.matches(Regex("[0-9]+(\\.[0-9]{0,2})?"))) {
             _uiState.update {
                 it.copy(
@@ -103,11 +86,10 @@ class SkuEditViewModel(private val skuId: String?, private val getSkuUseCase: Ge
         _uiState.update { it.copy(skuCurrencyCode = currencyCode) }
     }
 
-    fun save(onSuccess: () -> Unit) {
+    fun save() {
         viewModelScope.launch {
             val state = _uiState.value
 
-            // Validate
             var hasError = false
             if (state.skuName.isBlank()) {
                 _uiState.update { it.copy(nameError = "Name is required") }
@@ -117,11 +99,9 @@ class SkuEditViewModel(private val skuId: String?, private val getSkuUseCase: Ge
                 _uiState.update { it.copy(priceError = "Price is required") }
                 hasError = true
             }
-
             if (hasError) return@launch
 
             _uiState.update { it.copy(isSaving = true) }
-
             try {
                 val sku = SkuModel(
                     skuId = skuId ?: createPrimaryIDKey(),
@@ -130,23 +110,22 @@ class SkuEditViewModel(private val skuId: String?, private val getSkuUseCase: Ge
                     skuComment = state.skuComment,
                     skuCurrencyCode = state.skuCurrencyCode
                 )
-
-                setSkuUseCase(sku, emptyList()) // No photos for now
-                _uiState.update { it.copy(isSaving = false) }
-                onSuccess()
+                setSkuUseCase(sku, emptyList())
+                    .onSuccess {
+                        _uiState.update { it.copy(isSaving = false) }
+                        _events.emit(UiEvent.NavigateBack)
+                    }
+                    .onFailure {
+                        _uiState.update { it.copy(isSaving = false) }
+                        _events.emit(UiEvent.ShowError(it.message ?: "Failed to save SKU"))
+                    }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isSaving = false,
-                        error = e.message
-                    )
-                }
+                _uiState.update { it.copy(isSaving = false) }
+                _events.emit(UiEvent.ShowError(e.message ?: "Unexpected error"))
             }
         }
-    }
-
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
     }
 }
 
@@ -161,8 +140,7 @@ data class SkuEditUiState(
     val nameError: String? = null,
     val priceError: String? = null,
     val isLoading: Boolean = false,
-    val isSaving: Boolean = false,
-    val error: String? = null
+    val isSaving: Boolean = false
 ) {
     val isNewSku: Boolean
         get() = skuName.isEmpty() && skuPrice.isEmpty()

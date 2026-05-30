@@ -22,6 +22,7 @@ import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.purchase.setting.CornerSetting
 import com.veles.purchase.presentation.mvvm.purchase.setting.SettingPurchaseComposeViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -52,6 +53,16 @@ fun SettingsPurchaseScreen(
     val settings by viewModel.flowPurchaseSetting.collectAsState()
     val allCorner by viewModel.flowAllCorner.collectAsState()
     val sideCorner by viewModel.flowSideCorner.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is UiEvent.NavigateBack -> Unit
+            }
+        }
+    }
 
     // Apply original dark theme
     MaterialTheme(
@@ -66,6 +77,7 @@ fun SettingsPurchaseScreen(
             topBar = {
                 ToolBar(onNavigateBack, viewModel)
             },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = Color.Black
         ) { paddingValues ->
             Column(

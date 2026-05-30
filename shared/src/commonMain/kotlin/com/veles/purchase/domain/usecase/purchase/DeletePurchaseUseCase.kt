@@ -14,19 +14,19 @@ class DeletePurchaseUseCase(private val purchaseRepository: PurchaseRepository, 
     suspend operator fun invoke(
         purchaseModel: PurchaseModel,
         purchaseCollectionId: String
-    ): Boolean = withContext(Dispatchers.IO) {
-        purchaseRepository.deletePurchase(
-            purchaseModel.createId,
-            purchaseCollectionId
-        )
-
-        historyRepository.insert(
-            purchaseModel.createPurchaseTable(
-                HistoryType.DELETE,
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            purchaseRepository.deletePurchase(
+                purchaseModel.createId,
                 purchaseCollectionId
             )
-        )
 
-        true
+            historyRepository.insert(
+                purchaseModel.createPurchaseTable(
+                    HistoryType.DELETE,
+                    purchaseCollectionId
+                )
+            )
+        }
     }
 }

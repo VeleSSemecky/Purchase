@@ -37,6 +37,7 @@ import com.veles.purchase.presentation.compose.search.SearchTopAppBar
 import com.veles.purchase.presentation.compose.search.SearchWidgetState
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import com.veles.purchase.presentation.model.sort.toPurchaseComparator
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.purchase.list.ListPurchaseViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -51,12 +52,23 @@ fun PurchaseListScreen(
     onNavigateToPurchaseDetail: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     var searchWidgetState by remember { mutableStateOf(SearchWidgetState.CLOSED) }
     var showSortSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is UiEvent.NavigateBack -> Unit
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Colors.surface,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Box(
                 modifier = Modifier

@@ -9,8 +9,10 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -57,20 +60,27 @@ fun SkuEditScreen(
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvent.NavigateBack -> onNavigateBack()
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             SkuEditToolbar(
                 title = if (skuId != null) "Edit expense" else "Add expense",
                 onNavigateBack = onNavigateBack,
-                onSave = {
-                    viewModel.save {
-                        onNavigateBack()
-                    }
-                },
+                onSave = { viewModel.save() },
                 isSaving = uiState.isSaving
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Colors.surface
     ) { paddingValues ->
         if (uiState.isLoading) {
@@ -90,20 +100,6 @@ fun SkuEditScreen(
                 onPriceChanged = viewModel::onPriceChanged,
                 onCommentChanged = viewModel::onCommentChanged
             )
-        }
-
-        // Error snackbar
-        uiState.error?.let { error ->
-            Snackbar(
-                modifier = Modifier.padding(16.dp),
-                action = {
-                    TextButton(onClick = { viewModel.clearError() }) {
-                        Text("OK")
-                    }
-                }
-            ) {
-                Text(error)
-            }
         }
     }
 }

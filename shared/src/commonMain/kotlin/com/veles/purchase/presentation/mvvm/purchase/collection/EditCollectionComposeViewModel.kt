@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.veles.purchase.domain.model.purchase.PurchaseCollectionModel
 import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseUseCase
 import com.veles.purchase.domain.usecase.collection.SetCollectionPurchaseUseCase
+import com.veles.purchase.presentation.model.UiEvent
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -33,6 +35,9 @@ class EditCollectionComposeViewModel(
 
     val flowIsNameError: StateFlow<Boolean> = MutableStateFlow(false)
 
+    private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<UiEvent> = _events.asSharedFlow()
+
     val isNewCollection: Boolean
         get() = collectionId.isEmpty()
 
@@ -44,25 +49,30 @@ class EditCollectionComposeViewModel(
     private fun loadCollection() {
         viewModelScope.launch {
             _flowProgress.emit(ProgressState.Start)
-
-            if (collectionId.isNotEmpty()) {
-                val collection = getCollectionPurchaseUseCase(collectionId)
-                if (collection != null) {
-                    _flowCollectionModel.emit(collection)
+            try {
+                if (collectionId.isNotEmpty()) {
+                    val collection = getCollectionPurchaseUseCase(collectionId)
+                    if (collection != null) {
+                        _flowCollectionModel.emit(collection)
+                    }
+                } else {
+                    val newId = Uuid.random().toString().uppercase()
+                    val newCollection = PurchaseCollectionModel(
+                        id = newId,
+                        name = "",
+                        creator = com.veles.purchase.domain.model.user.UserPurchaseModel.EMPTY,
+                        categoryModels = emptyList(),
+                        listMembers = emptyList()
+                    )
+                    _flowCollectionModel.emit(newCollection)
                 }
-            } else {
-                val newId = Uuid.random().toString().uppercase()
-                val newCollection = PurchaseCollectionModel(
-                    id = newId,
-                    name = "",
-                    creator = com.veles.purchase.domain.model.user.UserPurchaseModel.EMPTY,
-                    categoryModels = emptyList(),
-                    listMembers = emptyList()
-                )
-                _flowCollectionModel.emit(newCollection)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load collection"))
+            } finally {
+                _flowProgress.emit(ProgressState.End)
             }
-
-            _flowProgress.emit(ProgressState.End)
         }
     }
 
@@ -77,16 +87,31 @@ class EditCollectionComposeViewModel(
         }
     }
 
-    suspend fun onSaveClicked(): Boolean {
+    fun onSaveClicked() {
         if (_flowCollectionModel.value.name.isBlank()) {
-            (flowIsNameError as MutableStateFlow).emit(true)
-            return false
+            viewModelScope.launch { (flowIsNameError as MutableStateFlow).emit(true) }
+            return
         }
 
-        _flowProgress.emit(ProgressState.Start)
-        setCollectionPurchaseUseCase(_flowCollectionModel.value)
-        _flowProgress.emit(ProgressState.End)
-        return true
+        viewModelScope.launch {
+            _flowProgress.emit(ProgressState.Start)
+            try {
+                setCollectionPurchaseUseCase(_flowCollectionModel.value)
+                    .onSuccess {
+                        _flowProgress.emit(ProgressState.End)
+                        _events.emit(UiEvent.NavigateBack)
+                    }
+                    .onFailure {
+                        _flowProgress.emit(ProgressState.End)
+                        _events.emit(UiEvent.ShowError(it.message ?: "Failed to save collection"))
+                    }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _flowProgress.emit(ProgressState.End)
+                _events.emit(UiEvent.ShowError(e.message ?: "Unexpected error"))
+            }
+        }
     }
 
     enum class ProgressState {

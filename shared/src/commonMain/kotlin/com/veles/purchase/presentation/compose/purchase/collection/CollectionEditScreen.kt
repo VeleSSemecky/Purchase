@@ -20,12 +20,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
 import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.ic_baseline_history_24
 import com.veles.purchase.shared.resources.ic_category
 import com.veles.purchase.shared.resources.ic_navigate_next
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -50,24 +50,27 @@ fun CollectionEditScreen(
     val isNameError by viewModel.flowIsNameError.collectAsState()
     val collectionModel by viewModel.flowCollectionModel.collectAsState()
 
-    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val isNewCollection = viewModel.isNewCollection
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvent.NavigateBack -> onNavigateBack()
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             ToolBar(
                 title = if (isNewCollection) "Create Collection" else "Edit Collection",
                 onNavigateBack = onNavigateBack,
-                onSaveClicked = {
-                    scope.launch {
-                        val success = viewModel.onSaveClicked()
-                        if (success) {
-                            onNavigateBack()
-                        }
-                    }
-                }
+                onSaveClicked = { viewModel.onSaveClicked() }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Colors.surface
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {

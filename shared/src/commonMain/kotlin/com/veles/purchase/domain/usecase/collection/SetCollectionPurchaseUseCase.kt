@@ -5,6 +5,6 @@ import com.veles.purchase.domain.repository.collection.CollectionRepository
 
 class SetCollectionPurchaseUseCase(private val collectionRepository: CollectionRepository) {
 
-    suspend operator fun invoke(purchaseModel: PurchaseCollectionModel) =
-        collectionRepository.saveCollection(purchaseModel)
+    suspend operator fun invoke(purchaseModel: PurchaseCollectionModel): Result<Unit> =
+        runCatching { collectionRepository.saveCollection(purchaseModel) }
 }

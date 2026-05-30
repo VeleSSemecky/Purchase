@@ -32,6 +32,7 @@ import com.veles.purchase.presentation.compose.FractionalThreshold
 import com.veles.purchase.presentation.compose.SwipeToDismiss
 import com.veles.purchase.presentation.compose.rememberDismissState
 import com.veles.purchase.presentation.compose.textStyle1
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseComposeViewModel
 import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.ic_delete_black_24dp
@@ -52,8 +53,20 @@ fun CollectionListScreen(
     onNavigateToCollection: (String) -> Unit = {},
     onNavigateToAddCollection: () -> Unit = {}
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is UiEvent.NavigateBack -> Unit
+            }
+        }
+    }
+
     Scaffold(
         containerColor = Colors.surface,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FAB(onNavigateToAddCollection)
         },

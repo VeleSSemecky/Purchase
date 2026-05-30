@@ -7,6 +7,8 @@ import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
 import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
 import com.veles.purchase.domain.usecase.setting.SetSettingUseCase
+import com.veles.purchase.presentation.model.UiEvent
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -29,6 +31,9 @@ class SettingPurchaseComposeViewModel(private val getSettingUseCase: GetSettingU
     val flowSideCorner: StateFlow<CornerSetting>
         get() = _flowSideCorner.asStateFlow()
 
+    private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<UiEvent> = _events.asSharedFlow()
+
     init {
         loadSettings()
     }
@@ -36,8 +41,11 @@ class SettingPurchaseComposeViewModel(private val getSettingUseCase: GetSettingU
     fun onSaveSettingsClicked() = viewModelScope.launch {
         try {
             setSettingUseCase(flowPurchaseSetting.value)
+                .onFailure { _events.emit(UiEvent.ShowError(it.message ?: "Failed to save settings")) }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            e.printStackTrace()
+            _events.emit(UiEvent.ShowError(e.message ?: "Unexpected error"))
         }
     }
 
@@ -91,6 +99,7 @@ class SettingPurchaseComposeViewModel(private val getSettingUseCase: GetSettingU
     }
 
     private fun loadSettings() = getSettingUseCase()
+        .catch { e -> _events.emit(UiEvent.ShowError(e.message ?: "Failed to load settings")) }
         .onEach { settings ->
             _flowPurchaseSetting.emit(settings)
             when (settings.isSymmetry) {
@@ -101,7 +110,12 @@ class SettingPurchaseComposeViewModel(private val getSettingUseCase: GetSettingU
         .launchIn(viewModelScope)
 }
 
-data class CornerSetting(val topStart: Float = 0f, val topEnd: Float = 0f, val bottomStart: Float = 0f, val bottomEnd: Float = 0f) {
+data class CornerSetting(
+    val topStart: Float = 0f,
+    val topEnd: Float = 0f,
+    val bottomStart: Float = 0f,
+    val bottomEnd: Float = 0f
+) {
     constructor(allCorners: Float) : this(allCorners, allCorners, allCorners, allCorners)
 }
 

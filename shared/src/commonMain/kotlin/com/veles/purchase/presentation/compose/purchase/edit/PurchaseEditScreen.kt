@@ -17,8 +17,8 @@ import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
 import com.veles.purchase.platform.media.rememberCameraLauncher
 import com.veles.purchase.platform.media.rememberMediaPickerLauncher
 import com.veles.purchase.presentation.compose.Colors
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.purchase.edit.EditPurchaseViewModel
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -43,7 +43,7 @@ fun PurchaseEditScreen(
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     var showCategorySheet by remember { mutableStateOf(false) }
     var showPhotoSourceSheet by remember { mutableStateOf(false) }
 
@@ -72,17 +72,6 @@ fun PurchaseEditScreen(
             { category: com.veles.purchase.domain.model.purchase.PurchaseCategoryModel? -> viewModel.onCategorySelected(category) }
         }
 
-    val onSaveClicked = remember(viewModel, onNavigateBack) {
-        {
-            scope.launch {
-                val success = viewModel.onSaveClicked()
-                if (success) {
-                    onNavigateBack()
-                }
-            }
-        }
-    }
-
     val isSaveEnabled by remember {
         derivedStateOf { uiState.purchase.text.isNotBlank() }
     }
@@ -91,10 +80,15 @@ fun PurchaseEditScreen(
         derivedStateOf { uiState.progress == EditPurchaseViewModel.ProgressState.Start }
     }
 
-    // Auto-focus on Title for new purchases
     LaunchedEffect(Unit) {
         if (uiState.isNewPurchase) {
             titleFocusRequester.requestFocus()
+        }
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvent.NavigateBack -> onNavigateBack()
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+            }
         }
     }
 
@@ -103,11 +97,12 @@ fun PurchaseEditScreen(
             PurchaseEditToolbar(
                 title = if (uiState.isNewPurchase) "Add Purchase" else "Edit Purchase",
                 onNavigateBack = onNavigateBack,
-                onSaveClicked = { onSaveClicked() },
+                onSaveClicked = { viewModel.onSaveClicked() },
                 isSaveEnabled = isSaveEnabled,
                 isLoading = isLoading
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Colors.surface
     ) { paddingValues ->
         PurchaseEditForm(

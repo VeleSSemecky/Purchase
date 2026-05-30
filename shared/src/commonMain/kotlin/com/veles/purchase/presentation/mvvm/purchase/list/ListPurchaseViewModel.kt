@@ -11,7 +11,9 @@ import com.veles.purchase.domain.usecase.purchase.DeletePurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.GetPurchasesUseCase
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.model.sort.SortPurchase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -47,6 +49,9 @@ class ListPurchaseViewModel(
     private val _uiState = MutableStateFlow(PurchaseListUiState())
     val uiState: StateFlow<PurchaseListUiState> = _uiState.asStateFlow()
 
+    private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<UiEvent> = _events.asSharedFlow()
+
     init {
         loadCollection()
         observePurchases()
@@ -55,9 +60,15 @@ class ListPurchaseViewModel(
 
     private fun loadCollection() {
         viewModelScope.launch {
-            val collection = getCollectionPurchaseUseCase(collectionId)
-            if (collection != null) {
-                _uiState.update { it.copy(collection = collection) }
+            try {
+                val collection = getCollectionPurchaseUseCase(collectionId)
+                if (collection != null) {
+                    _uiState.update { it.copy(collection = collection) }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load collection"))
             }
         }
     }
@@ -70,6 +81,7 @@ class ListPurchaseViewModel(
             .flatMapLatest { query ->
                 getPurchasesUseCase(collectionId, query)
             }
+            .catch { e -> _events.emit(UiEvent.ShowError(e.message ?: "Failed to load purchases")) }
             .onEach { purchases ->
                 _uiState.update { it.copy(purchases = purchases) }
             }
@@ -78,6 +90,7 @@ class ListPurchaseViewModel(
 
     private fun observeSettings() {
         getSettingUseCase()
+            .catch { e -> _events.emit(UiEvent.ShowError(e.message ?: "Failed to load settings")) }
             .onEach { settings ->
                 _uiState.update { it.copy(settings = settings) }
             }
@@ -94,13 +107,27 @@ class ListPurchaseViewModel(
 
     fun onChecked(purchase: PurchaseModel) {
         viewModelScope.launch {
-            checkPurchaseUseCase(collectionId, purchase)
+            try {
+                checkPurchaseUseCase(collectionId, purchase)
+                    .onFailure { _events.emit(UiEvent.ShowError(it.message ?: "Failed to update purchase")) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _events.emit(UiEvent.ShowError(e.message ?: "Unexpected error"))
+            }
         }
     }
 
     fun deletePurchase(purchase: PurchaseModel) {
         viewModelScope.launch {
-            deletePurchaseUseCase(purchase, collectionId)
+            try {
+                deletePurchaseUseCase(purchase, collectionId)
+                    .onFailure { _events.emit(UiEvent.ShowError(it.message ?: "Failed to delete purchase")) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _events.emit(UiEvent.ShowError(e.message ?: "Unexpected error"))
+            }
         }
     }
 
@@ -108,25 +135,30 @@ class ListPurchaseViewModel(
     fun insertAdd(name: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(progress = ProgressState.Start) }
-
-            val newPurchase = PurchaseModel(
-                createId = Uuid.random().toString().uppercase(),
-                text = name,
-                count = "",
-                isChecked = false,
-                price = "",
-                userList = emptyList(),
-                listImage = emptyList(),
-                purchaseCategoryModel = null
-            )
-            savePurchaseUseCase(newPurchase, collectionId)
-
-            _uiState.update {
-                it.copy(
-                    newNamePurchase = "",
-                    searchText = "", // Reset search after adding? Optional
-                    progress = ProgressState.End
+            try {
+                val newPurchase = PurchaseModel(
+                    createId = Uuid.random().toString().uppercase(),
+                    text = name,
+                    count = "",
+                    isChecked = false,
+                    price = "",
+                    userList = emptyList(),
+                    listImage = emptyList(),
+                    purchaseCategoryModel = null
                 )
+                savePurchaseUseCase(newPurchase, collectionId)
+                    .onSuccess {
+                        _uiState.update { it.copy(newNamePurchase = "", searchText = "", progress = ProgressState.End) }
+                    }
+                    .onFailure {
+                        _uiState.update { it.copy(progress = ProgressState.End) }
+                        _events.emit(UiEvent.ShowError(it.message ?: "Failed to add purchase"))
+                    }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.update { it.copy(progress = ProgressState.End) }
+                _events.emit(UiEvent.ShowError(e.message ?: "Unexpected error"))
             }
         }
     }

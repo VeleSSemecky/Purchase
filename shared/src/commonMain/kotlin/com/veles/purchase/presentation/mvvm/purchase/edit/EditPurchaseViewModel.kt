@@ -14,6 +14,8 @@ import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.UploadPurchasePhotosUseCase
 import com.veles.purchase.domain.utill.createPrimaryIDKey
 import com.veles.purchase.platform.logger.AppLogger
+import com.veles.purchase.presentation.model.UiEvent
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -47,6 +49,9 @@ class EditPurchaseViewModel(
     private val _uiState = MutableStateFlow(PurchaseEditUiState(isNewPurchase = purchaseId.isEmpty()))
     val uiState: StateFlow<PurchaseEditUiState> = _uiState.asStateFlow()
 
+    private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<UiEvent> = _events.asSharedFlow()
+
     init {
         loadPurchase()
         loadCategories()
@@ -56,35 +61,46 @@ class EditPurchaseViewModel(
     private fun loadPurchase() {
         viewModelScope.launch {
             _uiState.update { it.copy(progress = ProgressState.Start) }
-
-            if (purchaseId.isNotEmpty()) {
-                val purchase = getPurchaseUseCase(collectionId, purchaseId)
-                if (purchase != null) {
-                    _uiState.update { it.copy(purchase = purchase) }
+            try {
+                if (purchaseId.isNotEmpty()) {
+                    val purchase = getPurchaseUseCase(collectionId, purchaseId)
+                    if (purchase != null) {
+                        _uiState.update { it.copy(purchase = purchase) }
+                    }
+                } else {
+                    val newPurchase = PurchaseModel(
+                        createId = Uuid.random().toString().uppercase(),
+                        text = "",
+                        count = "1",
+                        isChecked = false,
+                        price = "",
+                        userList = emptyList(),
+                        listImage = emptyList(),
+                        purchaseCategoryModel = null
+                    )
+                    _uiState.update { it.copy(purchase = newPurchase) }
                 }
-            } else {
-                val newPurchase = PurchaseModel(
-                    createId = Uuid.random().toString().uppercase(),
-                    text = "",
-                    count = "1",
-                    isChecked = false,
-                    price = "",
-                    userList = emptyList(),
-                    listImage = emptyList(),
-                    purchaseCategoryModel = null
-                )
-                _uiState.update { it.copy(purchase = newPurchase) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load purchase"))
+            } finally {
+                _uiState.update { it.copy(progress = ProgressState.End) }
             }
-
-            _uiState.update { it.copy(progress = ProgressState.End) }
         }
     }
 
     private fun loadCategories() {
         viewModelScope.launch {
-            val collection = getCollectionPurchaseUseCase(collectionId)
-            if (collection != null) {
-                _uiState.update { it.copy(categories = collection.categoryModels) }
+            try {
+                val collection = getCollectionPurchaseUseCase(collectionId)
+                if (collection != null) {
+                    _uiState.update { it.copy(categories = collection.categoryModels) }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load categories"))
             }
         }
     }
@@ -131,30 +147,42 @@ class EditPurchaseViewModel(
         }
     }
 
-    suspend fun onSaveClicked(): Boolean {
+    fun onSaveClicked() {
         val currentPurchase = _uiState.value.purchase
-        if (currentPurchase.text.isBlank()) return false
+        if (currentPurchase.text.isBlank()) return
 
-        _uiState.update { it.copy(progress = ProgressState.Start) }
+        viewModelScope.launch {
+            _uiState.update { it.copy(progress = ProgressState.Start) }
+            try {
+                // 1. Delete removed photos from Cloudinary
+                _uiState.value.photosToDelete.forEach { deletePurchasePhotoRepository.deletePhoto(it) }
 
-        return try {
-            // 1. Delete removed photos from Cloudinary
-            _uiState.value.photosToDelete.forEach { deletePurchasePhotoRepository.deletePhoto(it) }
+                // 2. Upload new LOCAL photos and get download URLs
+                val uploadedPhotos = uploadPurchasePhotosUseCase(currentPurchase.listImage)
+                    .getOrElse {
+                        _events.emit(UiEvent.ShowError(it.message ?: "Photo upload failed"))
+                        return@launch
+                    }
 
-            // 2. Upload new LOCAL photos and get download URLs
-            val uploadedPhotos = uploadPurchasePhotosUseCase(currentPurchase.listImage)
-            val purchaseToSave = currentPurchase.copy(listImage = uploadedPhotos)
-
-            // 3. Save to Firestore
-            val historyType = if (_uiState.value.isNewPurchase) HistoryType.ADD else HistoryType.CHANGE
-            savePurchaseUseCase(purchaseToSave, collectionId, historyType)
-
-            _uiState.update { it.copy(progress = ProgressState.End, photosToDelete = emptyList()) }
-            true
-        } catch (e: Exception) {
-            AppLogger.e("EditPurchaseViewModel", "Save failed: ${e.message}", e)
-            _uiState.update { it.copy(progress = ProgressState.End) }
-            false
+                // 3. Save to Firestore
+                val historyType = if (_uiState.value.isNewPurchase) HistoryType.ADD else HistoryType.CHANGE
+                savePurchaseUseCase(currentPurchase.copy(listImage = uploadedPhotos), collectionId, historyType)
+                    .onSuccess {
+                        _uiState.update { it.copy(progress = ProgressState.End, photosToDelete = emptyList()) }
+                        _events.emit(UiEvent.NavigateBack)
+                    }
+                    .onFailure {
+                        AppLogger.e("EditPurchaseViewModel", "Save failed: ${it.message}", it)
+                        _uiState.update { it.copy(progress = ProgressState.End) }
+                        _events.emit(UiEvent.ShowError(it.message ?: "Failed to save purchase"))
+                    }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                AppLogger.e("EditPurchaseViewModel", "Save failed: ${e.message}", e)
+                _uiState.update { it.copy(progress = ProgressState.End) }
+                _events.emit(UiEvent.ShowError(e.message ?: "Unexpected error"))
+            }
         }
     }
 

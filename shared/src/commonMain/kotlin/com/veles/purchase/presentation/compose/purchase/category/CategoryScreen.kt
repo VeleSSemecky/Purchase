@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
 import com.veles.purchase.presentation.mvvm.purchase.category.DialogState
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -62,7 +62,7 @@ fun CategoryScreen(
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Back press handler with unsaved changes check
     val handleBackPress = {
@@ -73,16 +73,20 @@ fun CategoryScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvent.NavigateBack -> onNavigateBack()
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             CategoryToolbar(
                 onBackClicked = handleBackPress,
-                onSaveClicked = {
-                    scope.launch {
-                        viewModel.onSaveClicked()
-                        onNavigateBack()
-                    }
-                }
+                onSaveClicked = { viewModel.onSaveClicked() }
             )
         },
         floatingActionButton = {
@@ -91,6 +95,7 @@ fun CategoryScreen(
             )
         },
         floatingActionButtonPosition = FabPosition.End,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Colors.surface
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {

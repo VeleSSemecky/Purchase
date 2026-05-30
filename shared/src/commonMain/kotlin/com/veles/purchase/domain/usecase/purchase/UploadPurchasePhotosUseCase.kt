@@ -7,6 +7,6 @@ class UploadPurchasePhotosUseCase(
     private val setPurchasePhotoRepository: SetPurchasePhotoRepository
 ) {
 
-    suspend operator fun invoke(photos: List<PurchasePhotoModel>): List<PurchasePhotoModel> =
-        setPurchasePhotoRepository.setPurchasePhotos(photos)
+    suspend operator fun invoke(photos: List<PurchasePhotoModel>): Result<List<PurchasePhotoModel>> =
+        runCatching { setPurchasePhotoRepository.setPurchasePhotos(photos) }
 }

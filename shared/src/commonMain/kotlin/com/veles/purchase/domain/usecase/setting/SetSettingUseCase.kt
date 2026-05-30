@@ -5,6 +5,6 @@ import com.veles.purchase.domain.repository.setting.SettingRepository
 
 class SetSettingUseCase(private val settingRepository: SettingRepository) {
 
-    suspend operator fun invoke(purchaseSetting: PurchaseSetting) =
-        settingRepository.saveSettingsPurchase(purchaseSetting)
+    suspend operator fun invoke(purchaseSetting: PurchaseSetting): Result<Unit> =
+        runCatching { settingRepository.saveSettingsPurchase(purchaseSetting) }
 }

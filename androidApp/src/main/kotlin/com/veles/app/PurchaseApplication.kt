@@ -4,6 +4,7 @@ import android.app.Application
 import com.veles.purchase.config.EnvironmentConfig
 import com.veles.purchase.data.firebase.FirebaseInitializer
 import com.veles.purchase.di.appModules
+import com.veles.purchase.platform.logger.AppLogger
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -16,6 +17,10 @@ class PurchaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Thread.setDefaultUncaughtExceptionHandler { _, e ->
+            AppLogger.e("CRASH", "Uncaught exception: ${e.message}", e)
+        }
 
         // Initialize Environment Config from BuildConfig
         EnvironmentConfig.initialize(

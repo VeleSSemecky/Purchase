@@ -13,8 +13,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.SkuModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.compose.textStyle1
+import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
 import com.veles.purchase.shared.resources.Res
 import com.veles.purchase.shared.resources.ic_baseline_insert_chart_outlined_24
@@ -59,6 +62,16 @@ fun SkuListScreen(
     viewModel: SkuListViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is UiEvent.NavigateBack -> Unit
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -79,6 +92,7 @@ fun SkuListScreen(
                 )
             }
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Colors.surface
     ) { paddingValues ->
         SkuListContent(

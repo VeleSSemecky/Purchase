@@ -11,8 +11,8 @@ class CheckPurchaseUseCase(private val purchaseRepository: PurchaseRepository, p
     suspend operator fun invoke(
         purchaseCollectionId: String,
         purchaseModel: PurchaseModel
-    ) {
-        if (purchaseCollectionId.isEmpty()) return
+    ): Result<Unit> = runCatching {
+        if (purchaseCollectionId.isEmpty()) return@runCatching
 
         val toggled = purchaseModel.copy(isChecked = !purchaseModel.isChecked)
         purchaseRepository.setPurchase(toggled, purchaseCollectionId)
