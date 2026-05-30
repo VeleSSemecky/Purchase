@@ -411,8 +411,12 @@ open class SwipeableState<T>(
  * Must be between `0` and `1`.
  */
 @Immutable
-class SwipeProgress<T>(val from: T, val to: T,
-    /*@FloatRange(from = 0.0, to = 1.0)*/ val fraction: Float) {
+class SwipeProgress<T>(
+    val from: T,
+    val to: T,
+    /*@FloatRange(from = 0.0, to = 1.0)*/
+    val fraction: Float
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SwipeProgress<*>) return false

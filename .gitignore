@@ -43,3 +43,6 @@ Secret.kt
 
 # Genereted kotlin code
 .kotlin
+
+# iOS compiled framework (generated, do not commit)
+iosApp/Frameworks/

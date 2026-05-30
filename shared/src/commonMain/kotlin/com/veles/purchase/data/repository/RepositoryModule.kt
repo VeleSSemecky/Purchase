@@ -1,14 +1,18 @@
 package com.veles.purchase.data.repository
 
+import com.veles.purchase.data.network.createHttpClient
 import com.veles.purchase.data.repository.auth.AuthWithGoogleRepositoryImpl
 import com.veles.purchase.data.repository.auth.LogoutRepositoryImpl
 import com.veles.purchase.data.repository.collection.CollectionPurchaseRepositoryImpl
 import com.veles.purchase.data.repository.collection.CollectionRepositoryImpl
 import com.veles.purchase.data.repository.history.HistoryRepositoryImpl
+import com.veles.purchase.data.repository.purchase.GetPurchasePhotoRepositoryImpl
 import com.veles.purchase.data.repository.purchase.PurchaseRepositoryImpl
 import com.veles.purchase.data.repository.setting.SettingRepositoryImpl
 import com.veles.purchase.data.repository.sku.SkuPhotoRepositoryImpl
 import com.veles.purchase.data.repository.sku.SkuRepositoryImpl
+import com.veles.purchase.data.repository.storage.DeletePurchasePhotoRepositoryImpl
+import com.veles.purchase.data.repository.storage.SetPurchasePhotoRepositoryImpl
 import com.veles.purchase.data.repository.user.FirebaseGetUserRepositoryImpl
 import com.veles.purchase.data.repository.user.FirebaseMessageTokenRepositoryImpl
 import com.veles.purchase.domain.repository.auth.AuthWithGoogleRepository
@@ -16,15 +20,21 @@ import com.veles.purchase.domain.repository.auth.LogoutRepository
 import com.veles.purchase.domain.repository.collection.CollectionPurchaseRepository
 import com.veles.purchase.domain.repository.collection.CollectionRepository
 import com.veles.purchase.domain.repository.history.HistoryRepository
+import com.veles.purchase.domain.repository.purchase.GetPurchasePhotoRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
 import com.veles.purchase.domain.repository.setting.SettingRepository
 import com.veles.purchase.domain.repository.sku.SkuPhotoRepository
 import com.veles.purchase.domain.repository.sku.SkuRepository
+import com.veles.purchase.domain.repository.storage.DeletePurchasePhotoRepository
+import com.veles.purchase.domain.repository.storage.SetPurchasePhotoRepository
 import com.veles.purchase.domain.repository.user.FirebaseGetUserRepository
 import com.veles.purchase.domain.repository.user.FirebaseMessageTokenRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
+    // HTTP client (shared across repos)
+    single { createHttpClient() }
+
     // Auth repositories
     single<LogoutRepository> {
         LogoutRepositoryImpl(auth = get())
@@ -96,5 +106,18 @@ val repositoryModule = module {
     // Settings repository (In-memory for now, TODO: migrate to DataStore KMP)
     single<SettingRepository> {
         SettingRepositoryImpl()
+    }
+
+    // Photo repositories (Cloudinary)
+    single<SetPurchasePhotoRepository> {
+        SetPurchasePhotoRepositoryImpl(httpClient = get())
+    }
+
+    single<GetPurchasePhotoRepository> {
+        GetPurchasePhotoRepositoryImpl()
+    }
+
+    single<DeletePurchasePhotoRepository> {
+        DeletePurchasePhotoRepositoryImpl(httpClient = get())
     }
 }

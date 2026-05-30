@@ -17,6 +17,7 @@ import com.veles.purchase.domain.usecase.purchase.GetPurchasesUseCase
 import com.veles.purchase.domain.usecase.purchase.MoveForLaterPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.SetPurchaseHistoryUseCase
+import com.veles.purchase.domain.usecase.purchase.UploadPurchasePhotosUseCase
 import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
 import com.veles.purchase.domain.usecase.setting.SetSettingUseCase
 import com.veles.purchase.domain.usecase.sku.DeleteSkuPhotoUseCase
@@ -51,6 +52,7 @@ val useCaseModule = module {
     single { AddLazyPurchaseUseCase(purchaseRepository = get(), historyRepository = get()) }
     single { MoveForLaterPurchaseUseCase(purchaseRepository = get()) }
     single { FirebasePurchaseSendUseCase(purchaseRepository = get()) }
+    single { UploadPurchasePhotosUseCase(setPurchasePhotoRepository = get()) }
 
     // Collection UseCases
     single { GetCollectionPurchaseUseCase(collectionRepository = get()) }

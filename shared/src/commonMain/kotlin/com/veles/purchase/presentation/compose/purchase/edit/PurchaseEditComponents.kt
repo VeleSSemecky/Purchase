@@ -291,3 +291,156 @@ private fun CategoryItem(
         }
     }
 }
+
+// ─── Photo Section ────────────────────────────────────────────────────────────
+
+@Composable
+fun PhotoSection(
+    photos: List<com.veles.purchase.domain.model.purchase.PurchasePhotoModel>,
+    onAddPhotoClick: () -> Unit,
+    onDeletePhoto: (com.veles.purchase.domain.model.purchase.PurchasePhotoModel) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = "Photos",
+            color = Color.White.copy(alpha = 0.7f),
+            fontSize = 12.sp,
+            modifier = Modifier.padding(start = 20.dp, bottom = 8.dp)
+        )
+        androidx.compose.foundation.lazy.LazyRow(
+            contentPadding = PaddingValues(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(photos) { photo ->
+                PhotoItem(photo = photo, onDelete = { onDeletePhoto(photo) })
+            }
+            item {
+                AddPhotoButton(onClick = onAddPhotoClick)
+            }
+        }
+    }
+}
+
+@Composable
+private fun PhotoItem(
+    photo: com.veles.purchase.domain.model.purchase.PurchasePhotoModel,
+    onDelete: () -> Unit
+) {
+    Box(modifier = Modifier.size(80.dp)) {
+        Card(
+            modifier = Modifier.fillMaxSize(),
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            val model: Any = if (photo.bytes != null) photo.bytes else photo.purchasePhotoUri
+            coil3.compose.AsyncImage(
+                model = model,
+                contentDescription = null,
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        IconButton(
+            onClick = onDelete,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(24.dp)
+                .background(Colors.colorPrimary.copy(alpha = 0.8f), shape = RoundedCornerShape(4.dp))
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Delete photo",
+                tint = Color.White,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddPhotoButton(onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .size(80.dp)
+            .clickable(onClick = onClick),
+        border = BorderStroke(1.dp, Colors.gr.copy(alpha = 0.6f)),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Colors.colorPrimary.copy(alpha = 0.3f))
+    ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add photo",
+                tint = Colors.gr,
+                modifier = Modifier.size(32.dp)
+            )
+        }
+    }
+}
+
+// ─── Photo Source Picker ──────────────────────────────────────────────────────
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PhotoSourceBottomSheet(
+    onCamera: () -> Unit,
+    onGallery: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = Colors.colorPrimary
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 32.dp)
+        ) {
+            Text(
+                text = "Add Photo",
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                textAlign = TextAlign.Center
+            )
+            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onCamera() }
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Camera,
+                    contentDescription = null,
+                    tint = Colors.gr
+                )
+                Text(text = "Camera", color = Color.White, fontSize = 16.sp)
+            }
+            HorizontalDivider(color = Color.White.copy(alpha = 0.08f), modifier = Modifier.padding(horizontal = 20.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onGallery() }
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PhotoLibrary,
+                    contentDescription = null,
+                    tint = Colors.gr
+                )
+                Text(text = "Gallery", color = Color.White, fontSize = 16.sp)
+            }
+        }
+    }
+}

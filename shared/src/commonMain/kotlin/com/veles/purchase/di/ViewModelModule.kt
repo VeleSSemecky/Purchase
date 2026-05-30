@@ -101,7 +101,9 @@ val viewModelModule = module {
             purchaseId = parameters.get(),
             getPurchaseUseCase = get(),
             savePurchaseUseCase = get(),
-            getCollectionPurchaseUseCase = get()
+            getCollectionPurchaseUseCase = get(),
+            uploadPurchasePhotosUseCase = get(),
+            deletePurchasePhotoRepository = get()
         )
     }
 

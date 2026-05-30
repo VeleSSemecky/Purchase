@@ -6,6 +6,9 @@ import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.repository.collection.CollectionRepository
 import com.veles.purchase.domain.usecase.purchase.SavePurchaseUseCase
 import com.veles.purchase.domain.utill.zeroString
+import com.veles.purchase.platform.logger.AppLogger
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -23,9 +26,10 @@ class PurchaseAppFunctions : KoinComponent {
      * @param productName Назва продукту або товару, який потрібно купити (наприклад: "молоко", "яблука").
      * @param quantity Кількість одиниць товару. Якщо користувач не вказав кількість, передавайте 1.
      */
+    @OptIn(ExperimentalUuidApi::class)
     @AppFunction(isDescribedByKDoc = true)
     suspend fun addProductToList(
-        context: AppFunctionContext,
+        @Suppress("UNUSED_PARAMETER") context: AppFunctionContext,
         productName: String,
         quantity: Int = 1
     ): Boolean {
@@ -35,7 +39,7 @@ class PurchaseAppFunctions : KoinComponent {
             val collectionId = collection.id
 
             val purchase = PurchaseModel(
-                createId = System.currentTimeMillis().toString(),
+                createId = Uuid.random().toString().uppercase(),
                 text = productName,
                 count = quantity.toString(),
                 isChecked = false,
@@ -48,6 +52,7 @@ class PurchaseAppFunctions : KoinComponent {
             savePurchaseUseCase(purchase, collectionId)
             true
         } catch (e: Exception) {
+            AppLogger.e("PurchaseAppFunctions", "Failed to add product to list", e)
             false
         }
     }

@@ -4,5 +4,5 @@ import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
 
 interface SetPurchasePhotoRepository {
 
-    suspend fun setPurchasePhotos(list: List<PurchasePhotoModel>)
+    suspend fun setPurchasePhotos(list: List<PurchasePhotoModel>): List<PurchasePhotoModel>
 }

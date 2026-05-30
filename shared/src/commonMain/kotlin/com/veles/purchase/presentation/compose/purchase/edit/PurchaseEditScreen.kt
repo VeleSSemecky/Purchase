@@ -13,6 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
+import com.veles.purchase.platform.media.rememberCameraLauncher
+import com.veles.purchase.platform.media.rememberMediaPickerLauncher
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.mvvm.purchase.edit.EditPurchaseViewModel
 import kotlinx.coroutines.launch
@@ -42,6 +45,17 @@ fun PurchaseEditScreen(
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
     var showCategorySheet by remember { mutableStateOf(false) }
+    var showPhotoSourceSheet by remember { mutableStateOf(false) }
+
+    // Media picker — platform-specific (Android: PickMultipleVisualMedia, iOS: PHPickerViewController)
+    val launchMediaPicker = rememberMediaPickerLauncher { bytes ->
+        viewModel.onPhotoAdded(bytes)
+    }
+
+    // Camera launcher — platform-specific (Android: TakePicture, iOS: UIImagePickerController)
+    val launchCamera = rememberCameraLauncher { bytes ->
+        viewModel.onPhotoAdded(bytes)
+    }
 
     // Focus management
     val titleFocusRequester = remember { FocusRequester() }
@@ -104,6 +118,8 @@ fun PurchaseEditScreen(
             onCommentChange = onCommentChange,
             onCheckedChange = onCheckedChange,
             onShowCategorySheet = { showCategorySheet = true },
+            onAddPhotoClick = { showPhotoSourceSheet = true },
+            onDeletePhoto = viewModel::onPhotoDeleted,
             titleFocusRequester = titleFocusRequester,
             priceFocusRequester = priceFocusRequester,
             commentFocusRequester = commentFocusRequester
@@ -122,6 +138,20 @@ fun PurchaseEditScreen(
             onDismiss = { showCategorySheet = false }
         )
     }
+
+    if (showPhotoSourceSheet) {
+        PhotoSourceBottomSheet(
+            onCamera = {
+                showPhotoSourceSheet = false
+                launchCamera()
+            },
+            onGallery = {
+                showPhotoSourceSheet = false
+                launchMediaPicker()
+            },
+            onDismiss = { showPhotoSourceSheet = false }
+        )
+    }
 }
 
 @Composable
@@ -132,6 +162,8 @@ private fun PurchaseEditForm(
     onCommentChange: (String) -> Unit,
     onCheckedChange: (Boolean) -> Unit,
     onShowCategorySheet: () -> Unit,
+    onAddPhotoClick: () -> Unit,
+    onDeletePhoto: (PurchasePhotoModel) -> Unit,
     titleFocusRequester: FocusRequester,
     priceFocusRequester: FocusRequester,
     commentFocusRequester: FocusRequester,
@@ -205,6 +237,15 @@ private fun PurchaseEditForm(
         CategorySelector(
             selectedCategory = purchase.purchaseCategoryModel,
             onClick = onShowCategorySheet
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Photo section
+        PhotoSection(
+            photos = purchase.listImage,
+            onAddPhotoClick = onAddPhotoClick,
+            onDeletePhoto = onDeletePhoto
         )
 
         Spacer(modifier = Modifier.height(32.dp))

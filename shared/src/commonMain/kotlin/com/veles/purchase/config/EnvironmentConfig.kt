@@ -12,9 +12,23 @@ object EnvironmentConfig {
     var DB_KEY: String = "default_db_key"
     var SERVER_CLIENT_ID: String = "76128650518-3vt5un7d8sv5jti8mfrb21v6ap4fpj6a.apps.googleusercontent.com"
 
-    fun initialize(dbKey: String, serverClientId: String) {
+    // Cloudinary image storage
+    var CLOUDINARY_CLOUD_NAME: String = ""
+    var CLOUDINARY_API_KEY: String = ""
+    var CLOUDINARY_API_SECRET: String = ""
+
+    fun initialize(
+        dbKey: String,
+        serverClientId: String,
+        cloudinaryCloudName: String = "",
+        cloudinaryApiKey: String = "",
+        cloudinaryApiSecret: String = ""
+    ) {
         DB_KEY = dbKey
         SERVER_CLIENT_ID = serverClientId
+        CLOUDINARY_CLOUD_NAME = cloudinaryCloudName
+        CLOUDINARY_API_KEY = cloudinaryApiKey
+        CLOUDINARY_API_SECRET = cloudinaryApiSecret
     }
 
     // Firebase Collections

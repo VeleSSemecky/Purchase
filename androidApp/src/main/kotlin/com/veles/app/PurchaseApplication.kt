@@ -20,7 +20,10 @@ class PurchaseApplication : Application() {
         // Initialize Environment Config from BuildConfig
         EnvironmentConfig.initialize(
             dbKey = BuildConfig.DB_KEY,
-            serverClientId = BuildConfig.SERVER_CLIENT_ID
+            serverClientId = BuildConfig.SERVER_CLIENT_ID,
+            cloudinaryCloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
+            cloudinaryApiKey = BuildConfig.CLOUDINARY_API_KEY,
+            cloudinaryApiSecret = BuildConfig.CLOUDINARY_API_SECRET
         )
 
         FirebaseInitializer().apply {

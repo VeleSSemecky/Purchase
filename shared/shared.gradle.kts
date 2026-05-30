@@ -92,6 +92,10 @@ kotlin {
                 implementation(libs.firebase.kmp.auth)
                 implementation(libs.firebase.kmp.storage)
                 implementation(libs.firebase.kmp.messaging)
+
+                // Image loading (KMP)
+                implementation(libs.coil3.compose)
+                implementation(libs.coil3.network.ktor)
             }
         }
 

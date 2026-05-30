@@ -84,6 +84,7 @@ composeConstraintlayout = "1.1.1"
 #Image
 glide = "5.0.6"
 glideLandscapist = "2.9.7"
+coil3 = "3.2.0"
 
 #Utils
 securityCrypto = "1.0.0"
@@ -239,6 +240,8 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 glide-okhttp3 = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
 glide-landscapist = { group = "com.github.skydoves", name = "landscapist-glide", version.ref = "glideLandscapist" }
+coil3-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil3" }
+coil3-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil3" }
 
 #Utils
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
