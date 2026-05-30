@@ -104,15 +104,15 @@ fun PurchaseItem(
                     )
                 }
 
-                if (purchase.purchaseCategoryModel != null || purchase.listImage.isNotEmpty()) {
+                val hasCategory = purchase.purchaseCategoryModel != null
+                val hasPhotoChip = purchase.listImage.isNotEmpty() && !isImageSettingEnabled
+                if (hasCategory || hasPhotoChip) {
                     Row(
                         modifier = Modifier.padding(top = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        CategoryChip(categoryName = purchase.purchaseCategoryModel?.name)
-                        if (purchase.listImage.isNotEmpty() && !isImageSettingEnabled) {
-                            PhotoIndicator(count = purchase.listImage.size)
-                        }
+                        if (hasCategory) CategoryChip(categoryName = purchase.purchaseCategoryModel?.name)
+                        if (hasPhotoChip) PhotoIndicator(count = purchase.listImage.size)
                     }
                 }
             }
