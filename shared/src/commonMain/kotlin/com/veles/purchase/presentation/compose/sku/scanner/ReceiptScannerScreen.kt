@@ -2,15 +2,20 @@ package com.veles.purchase.presentation.compose.sku.scanner
 
 import com.veles.purchase.domain.utill.formatAmount
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
@@ -18,10 +23,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.veles.purchase.domain.model.scanner.ReceiptItem
 import com.veles.purchase.platform.media.rememberCameraLauncher
 import com.veles.purchase.platform.media.rememberMediaPickerLauncher
@@ -112,6 +120,7 @@ fun ReceiptScannerScreen(
                         ResultContent(
                             resultState = currentState,
                             onToggleItem = viewModel::onToggleItem,
+                            onEditPrice = viewModel::onEditItemPrice,
                             onConfirmTotal = {
                                 val total = currentState.data.totalAmount
                                 if (total != null) {
@@ -220,16 +229,45 @@ private fun IdleContent(
 private fun ResultContent(
     resultState: ReceiptScannerState.Result,
     onToggleItem: (Int) -> Unit,
+    onEditPrice: (Int, Double) -> Unit,
     onConfirmTotal: () -> Unit,
     onConfirmSelected: () -> Unit,
     onRetry: () -> Unit
 ) {
     val data = resultState.data
+    var imageExpanded by remember { mutableStateOf(true) }
+    var editingIndex by remember { mutableStateOf<Int?>(null) }
+
+    // Edit price dialog
+    editingIndex?.let { index ->
+        val item = data.items[index]
+        EditPriceDialog(
+            itemName = item.name,
+            currentPrice = item.price,
+            currency = data.currency,
+            onConfirm = { newPrice ->
+                onEditPrice(index, newPrice)
+                editingIndex = null
+            },
+            onDismiss = { editingIndex = null }
+        )
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
+        // Receipt image preview
+        if (resultState.imageBytes.isNotEmpty()) {
+            item {
+                ReceiptImagePreview(
+                    imageBytes = resultState.imageBytes,
+                    expanded = imageExpanded,
+                    onToggle = { imageExpanded = !imageExpanded }
+                )
+            }
+        }
+
         // Total row
         if (data.totalAmount != null) {
             item {
@@ -255,7 +293,8 @@ private fun ResultContent(
                     item = item,
                     currency = data.currency,
                     isSelected = index in resultState.selectedItemIndices,
-                    onToggle = { onToggleItem(index) }
+                    onToggle = { onToggleItem(index) },
+                    onEditPrice = { editingIndex = index }
                 )
             }
             item {
@@ -310,6 +349,121 @@ private fun ResultContent(
 }
 
 @Composable
+private fun ReceiptImagePreview(
+    imageBytes: ByteArray,
+    expanded: Boolean,
+    onToggle: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Colors.colorPrimary),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onToggle)
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Receipt photo",
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Icon(
+                    imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    tint = Color.Gray
+                )
+            }
+            AnimatedVisibility(visible = expanded) {
+                AsyncImage(
+                    model = imageBytes,
+                    contentDescription = "Scanned receipt",
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 320.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EditPriceDialog(
+    itemName: String,
+    currentPrice: Double,
+    currency: String,
+    onConfirm: (Double) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var priceText by remember { mutableStateOf(currentPrice.formatAmount()) }
+    val isValid = priceText.replace(",", ".").toDoubleOrNull() != null
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = Colors.surface,
+        title = {
+            Text(
+                text = "Edit price",
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column {
+                Text(
+                    text = itemName,
+                    color = Color.Gray,
+                    fontSize = 13.sp,
+                    maxLines = 2,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                OutlinedTextField(
+                    value = priceText,
+                    onValueChange = { priceText = it },
+                    label = { Text("Price ($currency)") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    isError = !isValid,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedBorderColor = Colors.gr,
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Colors.gr,
+                        unfocusedLabelColor = Color.Gray,
+                        errorTextColor = Color.White
+                    )
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    priceText.replace(",", ".").toDoubleOrNull()?.let(onConfirm)
+                },
+                enabled = isValid
+            ) {
+                Text("Save", color = Colors.gr)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = Color.Gray)
+            }
+        }
+    )
+}
+
+@Composable
 private fun TotalRow(total: Double, currency: String, onConfirmTotal: () -> Unit) {
     Card(
         modifier = Modifier
@@ -349,7 +503,8 @@ private fun ReceiptItemRow(
     item: ReceiptItem,
     currency: String,
     isSelected: Boolean,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
+    onEditPrice: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -379,5 +534,16 @@ private fun ReceiptItemRow(
             color = Colors.gr,
             fontWeight = FontWeight.Medium
         )
+        IconButton(
+            onClick = onEditPrice,
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit price",
+                tint = Color.Gray,
+                modifier = Modifier.size(16.dp)
+            )
+        }
     }
 }

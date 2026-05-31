@@ -150,7 +150,10 @@ kotlin {
                 // ML Kit Text Recognition (OCR for price tag scanner)
                 implementation(libs.mlkit.text.recognition)
                 implementation(libs.mlkit.entity.extraction)
-                // Note: Cyrillic model — swap to play-services-mlkit-text-recognition-cyrillic if needed
+                // ML Kit Gemini Nano Prompt API (on-device AI for receipt parsing)
+                implementation(libs.mlkit.genai.prompt)
+                // MediaPipe LLM Inference API (Gemma 3 on-device via LiteRT)
+                implementation(libs.mediapipe.tasks.genai)
             }
         }
 

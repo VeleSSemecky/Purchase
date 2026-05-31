@@ -90,6 +90,9 @@ sealed class Route : NavKey {
 
         @Serializable
         data object Scanner : Sku()
+
+        @Serializable
+        data object GemmaSetup : Sku()
     }
 
     /**

@@ -12,8 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.*import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,7 @@ fun SkuListScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToStatistics: () -> Unit = {},
     onNavigateToReceiptScanner: () -> Unit = {},
+    onNavigateToAiSetup: () -> Unit = {},
     viewModel: SkuListViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -83,6 +83,13 @@ fun SkuListScreen(
                             Icon(
                                 painter = painterResource(Res.drawable.ic_baseline_insert_chart_outlined_24),
                                 contentDescription = "Statistics",
+                                tint = Color.White
+                            )
+                        }
+                        IconButton(onClick = onNavigateToAiSetup) {
+                            Icon(
+                                imageVector = Icons.Default.SmartToy,
+                                contentDescription = "AI Setup",
                                 tint = Color.White
                             )
                         }
