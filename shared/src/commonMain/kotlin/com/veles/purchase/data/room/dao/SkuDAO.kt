@@ -10,6 +10,7 @@ import com.veles.purchase.data.room.table.SkuPhotoEntity
 import com.veles.purchase.data.room.table.SkuSumMonthRelations
 import com.veles.purchase.domain.utill.zeroInt
 import com.veles.purchase.domain.utill.zeroString
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SkuDAO {
@@ -21,6 +22,9 @@ interface SkuDAO {
 
     @Query("SELECT * FROM SkuEntity")
     suspend fun getSkuEntityList(): List<SkuEntity>
+
+    @Query("SELECT * FROM SkuEntity")
+    fun getSkuEntityListFlow(): Flow<List<SkuEntity>>
 
     @Query(
         "SELECT sum(SkuPrice) SkuSumMonth, " +

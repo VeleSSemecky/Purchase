@@ -13,41 +13,39 @@ import kotlinx.datetime.LocalDateTime
 
 class SkuListViewModel(private val getSkuUseCase: GetSkuUseCase, private val deleteSkuUseCase: DeleteSkuUseCase) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SkuListUiState())
-    val uiState: StateFlow<SkuListUiState> = _uiState.asStateFlow()
+    private val _searchQuery = MutableStateFlow("")
+    private val _isLoading = MutableStateFlow(false)
 
     private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<UiEvent> = _events.asSharedFlow()
 
-    init {
-        loadSkus()
-    }
-
-    private fun loadSkus() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            try {
-                val skus = getSkuUseCase.getSkuModelList()
-                    .sortedByDescending { it.skuLocalData }
-                _uiState.update { it.copy(skus = skus, isLoading = false) }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false) }
-                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load expenses"))
-            }
-        }
-    }
+    val uiState: StateFlow<SkuListUiState> = combine(
+        getSkuUseCase.getSkuModelListFlow(),
+        _searchQuery,
+        _isLoading
+    ) { skus, query, loading ->
+        SkuListUiState(
+            skus = skus.sortedByDescending { it.skuLocalData },
+            searchQuery = query,
+            isLoading = loading
+        )
+    }.catch { e ->
+        _events.emit(UiEvent.ShowError(e.message ?: "Failed to load expenses"))
+        emit(SkuListUiState())
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = SkuListUiState(isLoading = true)
+    )
 
     fun onSearchQueryChanged(query: String) {
-        _uiState.update { it.copy(searchQuery = query) }
+        _searchQuery.value = query
     }
 
     fun onDeleteSku(skuId: String) {
         viewModelScope.launch {
             try {
                 deleteSkuUseCase(skuId)
-                    .onSuccess { loadSkus() }
                     .onFailure { _events.emit(UiEvent.ShowError(it.message ?: "Failed to delete")) }
             } catch (e: CancellationException) {
                 throw e

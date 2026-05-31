@@ -39,11 +39,14 @@ class ReceiptScannerViewModel(
             try {
                 val lines = textRecognizer.recognizeText(bytes)
                 val data = parseReceiptUseCase(lines)
+                println("Scanner: ParseReceipt result — total=${data.totalAmount} currency='${data.currency}' items=${data.items.size}")
+                data.items.forEachIndexed { i, item -> println("Scanner: item[$i] name='${item.name}' price=${item.price}") }
                 val allIndices = data.items.indices.toSet()
                 _state.value = ReceiptScannerState.Result(data, allIndices)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
+                println("Scanner: Receipt scanning failed — ${e.message}")
                 _state.value = ReceiptScannerState.Error(e.message ?: "Recognition failed")
                 _events.emit(UiEvent.ShowError(e.message ?: "Recognition failed"))
             }

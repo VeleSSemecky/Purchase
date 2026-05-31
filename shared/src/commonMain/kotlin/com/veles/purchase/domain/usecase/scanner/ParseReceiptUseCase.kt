@@ -12,20 +12,30 @@ import com.veles.purchase.domain.model.scanner.ReceiptItem
  */
 class ParseReceiptUseCase {
 
-    private val priceRegex = Regex("""\d+[.,]\d{2}(?![.\d])""")
+    // Matches: 12,99 or 12.99 — not followed by more digits (to avoid matching dates like 30.05)
+    private val priceRegex = Regex("""\b\d{1,5}[.,]\d{2}\b""")
     private val currencyRegex = Regex("""zł|PLN|грн|UAH|USD|\$|€|EUR""", RegexOption.IGNORE_CASE)
 
     private val totalKeywords = listOf(
         "razem", "suma", "total", "sum", "до сплати", "разом", "підсумок",
-        "do zapłaty", "kwota", "płatność", "zapłać", "payment"
+        "do zapłaty", "kwota", "płatność", "zapłać", "payment", "należność",
+        "do zapłaty", "łącznie"
+    )
+
+    // Lines to skip — not product lines
+    private val skipKeywords = listOf(
+        "paragon", "receipt", "nip", "tel", "www", "http", "sklep", "kasa",
+        "data", "godzina", "kasjer", "dziękujemy", "zapraszamy", "drukarka",
+        "vat", "ptv", "stawka", "podatek", "opis", "ilość", "cena", "wartość",
+        "numer", "nr ", "ptu"
     )
 
     operator fun invoke(lines: List<String>): ReceiptData {
         val cleanedLines = lines.map { it.trim() }.filter { it.isNotEmpty() }
 
         val currency = detectCurrency(cleanedLines)
-        val items = extractItems(cleanedLines)
         val total = extractTotal(cleanedLines)
+        val items = if (total != null) extractItems(cleanedLines) else emptyList()
 
         return ReceiptData(
             totalAmount = total,
@@ -49,39 +59,47 @@ class ParseReceiptUseCase {
     }
 
     private fun extractTotal(lines: List<String>): Double? {
-        // Look for lines containing total keywords — take the last/biggest matching price
         val candidates = mutableListOf<Double>()
         for (line in lines) {
             val lower = line.lowercase()
             if (totalKeywords.any { lower.contains(it) }) {
-                val match = priceRegex.find(line) ?: continue
-                val value = match.value.replace(",", ".").toDoubleOrNull() ?: continue
-                candidates.add(value)
+                // Find ALL prices on this line, take the last (usually the actual total)
+                val matches = priceRegex.findAll(line).toList()
+                for (m in matches) {
+                    val value = m.value.replace(",", ".").toDoubleOrNull() ?: continue
+                    // Ignore suspiciously small values (likely quantity/tax rates)
+                    if (value >= 0.01) candidates.add(value)
+                }
             }
         }
-        // Return the largest candidate (total is usually the biggest number on a TOTAL line)
         return candidates.maxOrNull()
     }
 
     private fun extractItems(lines: List<String>): List<ReceiptItem> {
         val items = mutableListOf<ReceiptItem>()
-        // Typical receipt line: "Product name   12,99" or "Product name  x2  25,98"
-        // We look for lines with a price at the end and some text at the start
-        val itemLineRegex = Regex("""^(.{2,40}?)\s+(\d+[.,]\d{2})(?![.\d])\s*$""")
+        // Receipt item patterns:
+        // "Product name   12,99"
+        // "Product name  1 x  12,99"
+        // "PRODUCT NAME A  12,99 B"  (VAT code at end)
+        val itemLineRegex = Regex("""^(.{2,50}?)\s{2,}(\d{1,5}[.,]\d{2})(?:\s*[ABCDEabcde])?\s*$""")
+        val itemLineRegex2 = Regex("""^(.{2,50}?)\s+(\d{1,5}[.,]\d{2})\s*$""")
 
         for (line in lines) {
             val lower = line.lowercase()
-            // Skip header/footer/total lines
             if (totalKeywords.any { lower.contains(it) }) continue
-            if (lower.contains("paragon") || lower.contains("receipt") || lower.contains("nip")
-                || lower.contains("tel") || lower.contains("www") || lower.contains("http")) continue
+            if (skipKeywords.any { lower.contains(it) }) continue
+            // Skip lines that look like a date (dd.mm.yyyy or dd-mm-yyyy)
+            if (line.matches(Regex(""".*\d{2}[./-]\d{2}[./-]\d{4}.*"""))) continue
+            // Skip lines that are only numbers/short codes
+            if (line.length < 4) continue
 
-            val match = itemLineRegex.find(line) ?: continue
+            val match = itemLineRegex.find(line) ?: itemLineRegex2.find(line) ?: continue
             val name = match.groupValues[1].trim()
             val price = match.groupValues[2].replace(",", ".").toDoubleOrNull() ?: continue
 
-            // Skip lines with very short names (likely noise) or very low prices (tax rows, etc.)
             if (name.length < 2) continue
+            // Skip if price looks like a date fragment (e.g. 30.05)
+            if (price < 0.01 || price > 99999.0) continue
 
             items.add(ReceiptItem(name = name, price = price))
         }

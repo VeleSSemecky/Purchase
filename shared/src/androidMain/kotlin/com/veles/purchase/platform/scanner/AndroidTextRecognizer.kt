@@ -19,6 +19,7 @@ class AndroidTextRecognizer : TextRecognizer {
         suspendCoroutine { continuation ->
             val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             if (bitmap == null) {
+                android.util.Log.w("Scanner", "decodeByteArray returned null — invalid image bytes")
                 continuation.resume(emptyList())
                 return@suspendCoroutine
             }
@@ -29,9 +30,12 @@ class AndroidTextRecognizer : TextRecognizer {
                     val lines = visionText.textBlocks.flatMap { block ->
                         block.lines.map { it.text }
                     }
+                    android.util.Log.d("Scanner", "=== OCR lines (${lines.size}) ===")
+                    lines.forEachIndexed { i, line -> android.util.Log.d("Scanner", "  [$i] '$line'") }
                     continuation.resume(lines)
                 }
                 .addOnFailureListener { e ->
+                    android.util.Log.e("Scanner", "ML Kit recognition failed: ${e.message}", e)
                     continuation.resumeWithException(e)
                 }
         }

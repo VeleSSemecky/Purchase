@@ -9,6 +9,8 @@ import com.veles.purchase.domain.model.SkuModel
 import com.veles.purchase.domain.model.SkuPhotoModel
 import com.veles.purchase.domain.model.SkuSumMonthModel
 import com.veles.purchase.domain.repository.sku.SkuRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class SkuRepositoryImpl(private val skuDAO: SkuDAO) : SkuRepository {
 
@@ -17,6 +19,9 @@ class SkuRepositoryImpl(private val skuDAO: SkuDAO) : SkuRepository {
 
     override suspend fun getSkuEntityList(): List<SkuModel> =
         skuDAO.getSkuEntityList().map { it.toSkuModel() }
+
+    override fun getSkuEntityListFlow(): Flow<List<SkuModel>> =
+        skuDAO.getSkuEntityListFlow().map { list -> list.map { it.toSkuModel() } }
 
     override suspend fun insert(skuModel: SkuModel, skuPhotoModelList: List<SkuPhotoModel>) {
         val skuEntity = skuModel.toSkuEntity()
