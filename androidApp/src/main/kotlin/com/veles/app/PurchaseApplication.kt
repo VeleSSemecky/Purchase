@@ -18,8 +18,10 @@ class PurchaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Thread.setDefaultUncaughtExceptionHandler { _, e ->
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, e ->
             AppLogger.e("CRASH", "Uncaught exception: ${e.message}", e)
+            defaultHandler?.uncaughtException(thread, e)
         }
 
         // Initialize Environment Config from BuildConfig

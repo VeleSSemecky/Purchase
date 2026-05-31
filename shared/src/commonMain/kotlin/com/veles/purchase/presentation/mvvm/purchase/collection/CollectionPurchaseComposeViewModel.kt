@@ -7,15 +7,16 @@ import com.veles.purchase.domain.usecase.collection.DeletePurchaseCollectionUseC
 import com.veles.purchase.domain.usecase.collection.FirebaseFirestorePurchaseCollectionUseCase
 import com.veles.purchase.presentation.model.UiEvent
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
 
 /**
@@ -68,7 +69,12 @@ class CollectionPurchaseComposeViewModel(
         viewModelScope.launch {
             _stateFlowProgress.emit(ProgressState.Start)
             firebaseFirestorePurchaseCollectionUseCase()
-                .catch { e -> _events.emit(UiEvent.ShowError(e.message ?: "Failed to load collections")) }
+                .retryWhen { e, attempt ->
+                    if (e is CancellationException) throw e
+                    _events.emit(UiEvent.ShowError(e.message ?: "Failed to load collections"))
+                    delay(3000L * (attempt + 1).coerceAtMost(3))
+                    true
+                }
                 .onEach { collections ->
                     _stateFlowListPurchaseCollections.emit(collections)
                     _stateFlowProgress.emit(ProgressState.End)

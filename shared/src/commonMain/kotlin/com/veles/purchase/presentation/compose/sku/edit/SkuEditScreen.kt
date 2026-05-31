@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,11 +62,12 @@ fun SkuEditScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is UiEvent.NavigateBack -> onNavigateBack()
+                is UiEvent.NavigateBack -> currentOnNavigateBack()
                 is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
             }
         }

@@ -5,6 +5,7 @@ import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.createPurchaseTable
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -27,6 +28,6 @@ class DeletePurchaseUseCase(private val purchaseRepository: PurchaseRepository, 
                     purchaseCollectionId
                 )
             )
-        }
+        }.also { it.exceptionOrNull()?.let { e -> if (e is CancellationException) throw e } }
     }
 }

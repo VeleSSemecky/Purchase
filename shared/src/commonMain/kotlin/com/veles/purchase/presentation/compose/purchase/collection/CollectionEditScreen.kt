@@ -52,11 +52,12 @@ fun CollectionEditScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val isNewCollection = viewModel.isNewCollection
+    val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is UiEvent.NavigateBack -> onNavigateBack()
+                is UiEvent.NavigateBack -> currentOnNavigateBack()
                 is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
             }
         }

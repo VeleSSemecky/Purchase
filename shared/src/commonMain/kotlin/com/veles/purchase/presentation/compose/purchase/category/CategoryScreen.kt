@@ -63,6 +63,7 @@ fun CategoryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
 
     // Back press handler with unsaved changes check
     val handleBackPress = {
@@ -76,7 +77,7 @@ fun CategoryScreen(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is UiEvent.NavigateBack -> onNavigateBack()
+                is UiEvent.NavigateBack -> currentOnNavigateBack()
                 is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
             }
         }

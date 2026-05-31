@@ -5,6 +5,7 @@ import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.createPurchaseTable
 import com.veles.purchase.domain.repository.history.HistoryRepository
 import com.veles.purchase.domain.repository.purchase.PurchaseRepository
+import kotlinx.coroutines.CancellationException
 
 class CheckPurchaseUseCase(private val purchaseRepository: PurchaseRepository, private val historyRepository: HistoryRepository) {
 
@@ -19,5 +20,5 @@ class CheckPurchaseUseCase(private val purchaseRepository: PurchaseRepository, p
 
         val historyType = if (toggled.isChecked) HistoryType.CHECK else HistoryType.UNCHECK
         historyRepository.insert(toggled.createPurchaseTable(historyType, purchaseCollectionId))
-    }
+    }.also { it.exceptionOrNull()?.let { e -> if (e is CancellationException) throw e } }
 }

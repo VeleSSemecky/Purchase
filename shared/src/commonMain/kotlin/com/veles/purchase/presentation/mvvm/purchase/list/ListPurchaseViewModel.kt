@@ -14,6 +14,7 @@ import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
 import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.model.sort.SortPurchase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -81,7 +82,12 @@ class ListPurchaseViewModel(
             .flatMapLatest { query ->
                 getPurchasesUseCase(collectionId, query)
             }
-            .catch { e -> _events.emit(UiEvent.ShowError(e.message ?: "Failed to load purchases")) }
+            .retryWhen { e, attempt ->
+                if (e is CancellationException) throw e
+                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load purchases"))
+                delay(3000L * (attempt + 1).coerceAtMost(3))
+                true
+            }
             .onEach { purchases ->
                 _uiState.update { it.copy(purchases = purchases) }
             }
@@ -90,7 +96,12 @@ class ListPurchaseViewModel(
 
     private fun observeSettings() {
         getSettingUseCase()
-            .catch { e -> _events.emit(UiEvent.ShowError(e.message ?: "Failed to load settings")) }
+            .retryWhen { e, attempt ->
+                if (e is CancellationException) throw e
+                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load settings"))
+                delay(3000L * (attempt + 1).coerceAtMost(3))
+                true
+            }
             .onEach { settings ->
                 _uiState.update { it.copy(settings = settings) }
             }

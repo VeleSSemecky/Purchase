@@ -44,6 +44,7 @@ fun PurchaseEditScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
     var showCategorySheet by remember { mutableStateOf(false) }
     var showPhotoSourceSheet by remember { mutableStateOf(false) }
 
@@ -86,7 +87,7 @@ fun PurchaseEditScreen(
         }
         viewModel.events.collect { event ->
             when (event) {
-                is UiEvent.NavigateBack -> onNavigateBack()
+                is UiEvent.NavigateBack -> currentOnNavigateBack()
                 is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
             }
         }

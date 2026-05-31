@@ -9,6 +9,7 @@ import com.veles.purchase.domain.usecase.setting.GetSettingUseCase
 import com.veles.purchase.domain.usecase.setting.SetSettingUseCase
 import com.veles.purchase.presentation.model.UiEvent
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -99,7 +100,12 @@ class SettingPurchaseComposeViewModel(private val getSettingUseCase: GetSettingU
     }
 
     private fun loadSettings() = getSettingUseCase()
-        .catch { e -> _events.emit(UiEvent.ShowError(e.message ?: "Failed to load settings")) }
+        .retryWhen { e, attempt ->
+            if (e is CancellationException) throw e
+            _events.emit(UiEvent.ShowError(e.message ?: "Failed to load settings"))
+            delay(3000L * (attempt + 1).coerceAtMost(3))
+            true
+        }
         .onEach { settings ->
             _flowPurchaseSetting.emit(settings)
             when (settings.isSymmetry) {
