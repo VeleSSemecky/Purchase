@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -42,7 +43,6 @@ fun PhotoViewerScreen(
             .pointerInput(Unit) {
                 detectTransformGestures { _, pan, zoom, _ ->
                     val newScale = (scale * zoom).coerceIn(1f, 5f)
-                    // Reset offset when zooming back to 1x
                     offset = if (newScale == 1f) Offset.Zero else offset + pan
                     scale = newScale
                 }
@@ -66,10 +66,11 @@ fun PhotoViewerScreen(
             onClick = onNavigateBack,
             modifier = Modifier
                 .align(Alignment.TopStart)
+                .statusBarsPadding()
                 .padding(8.dp)
                 .size(48.dp),
             colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Black.copy(alpha = 0.4f)
+                containerColor = Color.Black.copy(alpha = 0.5f)
             )
         ) {
             Icon(
