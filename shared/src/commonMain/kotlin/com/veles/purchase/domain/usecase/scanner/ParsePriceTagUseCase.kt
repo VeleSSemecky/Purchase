@@ -3,6 +3,7 @@ package com.veles.purchase.domain.usecase.scanner
 import com.veles.purchase.domain.model.scanner.ScannedProduct
 import com.veles.purchase.platform.extractor.MoneyAnnotation
 import com.veles.purchase.platform.extractor.PriceEntityExtractor
+import com.veles.purchase.platform.logger.AppLogger
 import kotlinx.coroutines.CancellationException
 
 class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
@@ -11,21 +12,33 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         val fullText = lines.joinToString("\n")
         val name = buildProductName(lines)
 
+        AppLogger.d("Scanner", "=== OCR lines (${lines.size}) ===")
+        lines.forEachIndexed { i, l -> AppLogger.d("Scanner", "  [$i] '$l'") }
+
         // Try entity extraction first (ML Kit on Android, regex on iOS)
         try {
-            val entities = entityExtractor.extractMoneyEntities(fullText)
-                .filter { !isDateAnnotation(it, fullText) }   // skip date-like spans (e.g. "30.05" from "30.05.2026")
+            val allEntities = entityExtractor.extractMoneyEntities(fullText)
+            AppLogger.d("Scanner", "=== MoneyAnnotations before filter (${allEntities.size}) ===")
+            allEntities.forEach { e ->
+                AppLogger.d("Scanner", "  text='${e.text}' amount=${e.amount} currency='${e.currency}' start=${e.start} end=${e.end} isDate=${isDateAnnotation(e, fullText)}")
+            }
+
+            val entities = allEntities.filter { !isDateAnnotation(it, fullText) }
+            AppLogger.d("Scanner", "=== After date filter: ${entities.size} entities ===")
+
             if (entities.isNotEmpty()) {
                 val (amount, currency) = selectTotalPrice(fullText, entities)
+                AppLogger.d("Scanner", "=== Selected: price='$amount' currency='$currency' name='$name' ===")
                 return ScannedProduct(name = name, price = amount, currency = currency)
             }
         } catch (e: CancellationException) {
             throw e
-        } catch (_: Exception) {
-            // Fall through to regex backup
+        } catch (e: Exception) {
+            AppLogger.e("Scanner", "Entity extraction failed, fallback to regex: ${e.message}", e)
         }
 
         // Regex backup (extra safety net)
+        AppLogger.d("Scanner", "=== Using regex fallback ===")
         return regexFallback(lines, name)
     }
 
@@ -165,18 +178,22 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
     }
 
     private fun regexFallback(lines: List<String>, name: String): ScannedProduct {
-        val priceRegex = """\d+[.,]\d{2}(?!\d)""".toRegex()
+        // (?![.\d]) prevents matching "30.05" inside "30.05.2026" (date)
+        val priceRegex = """\d+[.,]\d{2}(?![.\d])""".toRegex()
         val unitPricePattern = Regex("""(/kg|per kg|/кг|na kg|cena/kg)""", RegexOption.IGNORE_CASE)
         val weightLine = Regex("""\d+[.,]\d+\s*(kg|g|dkg|ml|l)\b""", RegexOption.IGNORE_CASE)
-        val currencyPattern = Regex("""(zł|PLN|USD|\$|EUR|€|грн|UAH|CZK|Kč)""", RegexOption.IGNORE_CASE)
+        val dateLine = Regex("""\d{1,2}[./\-]\d{2}[./\-]\d{2,4}""")
+        val currencyPattern = Regex("""(zł|Zt\.|PLN|USD|\$|EUR|€|грн|UAH|CZK|Kč)""", RegexOption.IGNORE_CASE)
 
         var price = ""
         var currency = ""
+        var foundIndex = -1
 
-        for (line in lines) {
+        for ((index, line) in lines.withIndex()) {
             val t = line.trim()
             if (unitPricePattern.containsMatchIn(t)) continue
             if (weightLine.containsMatchIn(t)) continue
+            if (dateLine.containsMatchIn(t)) continue   // skip "30.05.2026" lines entirely
             val match = priceRegex.find(t) ?: continue
             val value = match.value.replace(",", ".").toDoubleOrNull() ?: continue
             if (value < 0.5) continue
@@ -185,10 +202,17 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
                 val fracPart = kotlin.math.round((value - intPart) * 100).toLong()
                 "$intPart.${"%02d".format(fracPart)}"
             }
-            currency = normalizeCurrency(currencyPattern.find(t)?.value ?: "")
+            // Look for currency symbol on same line or ±2 adjacent lines
+            val searchLines = lines.subList(
+                maxOf(0, index - 1),
+                minOf(lines.size, index + 3)
+            ).joinToString(" ")
+            currency = normalizeCurrency(currencyPattern.find(searchLines)?.value ?: "")
+            foundIndex = index
             break
         }
 
+        AppLogger.d("Scanner", "=== Regex fallback: price='$price' currency='$currency' foundAtLine=$foundIndex ===")
         return ScannedProduct(name = name, price = price, currency = currency)
     }
 }

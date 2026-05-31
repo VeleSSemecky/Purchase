@@ -5,6 +5,7 @@ import com.google.mlkit.nl.entityextraction.EntityExtraction
 import com.google.mlkit.nl.entityextraction.EntityExtractionParams
 import com.google.mlkit.nl.entityextraction.EntityExtractorOptions
 import com.google.mlkit.nl.entityextraction.MoneyEntity
+import com.veles.purchase.platform.logger.AppLogger
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -29,9 +30,17 @@ class AndroidPriceEntityExtractor : PriceEntityExtractor {
             val params = EntityExtractionParams.Builder(text).build()
             extractor.annotate(params)
                 .addOnSuccessListener { result: List<EntityAnnotation> ->
+                    AppLogger.d("Scanner", "=== ML Kit raw annotations (${result.size}) ===")
+                    result.forEach { ann ->
+                        AppLogger.d("Scanner", "  annotatedText='${ann.annotatedText}' start=${ann.start} end=${ann.end} entities=${ann.entities.map { it.javaClass.simpleName }}")
+                        ann.entities.filterIsInstance<MoneyEntity>().forEach { m ->
+                            AppLogger.d("Scanner", "    MoneyEntity: integer=${m.integerPart} frac=${m.fractionalPart} currency='${m.unnormalizedCurrency}'")
+                        }
+                    }
                     continuation.resume(result)
                 }
                 .addOnFailureListener { e: Exception ->
+                    AppLogger.e("Scanner", "ML Kit annotate failed: ${e.message}", e)
                     if (continuation.isActive) continuation.resumeWithException(e)
                 }
         }
