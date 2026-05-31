@@ -30,22 +30,23 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
     }
 
     // Dates in European format look like money to ML Kit: dd.mm.yyyy or dd-mm-yyyy
-    // ML Kit often annotates only "30.05" from "30.05.2026", so we also check context after the span.
+    // Polish prices use comma ("20,21 zł") — dates use dot ("30.05.2026").
     private val datePattern = Regex("""\d{1,2}[.\-/]\d{2}[.\-/]\d{2,4}""")
-    private val dayMonthPattern = Regex("""^\d{1,2}[.\-/]\d{2}$""")
+    private val dotDayMonthPattern = Regex("""^(\d{1,2})\.(\d{2})$""")
 
     private fun isDateAnnotation(annotation: MoneyAnnotation, fullText: String): Boolean {
         // Full date inside the annotation text (e.g. "30.05.2026")
         if (datePattern.containsMatchIn(annotation.text)) return true
-        // ML Kit extracts only "30.05" but context shows ".2026" right after → it's a date
-        if (dayMonthPattern.matches(annotation.text.trim())) {
-            val tail = fullText.substring(annotation.end, minOf(annotation.end + 6, fullText.length))
-            // Check if tail immediately starts with separator + 2-4 digits (year continuation)
-            if (tail.isNotEmpty() && (tail[0] == '.' || tail[0] == '-' || tail[0] == '/')) {
-                val digits = tail.drop(1).takeWhile { it.isDigit() }
-                if (digits.length in 2..4) return true
-            }
+
+        // Polish prices use comma ("20,21 zł") — dates use dot ("30.05").
+        // "DD.MM" with dot separator where DD≤31 and MM≤12 is a date, not a price.
+        val dotMatch = dotDayMonthPattern.find(annotation.text.trim())
+        if (dotMatch != null) {
+            val day = dotMatch.groupValues[1].toIntOrNull() ?: 0
+            val month = dotMatch.groupValues[2].toIntOrNull() ?: 0
+            if (day in 1..31 && month in 1..12) return true
         }
+
         return false
     }
 
