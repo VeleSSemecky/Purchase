@@ -149,6 +149,7 @@ kotlin {
 
                 // ML Kit Text Recognition (OCR for price tag scanner)
                 implementation(libs.mlkit.text.recognition)
+                implementation(libs.mlkit.entity.extraction)
                 // Note: Cyrillic model — swap to play-services-mlkit-text-recognition-cyrillic if needed
             }
         }

@@ -250,6 +250,7 @@ play-services-auth = { group = "com.google.android.gms", name = "play-services-a
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServices" }
 mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version = "19.0.1" }
 mlkit-text-recognition-cyrillic = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-cyrillic", version = "16.0.1" }
+mlkit-entity-extraction = { group = "com.google.mlkit", name = "entity-extraction", version = "16.0.0-beta5" }
 biometric = { group = "androidx.biometric", name = "biometric-ktx", version.ref = "biometric" }
 play-app-update = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
 play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }

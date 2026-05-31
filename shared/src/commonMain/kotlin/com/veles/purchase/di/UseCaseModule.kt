@@ -78,5 +78,5 @@ val useCaseModule = module {
     single { PriceUseCase() }
 
     // Scanner UseCases
-    single { ParsePriceTagUseCase() }
+    single { ParsePriceTagUseCase(get()) }
 }
