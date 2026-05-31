@@ -27,6 +27,7 @@ import com.veles.purchase.domain.usecase.sku.GetSkuSumMontUseCase
 import com.veles.purchase.domain.usecase.sku.GetSkuUseCase
 import com.veles.purchase.domain.usecase.sku.SetSkuUseCase
 import com.veles.purchase.domain.usecase.user.UserUseCase
+import com.veles.purchase.domain.usecase.scanner.ParsePriceTagUseCase
 import org.koin.dsl.module
 
 /**
@@ -75,4 +76,7 @@ val useCaseModule = module {
 
     // Price UseCase
     single { PriceUseCase() }
+
+    // Scanner UseCases
+    single { ParsePriceTagUseCase() }
 }

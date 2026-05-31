@@ -37,6 +37,8 @@ import org.koin.core.parameter.parametersOf
 fun PurchaseEditScreen(
     collectionId: String,
     purchaseId: String = "",
+    prefillName: String? = null,
+    prefillPrice: String? = null,
     onNavigateBack: () -> Unit = {},
     onNavigateToPhoto: (String) -> Unit = {},
     viewModel: EditPurchaseViewModel = koinViewModel(
@@ -48,6 +50,14 @@ fun PurchaseEditScreen(
     val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
     var showCategorySheet by remember { mutableStateOf(false) }
     var showPhotoSourceSheet by remember { mutableStateOf(false) }
+
+    // Pre-fill fields from scanner when creating a new purchase
+    LaunchedEffect(prefillName, prefillPrice) {
+        if (purchaseId.isEmpty()) {
+            if (!prefillName.isNullOrEmpty()) viewModel.onTitleChange(prefillName)
+            if (!prefillPrice.isNullOrEmpty()) viewModel.onPriceChange(prefillPrice)
+        }
+    }
 
     // Media picker — platform-specific (Android: PickMultipleVisualMedia, iOS: PHPickerViewController)
     val launchMediaPicker = rememberMediaPickerLauncher { bytes ->

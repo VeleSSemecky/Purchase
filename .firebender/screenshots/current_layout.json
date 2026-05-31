@@ -1,0 +1,168 @@
+[
+  {
+    "interactions": [
+      "scrollable"
+    ],
+    "center": "[540,285]",
+    "bounds": "[0,0][1080,570]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable",
+      "long-clickable"
+    ],
+    "state": [
+      "focused"
+    ],
+    "center": "[540,654]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable",
+      "long-clickable"
+    ],
+    "off-screen": true,
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable",
+      "long-clickable"
+    ],
+    "center": "[540,96]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable",
+      "long-clickable"
+    ],
+    "center": "[540,327]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable",
+      "long-clickable"
+    ],
+    "center": "[540,515]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "off-screen": true,
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[864,1317]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[1008,1389]",
+    "key": 3506402
+  },
+  {
+    "text": "Name purchase",
+    "center": "[225,1256]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "off-screen": true,
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "off-screen": true,
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "off-screen": true,
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "off-screen": true,
+    "key": 3506402
+  },
+  {
+    "text": "зубочістка",
+    "center": "[377,60]",
+    "key": 3506402
+  },
+  {
+    "text": "1",
+    "center": "[258,121]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[916,87]",
+    "key": 3506402
+  },
+  {
+    "text": "хліб",
+    "center": "[295,300]",
+    "key": 3506402
+  },
+  {
+    "text": "1",
+    "center": "[258,361]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[916,327]",
+    "key": 3506402
+  },
+  {
+    "text": "багет",
+    "center": "[313,553]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[916,533]",
+    "key": 3506402
+  }
+]

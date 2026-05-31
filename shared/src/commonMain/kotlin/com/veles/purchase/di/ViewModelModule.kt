@@ -12,6 +12,7 @@ import com.veles.purchase.presentation.mvvm.purchase.setting.SettingPurchaseComp
 import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditViewModel
 import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
 import com.veles.purchase.presentation.mvvm.sku.statistics.OutlayGraphViewModel
+import com.veles.purchase.presentation.mvvm.scanner.PriceScannerViewModel
 import com.veles.purchase.presentation.viewmodel.login.LoginViewModel
 import com.veles.purchase.presentation.viewmodel.main.MainViewModel
 import org.koin.core.module.dsl.viewModel
@@ -149,6 +150,14 @@ val viewModelModule = module {
     viewModel {
         OutlayGraphViewModel(
             getSkuSumMontUseCase = get()
+        )
+    }
+
+    // PriceScannerViewModel
+    viewModel {
+        PriceScannerViewModel(
+            textRecognizer = get(),
+            parsePriceTagUseCase = get()
         )
     }
 }

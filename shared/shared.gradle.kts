@@ -146,6 +146,10 @@ kotlin {
                 implementation(libs.bundles.firebase.data)
                 implementation(libs.firebase.ui.auth)
                 implementation(libs.firebase.ui.storage)
+
+                // ML Kit Text Recognition (OCR for price tag scanner)
+                implementation(libs.mlkit.text.recognition)
+                // Note: Cyrillic model — swap to play-services-mlkit-text-recognition-cyrillic if needed
             }
         }
 

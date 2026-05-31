@@ -49,7 +49,8 @@ fun PurchaseListScreen(
     viewModel: ListPurchaseViewModel = koinViewModel(parameters = { parametersOf(collectionId) }),
     onNavigateBack: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
-    onNavigateToPurchaseDetail: (String) -> Unit = {}
+    onNavigateToPurchaseDetail: (String) -> Unit = {},
+    onNavigateToScanner: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -83,7 +84,8 @@ fun PurchaseListScreen(
                     onSearchWidgetStateChanged = { searchWidgetState = it },
                     onSearchTextChanged = viewModel::updateSearchText,
                     onBackClick = onNavigateBack,
-                    onSettingsClick = onNavigateToSettings
+                    onSettingsClick = onNavigateToSettings,
+                    onScanClick = onNavigateToScanner
                 )
             }
         },
@@ -144,6 +146,7 @@ private fun PurchaseListTopBar(
     onSearchTextChanged: (String) -> Unit,
     onBackClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onScanClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val searchWidgetStateMutable = remember { mutableStateOf(searchWidgetState) }
@@ -184,6 +187,9 @@ private fun PurchaseListTopBar(
                     onSearchWidgetStateChanged(SearchWidgetState.OPENED)
                 }) {
                     Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.White)
+                }
+                IconButton(onClick = onScanClick) {
+                    Icon(imageVector = Icons.Default.CameraAlt, contentDescription = "Scan price tag", tint = Color.White)
                 }
                 IconButton(onClick = onSettingsClick) {
                     Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)

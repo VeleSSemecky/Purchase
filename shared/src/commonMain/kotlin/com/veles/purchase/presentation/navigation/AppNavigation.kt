@@ -29,6 +29,7 @@ import com.veles.purchase.presentation.compose.purchase.history.HistoryScreen
 import com.veles.purchase.presentation.compose.purchase.later.ListLaterScreen
 import com.veles.purchase.presentation.compose.purchase.list.PurchaseListScreen
 import com.veles.purchase.presentation.compose.purchase.photo.PhotoViewerScreen
+import com.veles.purchase.presentation.compose.scanner.PriceScannerScreen
 import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchaseScreen
 import com.veles.purchase.presentation.compose.sku.edit.SkuEditScreen
 import com.veles.purchase.presentation.compose.sku.list.SkuListScreen
@@ -52,6 +53,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(Route.Purchase.List::class)
             subclass(Route.Purchase.Edit::class)
             subclass(Route.Purchase.PhotoViewer::class)
+            subclass(Route.Purchase.Scanner::class)
             subclass(Route.Purchase.History::class)
             subclass(Route.Purchase.Later::class)
             subclass(Route.Sku.List::class)
@@ -256,6 +258,9 @@ private fun EntryProviderScope<NavKey>.purchaseDestinations(navigator: Navigator
             },
             onNavigateToPurchaseDetail = { purchaseId ->
                 navigator.navigate(Route.Purchase.Edit(purchaseId, route.collectionId))
+            },
+            onNavigateToScanner = {
+                navigator.navigate(Route.Purchase.Scanner(route.collectionId))
             }
         )
     }
@@ -263,6 +268,8 @@ private fun EntryProviderScope<NavKey>.purchaseDestinations(navigator: Navigator
         PurchaseEditScreen(
             collectionId = route.collectionId,
             purchaseId = route.purchaseId ?: "",
+            prefillName = route.prefillName,
+            prefillPrice = route.prefillPrice,
             onNavigateBack = { navigator.goBack() },
             onNavigateToPhoto = { photoUri ->
                 navigator.navigate(Route.Purchase.PhotoViewer(photoUri))
@@ -273,6 +280,21 @@ private fun EntryProviderScope<NavKey>.purchaseDestinations(navigator: Navigator
         PhotoViewerScreen(
             photoUri = route.photoUri,
             onNavigateBack = { navigator.goBack() }
+        )
+    }
+    entry<Route.Purchase.Scanner> { route ->
+        PriceScannerScreen(
+            onNavigateBack = { navigator.goBack() },
+            onScanConfirmed = { name, price ->
+                navigator.navigate(
+                    Route.Purchase.Edit(
+                        purchaseId = null,
+                        collectionId = route.collectionId,
+                        prefillName = name.ifEmpty { null },
+                        prefillPrice = price.ifEmpty { null }
+                    )
+                )
+            }
         )
     }
     entry<Route.Purchase.Later> { route ->
