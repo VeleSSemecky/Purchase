@@ -76,8 +76,12 @@ fun PriceScannerScreen(
             when (event) {
                 is UiEvent.NavigateBack -> {
                     val result = viewModel.currentResult()
-                    if (result != null) currentOnScanConfirmed(result.name, result.price)
-                    currentOnNavigateBack()
+                    if (result != null) {
+                        // onScanConfirmed replaces Scanner with Edit — don't goBack separately
+                        currentOnScanConfirmed(result.name, result.price)
+                    } else {
+                        currentOnNavigateBack()
+                    }
                 }
                 is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
             }

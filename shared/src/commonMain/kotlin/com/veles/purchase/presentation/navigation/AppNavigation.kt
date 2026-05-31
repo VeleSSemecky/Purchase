@@ -111,6 +111,12 @@ class Navigator(private val backStack: NavBackStack<NavKey>, private val resultS
         }
     }
 
+    /** Replaces the current screen with [route] — used for Scanner → Edit transition. */
+    fun replace(route: NavKey) {
+        backStack.removeLastOrNull()
+        backStack.add(route)
+    }
+
     fun clearAndNavigate(route: NavKey) {
         backStack.clear()
         backStack.add(route)
@@ -286,7 +292,7 @@ private fun EntryProviderScope<NavKey>.purchaseDestinations(navigator: Navigator
         PriceScannerScreen(
             onNavigateBack = { navigator.goBack() },
             onScanConfirmed = { name, price ->
-                navigator.navigate(
+                navigator.replace(
                     Route.Purchase.Edit(
                         purchaseId = null,
                         collectionId = route.collectionId,
