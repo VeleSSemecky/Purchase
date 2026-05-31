@@ -39,9 +39,12 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         if (datePattern.containsMatchIn(annotation.text)) return true
         // ML Kit extracts only "30.05" but context shows ".2026" right after → it's a date
         if (dayMonthPattern.matches(annotation.text.trim())) {
-            val afterEnd = minOf(annotation.end + 6, fullText.length)
-            val tail = fullText.substring(annotation.end, afterEnd)
-            if (tail.matches("""[.\-/]\d{2,4}.*""".toRegex())) return true
+            val tail = fullText.substring(annotation.end, minOf(annotation.end + 6, fullText.length))
+            // Check if tail immediately starts with separator + 2-4 digits (year continuation)
+            if (tail.isNotEmpty() && (tail[0] == '.' || tail[0] == '-' || tail[0] == '/')) {
+                val digits = tail.drop(1).takeWhile { it.isDigit() }
+                if (digits.length in 2..4) return true
+            }
         }
         return false
     }
