@@ -303,6 +303,7 @@ fun PhotoSection(
     photos: List<com.veles.purchase.domain.model.purchase.PurchasePhotoModel>,
     onAddPhotoClick: () -> Unit,
     onDeletePhoto: (com.veles.purchase.domain.model.purchase.PurchasePhotoModel) -> Unit,
+    onPhotoClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -317,7 +318,11 @@ fun PhotoSection(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(photos) { photo ->
-                PhotoItem(photo = photo, onDelete = { onDeletePhoto(photo) })
+                PhotoItem(
+                    photo = photo,
+                    onDelete = { onDeletePhoto(photo) },
+                    onClick = { onPhotoClick(photo.purchasePhotoUri) }
+                )
             }
             item {
                 AddPhotoButton(onClick = onAddPhotoClick)
@@ -329,7 +334,8 @@ fun PhotoSection(
 @Composable
 private fun PhotoItem(
     photo: com.veles.purchase.domain.model.purchase.PurchasePhotoModel,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onClick: () -> Unit = {}
 ) {
     val isUploading = photo.status == PhotoStatus.LOCAL
 
@@ -340,6 +346,9 @@ private fun PhotoItem(
                 .fillMaxSize()
                 .clip(RoundedCornerShape(12.dp))
                 .background(Color.White.copy(alpha = 0.08f))
+                .then(
+                    if (!isUploading) Modifier.clickable(onClick = onClick) else Modifier
+                )
         ) {
             val model: Any = if (photo.bytes != null) photo.bytes else photo.purchasePhotoUri
             coil3.compose.AsyncImage(

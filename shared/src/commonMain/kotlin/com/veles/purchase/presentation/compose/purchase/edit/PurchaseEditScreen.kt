@@ -38,6 +38,7 @@ fun PurchaseEditScreen(
     collectionId: String,
     purchaseId: String = "",
     onNavigateBack: () -> Unit = {},
+    onNavigateToPhoto: (String) -> Unit = {},
     viewModel: EditPurchaseViewModel = koinViewModel(
         parameters = { parametersOf(collectionId, purchaseId) }
     )
@@ -116,6 +117,7 @@ fun PurchaseEditScreen(
             onShowCategorySheet = { showCategorySheet = true },
             onAddPhotoClick = { showPhotoSourceSheet = true },
             onDeletePhoto = viewModel::onPhotoDeleted,
+            onPhotoClick = onNavigateToPhoto,
             titleFocusRequester = titleFocusRequester,
             priceFocusRequester = priceFocusRequester,
             commentFocusRequester = commentFocusRequester
@@ -160,6 +162,7 @@ private fun PurchaseEditForm(
     onShowCategorySheet: () -> Unit,
     onAddPhotoClick: () -> Unit,
     onDeletePhoto: (PurchasePhotoModel) -> Unit,
+    onPhotoClick: (String) -> Unit,
     titleFocusRequester: FocusRequester,
     priceFocusRequester: FocusRequester,
     commentFocusRequester: FocusRequester,
@@ -241,7 +244,8 @@ private fun PurchaseEditForm(
         PhotoSection(
             photos = purchase.listImage,
             onAddPhotoClick = onAddPhotoClick,
-            onDeletePhoto = onDeletePhoto
+            onDeletePhoto = onDeletePhoto,
+            onPhotoClick = onPhotoClick
         )
 
         Spacer(modifier = Modifier.height(32.dp))

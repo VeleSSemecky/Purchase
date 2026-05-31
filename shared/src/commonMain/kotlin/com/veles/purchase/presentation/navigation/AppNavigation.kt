@@ -28,6 +28,7 @@ import com.veles.purchase.presentation.compose.purchase.edit.PurchaseEditScreen
 import com.veles.purchase.presentation.compose.purchase.history.HistoryScreen
 import com.veles.purchase.presentation.compose.purchase.later.ListLaterScreen
 import com.veles.purchase.presentation.compose.purchase.list.PurchaseListScreen
+import com.veles.purchase.presentation.compose.purchase.photo.PhotoViewerScreen
 import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchaseScreen
 import com.veles.purchase.presentation.compose.sku.edit.SkuEditScreen
 import com.veles.purchase.presentation.compose.sku.list.SkuListScreen
@@ -50,6 +51,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(Route.Collection.Members::class)
             subclass(Route.Purchase.List::class)
             subclass(Route.Purchase.Edit::class)
+            subclass(Route.Purchase.PhotoViewer::class)
             subclass(Route.Purchase.History::class)
             subclass(Route.Purchase.Later::class)
             subclass(Route.Sku.List::class)
@@ -261,6 +263,15 @@ private fun EntryProviderScope<NavKey>.purchaseDestinations(navigator: Navigator
         PurchaseEditScreen(
             collectionId = route.collectionId,
             purchaseId = route.purchaseId ?: "",
+            onNavigateBack = { navigator.goBack() },
+            onNavigateToPhoto = { photoUri ->
+                navigator.navigate(Route.Purchase.PhotoViewer(photoUri))
+            }
+        )
+    }
+    entry<Route.Purchase.PhotoViewer> { route ->
+        PhotoViewerScreen(
+            photoUri = route.photoUri,
             onNavigateBack = { navigator.goBack() }
         )
     }

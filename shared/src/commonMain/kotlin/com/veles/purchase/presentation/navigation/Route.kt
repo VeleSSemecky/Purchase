@@ -57,6 +57,9 @@ sealed class Route : NavKey {
         data class Edit(val purchaseId: String? = null, val collectionId: String) : Purchase()
 
         @Serializable
+        data class PhotoViewer(val photoUri: String) : Purchase()
+
+        @Serializable
         data class History(val collectionId: String) : Purchase()
 
         @Serializable
