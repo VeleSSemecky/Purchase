@@ -6,6 +6,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.veles.purchase.data.room.core.createPrimaryIDKey
+import com.veles.purchase.domain.model.ExpenseCategory
 import com.veles.purchase.domain.model.SkuModel
 import com.veles.purchase.domain.utill.emptyString
 import kotlinx.datetime.LocalDateTime
@@ -27,7 +28,9 @@ data class SkuEntity(
     @ColumnInfo(name = "SkuPrice")
     val skuPrice: String = emptyString(),
     @ColumnInfo(name = "SkuCurrencyCode")
-    val skuCurrencyCode: String = "USD" // Default currency, can be changed by user
+    val skuCurrencyCode: String = "USD", // Default currency, can be changed by user
+    @ColumnInfo(name = "SkuCategory")
+    val skuCategory: String = ExpenseCategory.OTHER.name
 )
 
 fun SkuEntity.toSkuModel(): SkuModel =
@@ -37,7 +40,8 @@ fun SkuEntity.toSkuModel(): SkuModel =
         skuName = skuName,
         skuComment = skuComment,
         skuPrice = skuPrice,
-        skuCurrencyCode = skuCurrencyCode
+        skuCurrencyCode = skuCurrencyCode,
+        category = ExpenseCategory.entries.firstOrNull { it.name == skuCategory } ?: ExpenseCategory.OTHER
     )
 
 fun SkuModel.toSkuEntity(): SkuEntity =
@@ -47,7 +51,8 @@ fun SkuModel.toSkuEntity(): SkuEntity =
         skuName = skuName,
         skuComment = skuComment,
         skuPrice = skuPrice,
-        skuCurrencyCode = skuCurrencyCode
+        skuCurrencyCode = skuCurrencyCode,
+        skuCategory = category.name
     )
 
 // TODO: Re-implement these extension functions with kotlinx.datetime

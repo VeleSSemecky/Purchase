@@ -107,7 +107,7 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         // Build locale-independent price string (avoid JVM locale comma separator)
         val intPart = entity.amount.toLong()
         val fracPart = kotlin.math.round((entity.amount - intPart) * 100).toLong()
-        val formatted = if (fracPart == 0L) "$intPart" else "$intPart.${"%02d".format(fracPart)}"
+        val formatted = if (fracPart == 0L) "$intPart" else "$intPart.${if (fracPart < 10) "0$fracPart" else "$fracPart"}"
         return Pair(formatted, normalizeCurrency(entity.currency))
     }
 
@@ -200,7 +200,7 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
             price = run {
                 val intPart = value.toLong()
                 val fracPart = kotlin.math.round((value - intPart) * 100).toLong()
-                "$intPart.${"%02d".format(fracPart)}"
+                "$intPart.${if (fracPart < 10) "0$fracPart" else "$fracPart"}"
             }
             // Look for currency symbol on same line or ±2 adjacent lines
             val searchLines = lines.subList(

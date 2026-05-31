@@ -9,10 +9,8 @@ import com.veles.purchase.presentation.model.UiEvent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 
-/**
- * ViewModel for SKU List Screen
- */
 class SkuListViewModel(private val getSkuUseCase: GetSkuUseCase, private val deleteSkuUseCase: DeleteSkuUseCase) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SkuListUiState())
@@ -30,12 +28,13 @@ class SkuListViewModel(private val getSkuUseCase: GetSkuUseCase, private val del
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val skus = getSkuUseCase.getSkuModelList()
+                    .sortedByDescending { it.skuLocalData }
                 _uiState.update { it.copy(skus = skus, isLoading = false) }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false) }
-                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load SKUs"))
+                _events.emit(UiEvent.ShowError(e.message ?: "Failed to load expenses"))
             }
         }
     }
@@ -49,7 +48,7 @@ class SkuListViewModel(private val getSkuUseCase: GetSkuUseCase, private val del
             try {
                 deleteSkuUseCase(skuId)
                     .onSuccess { loadSkus() }
-                    .onFailure { _events.emit(UiEvent.ShowError(it.message ?: "Failed to delete SKU")) }
+                    .onFailure { _events.emit(UiEvent.ShowError(it.message ?: "Failed to delete")) }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -57,15 +56,15 @@ class SkuListViewModel(private val getSkuUseCase: GetSkuUseCase, private val del
             }
         }
     }
-
-    fun onSkuClick(skuId: String) {
-        // Navigate to edit handled by screen
-    }
 }
 
-/**
- * UI State for SKU List screen
- */
+data class MonthGroup(
+    val label: String,   // e.g. "May 2026"
+    val monthSum: Double,
+    val currency: String,
+    val items: List<SkuModel>
+)
+
 data class SkuListUiState(
     val skus: List<SkuModel> = emptyList(),
     val searchQuery: String = "",
@@ -80,4 +79,30 @@ data class SkuListUiState(
                     it.skuComment.contains(searchQuery, ignoreCase = true)
             }
         }
+
+    val groupedByMonth: List<MonthGroup>
+        get() {
+            val monthNames = listOf(
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            )
+            return filteredSkus
+                .groupBy { sku ->
+                    val d = sku.skuLocalData
+                    "${d.month.ordinal + 1}-${d.year}"   // "5-2026"
+                }
+                .entries
+                .sortedByDescending { (key, _) ->
+                    val (month, year) = key.split("-").map { it.toInt() }
+                    year * 100 + month
+                }
+                .map { (key, items) ->
+                    val (month, year) = key.split("-").map { it.toInt() }
+                    val label = "${monthNames[month - 1]} $year"
+                    val sum = items.sumOf { it.skuPrice.toDoubleOrNull() ?: 0.0 }
+                    val currency = items.firstOrNull()?.skuCurrencyCode ?: ""
+                    MonthGroup(label = label, monthSum = sum, currency = currency, items = items)
+                }
+        }
 }
+

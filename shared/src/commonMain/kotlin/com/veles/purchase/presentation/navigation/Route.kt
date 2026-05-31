@@ -78,10 +78,18 @@ sealed class Route : NavKey {
         data object List : Sku()
 
         @Serializable
-        data class Edit(val skuId: String? = null) : Sku()
+        data class Edit(
+            val skuId: String? = null,
+            val prefillName: String? = null,
+            val prefillPrice: String? = null,
+            val prefillCategory: String? = null
+        ) : Sku()
 
         @Serializable
         data object Statistics : Sku()
+
+        @Serializable
+        data object Scanner : Sku()
     }
 
     /**

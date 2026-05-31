@@ -18,6 +18,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.veles.purchase.domain.utill.formatAmount
 import com.veles.purchase.presentation.compose.login.LoginScreen
 import com.veles.purchase.presentation.compose.main.MainScreen
 import com.veles.purchase.presentation.compose.purchase.category.CategoryScreen
@@ -33,6 +34,7 @@ import com.veles.purchase.presentation.compose.scanner.PriceScannerScreen
 import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchaseScreen
 import com.veles.purchase.presentation.compose.sku.edit.SkuEditScreen
 import com.veles.purchase.presentation.compose.sku.list.SkuListScreen
+import com.veles.purchase.presentation.compose.sku.scanner.ReceiptScannerScreen
 import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -59,6 +61,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(Route.Sku.List::class)
             subclass(Route.Sku.Edit::class)
             subclass(Route.Sku.Statistics::class)
+            subclass(Route.Sku.Scanner::class)
             subclass(Route.Settings.Main::class)
             subclass(Route.Settings.Purchase::class)
             subclass(Route.Settings.Appearance::class)
@@ -326,18 +329,45 @@ private fun EntryProviderScope<NavKey>.skuDestinations(navigator: Navigator) {
             onNavigateBack = { navigator.goBack() },
             onNavigateToStatistics = {
                 navigator.navigate(Route.Sku.Statistics)
+            },
+            onNavigateToReceiptScanner = {
+                navigator.navigate(Route.Sku.Scanner)
             }
         )
     }
     entry<Route.Sku.Edit> { route ->
         SkuEditScreen(
-            skuId = route.skuId ?: "",
+            skuId = route.skuId,
+            prefillName = route.prefillName,
+            prefillPrice = route.prefillPrice,
+            prefillCategory = route.prefillCategory,
             onNavigateBack = { navigator.goBack() }
         )
     }
     entry<Route.Sku.Statistics> {
         com.veles.purchase.presentation.compose.sku.statistics.SkuStatisticsScreen(
             onNavigateBack = { navigator.goBack() }
+        )
+    }
+    entry<Route.Sku.Scanner> {
+        ReceiptScannerScreen(
+            onNavigateBack = { navigator.goBack() },
+            onConfirmTotal = { amount, currency ->
+                navigator.replace(
+                    Route.Sku.Edit(prefillPrice = amount, prefillCategory = null)
+                )
+            },
+            onConfirmItems = { items, currency ->
+                // Navigate to edit with first item prefilled; others will need separate adds
+                val first = items.firstOrNull()
+                navigator.replace(
+                    Route.Sku.Edit(
+                        prefillName = first?.name,
+                        prefillPrice = first?.price?.let { it.formatAmount() },
+                        prefillCategory = null
+                    )
+                )
+            }
         )
     }
 }

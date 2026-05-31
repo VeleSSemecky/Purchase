@@ -14,7 +14,7 @@ import com.veles.purchase.data.room.table.SkuPhotoEntity
 import com.veles.purchase.data.room.util.HistoryTypeConverter
 import com.veles.purchase.data.room.util.LocalDateTimeConverter
 
-const val LAST_VERSION = 3
+const val LAST_VERSION = 4
 
 @Database(
     entities = [

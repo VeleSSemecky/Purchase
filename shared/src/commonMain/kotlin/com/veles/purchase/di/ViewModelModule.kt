@@ -11,8 +11,11 @@ import com.veles.purchase.presentation.mvvm.purchase.later.ListLaterPurchaseView
 import com.veles.purchase.presentation.mvvm.purchase.list.ListPurchaseViewModel
 import com.veles.purchase.presentation.mvvm.purchase.setting.SettingPurchaseComposeViewModel
 import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditViewModel
+import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditParams
 import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
 import com.veles.purchase.presentation.mvvm.sku.statistics.OutlayGraphViewModel
+import com.veles.purchase.presentation.mvvm.sku.scanner.ReceiptScannerViewModel
+import com.veles.purchase.domain.usecase.scanner.ParseReceiptUseCase
 import com.veles.purchase.presentation.mvvm.scanner.PriceScannerViewModel
 import com.veles.purchase.presentation.viewmodel.login.LoginViewModel
 import com.veles.purchase.presentation.viewmodel.main.MainViewModel
@@ -144,10 +147,14 @@ val viewModelModule = module {
 
     // SkuEditViewModel
     viewModel { parameters ->
+        val p = parameters.get<SkuEditParams>()
         SkuEditViewModel(
-            skuId = parameters.getOrNull(),
+            skuId = p.skuId,
             getSkuUseCase = get(),
-            setSkuUseCase = get()
+            setSkuUseCase = get(),
+            prefillName = p.prefillName,
+            prefillPrice = p.prefillPrice,
+            prefillCategory = p.prefillCategory
         )
     }
 
@@ -166,4 +173,15 @@ val viewModelModule = module {
             pendingPhotoStore = get()
         )
     }
+
+    // ReceiptScannerViewModel
+    viewModel {
+        ReceiptScannerViewModel(
+            textRecognizer = get(),
+            parseReceiptUseCase = get()
+        )
+    }
+
+    // ParseReceiptUseCase
+    factory { ParseReceiptUseCase() }
 }
