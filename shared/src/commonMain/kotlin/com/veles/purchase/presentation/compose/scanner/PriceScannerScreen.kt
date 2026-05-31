@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.scanner.ScannedProduct
 import com.veles.purchase.platform.media.rememberCameraLauncher
+import com.veles.purchase.platform.media.rememberMediaPickerLauncher
 import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.scanner.PriceScannerViewModel
 import com.veles.purchase.presentation.mvvm.scanner.ScannerState
@@ -61,6 +64,10 @@ fun PriceScannerScreen(
     val currentOnScanConfirmed by rememberUpdatedState(onScanConfirmed)
 
     val launchCamera = rememberCameraLauncher { bytes ->
+        viewModel.onImageCaptured(bytes)
+    }
+
+    val launchGallery = rememberMediaPickerLauncher { bytes ->
         viewModel.onImageCaptured(bytes)
     }
 
@@ -93,7 +100,10 @@ fun PriceScannerScreen(
 
             AnimatedContent(targetState = state, label = "scanner_state") { currentState ->
                 when (currentState) {
-                    is ScannerState.Idle -> IdleContent(onCaptureClick = launchCamera)
+                    is ScannerState.Idle -> IdleContent(
+                        onCaptureClick = launchCamera,
+                        onGalleryClick = launchGallery
+                    )
                     is ScannerState.Processing -> ProcessingContent()
                     is ScannerState.Result -> ResultContent(
                         product = currentState.product,
@@ -135,7 +145,7 @@ fun PriceScannerScreen(
 }
 
 @Composable
-private fun IdleContent(onCaptureClick: () -> Unit) {
+private fun IdleContent(onCaptureClick: () -> Unit, onGalleryClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -158,7 +168,7 @@ private fun IdleContent(onCaptureClick: () -> Unit) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Take a photo of the price label.\nThe name and price will be filled in automatically.",
+            text = "Take a photo or choose from gallery.\nThe name and price will be filled in automatically.",
             color = Color.White.copy(alpha = 0.6f),
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
@@ -175,7 +185,30 @@ private fun IdleContent(onCaptureClick: () -> Unit) {
                 .fillMaxWidth()
                 .height(56.dp)
         ) {
+            Icon(
+                imageVector = Icons.Default.CameraAlt,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text("Take Photo", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        OutlinedButton(
+            onClick = onGalleryClick,
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.PhotoLibrary,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Choose from Gallery", fontSize = 16.sp, color = Color.White)
         }
     }
 }
