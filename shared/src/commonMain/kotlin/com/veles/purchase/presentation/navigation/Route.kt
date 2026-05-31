@@ -59,6 +59,7 @@ sealed class Route : NavKey {
         @Serializable
         data class PhotoViewer(val photoUri: String) : Purchase()
 
+        @Serializable
         data class Scanner(val collectionId: String) : Purchase()
 
         @Serializable
