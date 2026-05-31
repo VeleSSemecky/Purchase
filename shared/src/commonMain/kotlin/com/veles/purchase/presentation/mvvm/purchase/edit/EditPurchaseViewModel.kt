@@ -7,6 +7,7 @@ import com.veles.purchase.domain.model.purchase.PhotoStatus
 import com.veles.purchase.domain.model.purchase.PurchaseCategoryModel
 import com.veles.purchase.domain.model.purchase.PurchaseModel
 import com.veles.purchase.domain.model.purchase.PurchasePhotoModel
+import com.veles.purchase.domain.model.scanner.PendingPhotoStore
 import com.veles.purchase.domain.repository.storage.DeletePurchasePhotoRepository
 import com.veles.purchase.domain.usecase.collection.GetCollectionPurchaseUseCase
 import com.veles.purchase.domain.usecase.purchase.GetPurchaseUseCase
@@ -43,7 +44,8 @@ class EditPurchaseViewModel(
     private val savePurchaseUseCase: SavePurchaseUseCase,
     private val getCollectionPurchaseUseCase: GetCollectionPurchaseUseCase,
     private val uploadPurchasePhotosUseCase: UploadPurchasePhotosUseCase,
-    private val deletePurchasePhotoRepository: DeletePurchasePhotoRepository
+    private val deletePurchasePhotoRepository: DeletePurchasePhotoRepository,
+    private val pendingPhotoStore: PendingPhotoStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PurchaseEditUiState(isNewPurchase = purchaseId.isEmpty()))
@@ -55,6 +57,8 @@ class EditPurchaseViewModel(
     init {
         loadPurchase()
         loadCategories()
+        // If opened from scanner, attach the captured photo automatically
+        pendingPhotoStore.consume()?.let { bytes -> onPhotoAdded(bytes) }
     }
 
     @OptIn(ExperimentalUuidApi::class)

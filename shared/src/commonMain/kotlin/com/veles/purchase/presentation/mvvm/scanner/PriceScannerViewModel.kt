@@ -2,6 +2,7 @@ package com.veles.purchase.presentation.mvvm.scanner
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.veles.purchase.domain.model.scanner.PendingPhotoStore
 import com.veles.purchase.domain.model.scanner.ScannedProduct
 import com.veles.purchase.domain.usecase.scanner.ParsePriceTagUseCase
 import com.veles.purchase.platform.scanner.TextRecognizer
@@ -24,7 +25,8 @@ sealed class ScannerState {
 
 class PriceScannerViewModel(
     private val textRecognizer: TextRecognizer,
-    private val parsePriceTagUseCase: ParsePriceTagUseCase
+    private val parsePriceTagUseCase: ParsePriceTagUseCase,
+    private val pendingPhotoStore: PendingPhotoStore
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ScannerState>(ScannerState.Idle)
@@ -34,6 +36,7 @@ class PriceScannerViewModel(
     val events: SharedFlow<UiEvent> = _events.asSharedFlow()
 
     fun onImageCaptured(bytes: ByteArray) {
+        pendingPhotoStore.pendingBytes = bytes   // store for Edit screen to pick up
         viewModelScope.launch {
             _state.value = ScannerState.Processing
             try {

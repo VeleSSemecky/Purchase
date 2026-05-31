@@ -1,5 +1,6 @@
 package com.veles.purchase.di
 
+import com.veles.purchase.domain.model.scanner.PendingPhotoStore
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionMembersViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseComposeViewModel
@@ -23,6 +24,9 @@ import org.koin.dsl.module
  * Phase 6: ViewModels migrated to UseCases (Clean Architecture)
  */
 val viewModelModule = module {
+
+    // Shared store for scanner → edit photo handoff
+    single { PendingPhotoStore() }
 
     // Login ViewModel
     viewModel {
@@ -104,7 +108,8 @@ val viewModelModule = module {
             savePurchaseUseCase = get(),
             getCollectionPurchaseUseCase = get(),
             uploadPurchasePhotosUseCase = get(),
-            deletePurchasePhotoRepository = get()
+            deletePurchasePhotoRepository = get(),
+            pendingPhotoStore = get()
         )
     }
 
@@ -157,7 +162,8 @@ val viewModelModule = module {
     viewModel {
         PriceScannerViewModel(
             textRecognizer = get(),
-            parsePriceTagUseCase = get()
+            parsePriceTagUseCase = get(),
+            pendingPhotoStore = get()
         )
     }
 }
