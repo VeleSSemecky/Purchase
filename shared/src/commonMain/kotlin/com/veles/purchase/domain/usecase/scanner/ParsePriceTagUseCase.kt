@@ -14,6 +14,7 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         // Try entity extraction first (ML Kit on Android, regex on iOS)
         try {
             val entities = entityExtractor.extractMoneyEntities(fullText)
+                .filter { !isDateAnnotation(it) }   // skip date-like spans (e.g. "30.05.2026")
             if (entities.isNotEmpty()) {
                 val (amount, currency) = selectTotalPrice(fullText, entities)
                 return ScannedProduct(name = name, price = amount, currency = currency)
@@ -27,6 +28,11 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         // Regex backup (extra safety net)
         return regexFallback(lines, name)
     }
+
+    // Dates in European format look like money to ML Kit: dd.mm.yyyy or dd-mm-yyyy
+    private val datePattern = Regex("""\d{1,2}[.\-/]\d{2}[.\-/]\d{2,4}""")
+    private fun isDateAnnotation(annotation: MoneyAnnotation): Boolean =
+        datePattern.containsMatchIn(annotation.text)
 
     /**
      * Picks the "Cena:" price over unit prices ("Cena/kg:").
@@ -69,11 +75,10 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
     }
 
     private fun formatEntity(entity: MoneyAnnotation): Pair<String, String> {
-        val formatted = if (entity.amount == entity.amount.toLong().toDouble()) {
-            entity.amount.toLong().toString()
-        } else {
-            "%.2f".format(entity.amount)
-        }
+        // Build locale-independent price string (avoid JVM locale comma separator)
+        val intPart = entity.amount.toLong()
+        val fracPart = kotlin.math.round((entity.amount - intPart) * 100).toLong()
+        val formatted = if (fracPart == 0L) "$intPart" else "$intPart.${"%02d".format(fracPart)}"
         return Pair(formatted, normalizeCurrency(entity.currency))
     }
 
@@ -86,8 +91,8 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         raw.contains("USD", ignoreCase = true) || raw.contains("$") -> "USD"
         raw.contains("EUR", ignoreCase = true) || raw.contains("€") -> "EUR"
         raw.contains("CZK", ignoreCase = true) || raw.contains("Kč", ignoreCase = true) -> "CZK"
-        raw.isNotEmpty() -> raw  // keep unknown as-is
-        else -> ""
+        raw.matches("[A-Z]{2,4}".toRegex()) -> raw  // only valid currency codes
+        else -> ""  // don't return garbage (dates, full lines, etc.)
     }
 
     // ── Name extraction ──────────────────────────────────────────────────────
@@ -102,12 +107,12 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
             if (isAllCapsName(t)) currentGroup.add(t)
             else {
                 if (currentGroup.isNotEmpty()) {
-                    candidates.add(currentGroup.joinToString(" "))
+                    candidates.add(trimBrandPrefix(currentGroup))
                     currentGroup.clear()
                 }
             }
         }
-        if (currentGroup.isNotEmpty()) candidates.add(currentGroup.joinToString(" "))
+        if (currentGroup.isNotEmpty()) candidates.add(trimBrandPrefix(currentGroup))
 
         val name = candidates.maxByOrNull { it.length } ?: ""
         if (name.isNotEmpty()) return name
@@ -120,6 +125,20 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         } ?: ""
     }
 
+    /**
+     * When a group has 3+ consecutive ALL-CAPS lines and the first is a single word
+     * (likely a brand name like "MORLINY"), drop it so the product name stays clean.
+     * E.g. ["MORLINY", "MORLIŃSKI", "BOCZEK WĘDZONY"] → "MORLIŃSKI BOCZEK WĘDZONY"
+     */
+    private fun trimBrandPrefix(group: List<String>): String {
+        val trimmed = if (group.size >= 3 && group.first().trim().split("\\s+".toRegex()).size == 1) {
+            group.drop(1)
+        } else {
+            group
+        }
+        return trimmed.joinToString(" ")
+    }
+
     private fun isAllCapsName(line: String): Boolean {
         if (line.length < 3) return false
         val letters = line.filter { it.isLetter() }
@@ -129,12 +148,11 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         return letters.all { it.isUpperCase() }
     }
 
-    // ── Regex backup ─────────────────────────────────────────────────────────
-
     private fun regexFallback(lines: List<String>, name: String): ScannedProduct {
         val priceRegex = """\d+[.,]\d{2}(?!\d)""".toRegex()
         val unitPricePattern = Regex("""(/kg|per kg|/кг|na kg|cena/kg)""", RegexOption.IGNORE_CASE)
         val weightLine = Regex("""\d+[.,]\d+\s*(kg|g|dkg|ml|l)\b""", RegexOption.IGNORE_CASE)
+        val currencyPattern = Regex("""(zł|PLN|USD|\$|EUR|€|грн|UAH|CZK|Kč)""", RegexOption.IGNORE_CASE)
 
         var price = ""
         var currency = ""
@@ -146,8 +164,12 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
             val match = priceRegex.find(t) ?: continue
             val value = match.value.replace(",", ".").toDoubleOrNull() ?: continue
             if (value < 0.5) continue
-            price = "%.2f".format(value)
-            currency = normalizeCurrency(t)
+            price = run {
+                val intPart = value.toLong()
+                val fracPart = kotlin.math.round((value - intPart) * 100).toLong()
+                "$intPart.${"%02d".format(fracPart)}"
+            }
+            currency = normalizeCurrency(currencyPattern.find(t)?.value ?: "")
             break
         }
 
