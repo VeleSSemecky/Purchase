@@ -14,7 +14,7 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
         // Try entity extraction first (ML Kit on Android, regex on iOS)
         try {
             val entities = entityExtractor.extractMoneyEntities(fullText)
-                .filter { !isDateAnnotation(it) }   // skip date-like spans (e.g. "30.05.2026")
+                .filter { !isDateAnnotation(it, fullText) }   // skip date-like spans (e.g. "30.05" from "30.05.2026")
             if (entities.isNotEmpty()) {
                 val (amount, currency) = selectTotalPrice(fullText, entities)
                 return ScannedProduct(name = name, price = amount, currency = currency)
@@ -30,9 +30,21 @@ class ParsePriceTagUseCase(private val entityExtractor: PriceEntityExtractor) {
     }
 
     // Dates in European format look like money to ML Kit: dd.mm.yyyy or dd-mm-yyyy
+    // ML Kit often annotates only "30.05" from "30.05.2026", so we also check context after the span.
     private val datePattern = Regex("""\d{1,2}[.\-/]\d{2}[.\-/]\d{2,4}""")
-    private fun isDateAnnotation(annotation: MoneyAnnotation): Boolean =
-        datePattern.containsMatchIn(annotation.text)
+    private val dayMonthPattern = Regex("""^\d{1,2}[.\-/]\d{2}$""")
+
+    private fun isDateAnnotation(annotation: MoneyAnnotation, fullText: String): Boolean {
+        // Full date inside the annotation text (e.g. "30.05.2026")
+        if (datePattern.containsMatchIn(annotation.text)) return true
+        // ML Kit extracts only "30.05" but context shows ".2026" right after → it's a date
+        if (dayMonthPattern.matches(annotation.text.trim())) {
+            val afterEnd = minOf(annotation.end + 6, fullText.length)
+            val tail = fullText.substring(annotation.end, afterEnd)
+            if (tail.matches("""[.\-/]\d{2,4}.*""".toRegex())) return true
+        }
+        return false
+    }
 
     /**
      * Picks the "Cena:" price over unit prices ("Cena/kg:").
