@@ -5,12 +5,14 @@ import com.veles.purchase.platform.extractor.AndroidPriceEntityExtractor
 import com.veles.purchase.platform.extractor.PriceEntityExtractor
 import com.veles.purchase.platform.scanner.AndroidTextRecognizer
 import com.veles.purchase.platform.scanner.TextRecognizer
-import com.veles.purchase.platform.ai.AndroidGemmaModelRepository
-import com.veles.purchase.platform.ai.AndroidReceiptAiParser
-import com.veles.purchase.platform.ai.GemmaModelRepository
+import com.veles.purchase.platform.ai.AndroidGeminiNanoParser
+import com.veles.purchase.platform.ai.LocalMediaPipeVisionParser
+import com.veles.purchase.platform.ai.LocalModelDownloader
+import com.veles.purchase.platform.ai.LocalModelManager
 import com.veles.purchase.platform.ai.ReceiptAiParser
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 actual val platformModule: Module = module {
@@ -19,21 +21,26 @@ actual val platformModule: Module = module {
         GoogleSignInHelper(activity, serverClientId)
     }
 
-    // Text Recognizer (OCR) — Android: ML Kit
     single<TextRecognizer> { AndroidTextRecognizer() }
 
-    // Price Entity Extractor — Android: ML Kit Entity Extraction (on-device Polish model)
     single<PriceEntityExtractor> { AndroidPriceEntityExtractor() }
 
-    // Gemma 3 model repository — handles download + status
-    single<GemmaModelRepository> { AndroidGemmaModelRepository(androidContext()) }
-
-    // On-device AI receipt parser — Android: Gemma 3 via MediaPipe (if downloaded)
-    single<ReceiptAiParser> {
-        AndroidReceiptAiParser(
+    single<LocalModelManager> {
+        LocalModelManager(
             context = androidContext(),
-            modelRepo = get<GemmaModelRepository>() as AndroidGemmaModelRepository,
-            fallback = get()
+            kaggleApiKey = com.veles.purchase.config.EnvironmentConfig.KAGGLE_API_KEY
+        )
+    }
+    single<LocalModelDownloader> { get<LocalModelManager>() }
+
+    single<ReceiptAiParser>(qualifier = named("nano")) {
+        AndroidGeminiNanoParser(androidContext())
+    }
+
+    single<ReceiptAiParser>(qualifier = named("local")) {
+        LocalMediaPipeVisionParser(
+            context = androidContext(),
+            modelFile = get<LocalModelManager>().modelFile
         )
     }
 }

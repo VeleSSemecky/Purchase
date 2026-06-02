@@ -35,7 +35,6 @@ import com.veles.purchase.presentation.compose.purchase.setting.SettingsPurchase
 import com.veles.purchase.presentation.compose.sku.edit.SkuEditScreen
 import com.veles.purchase.presentation.compose.sku.list.SkuListScreen
 import com.veles.purchase.presentation.compose.sku.scanner.ReceiptScannerScreen
-import com.veles.purchase.presentation.compose.sku.scanner.GemmaSetupScreen
 import com.veles.purchase.presentation.mvvm.purchase.collection.EditCollectionComposeViewModel
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -63,7 +62,6 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(Route.Sku.Edit::class)
             subclass(Route.Sku.Statistics::class)
             subclass(Route.Sku.Scanner::class)
-            subclass(Route.Sku.GemmaSetup::class)
             subclass(Route.Settings.Main::class)
             subclass(Route.Settings.Purchase::class)
             subclass(Route.Settings.Appearance::class)
@@ -334,9 +332,6 @@ private fun EntryProviderScope<NavKey>.skuDestinations(navigator: Navigator) {
             },
             onNavigateToReceiptScanner = {
                 navigator.navigate(Route.Sku.Scanner)
-            },
-            onNavigateToAiSetup = {
-                navigator.navigate(Route.Sku.GemmaSetup)
             }
         )
     }
@@ -372,11 +367,6 @@ private fun EntryProviderScope<NavKey>.skuDestinations(navigator: Navigator) {
                     )
                 )
             }
-        )
-    }
-    entry<Route.Sku.GemmaSetup> {
-        GemmaSetupScreen(
-            onNavigateBack = { navigator.goBack() }
         )
     }
 }

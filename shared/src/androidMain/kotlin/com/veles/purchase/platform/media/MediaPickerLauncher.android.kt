@@ -16,7 +16,7 @@ actual fun rememberMediaPickerLauncher(onResult: (ByteArray) -> Unit): () -> Uni
     ) { uris: List<Uri> ->
         uris.forEach { uri ->
             context.contentResolver.openInputStream(uri)?.use { stream ->
-                onResult(stream.readBytes())
+                onResult(compressImageBytes(stream.readBytes()))
             }
         }
     }

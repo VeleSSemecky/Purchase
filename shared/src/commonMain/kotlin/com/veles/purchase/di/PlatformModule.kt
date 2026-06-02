@@ -1,9 +1,13 @@
 package com.veles.purchase.di
 
 import com.veles.purchase.data.firebase.firebaseModule
+import com.veles.purchase.data.network.createHttpClient
 import com.veles.purchase.data.repository.repositoryModule
+import com.veles.purchase.platform.ai.GroqReceiptParser
+import com.veles.purchase.platform.ai.ReceiptAiParser
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.dsl.module
 
 /**
  * Platform-specific dependencies module
@@ -14,12 +18,23 @@ import org.koin.core.module.Module
 expect val platformModule: Module
 
 /**
+ * Common AI module for cloud-based parsers
+ */
+val commonAiModule = module {
+    single { createHttpClient() }
+    single<ReceiptAiParser>(qualifier = org.koin.core.qualifier.named("groq")) {
+        GroqReceiptParser(get())
+    }
+}
+
+/**
  * All Koin modules for the application
  * Phase 6 Complete - using real Firebase + Room implementations + UseCases
  */
 val appModules = listOf(
     mockDataModule, // Empty now, kept for backward compatibility
     platformModule,
+    commonAiModule, // Groq Cloud parser
     firebaseModule, // Phase 5.5: Firebase KMP services
     databaseModule, // Phase 6: Room database and DAOs
     repositoryModule, // Phase 6: All repositories (Firebase + Room)

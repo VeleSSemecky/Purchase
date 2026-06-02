@@ -31,6 +31,9 @@ android {
         buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${project.findProperty("CLOUDINARY_CLOUD_NAME") ?: ""}\"")
         buildConfigField("String", "CLOUDINARY_API_KEY", "\"${project.findProperty("CLOUDINARY_API_KEY") ?: ""}\"")
         buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${project.findProperty("CLOUDINARY_API_SECRET") ?: ""}\"")
+        buildConfigField("String", "GROQ_API_KEY", "\"${project.findProperty("GROQ_API_KEY") ?: ""}\"")
+        buildConfigField("String", "KAGGLE_USERNAME", "\"${project.findProperty("KAGGLE_USERNAME") ?: ""}\"")
+        buildConfigField("String", "KAGGLE_API_KEY", "\"${project.findProperty("KAGGLE_API_KEY") ?: ""}\"")
     }
 
     buildTypes {

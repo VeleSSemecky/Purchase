@@ -1,5 +1,8 @@
 package com.veles.purchase.platform.scanner
 
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSData
 import platform.Foundation.create
@@ -7,6 +10,7 @@ import platform.UIKit.UIImage
 import platform.Vision.VNImageRequestHandler
 import platform.Vision.VNRecognizeTextRequest
 import platform.Vision.VNRecognizeTextRequestRevision3
+import platform.Vision.VNRecognizedText
 import platform.Vision.VNRecognizedTextObservation
 import platform.Vision.VNRequestTextRecognitionLevelAccurate
 import kotlin.coroutines.resume
@@ -14,6 +18,7 @@ import kotlin.coroutines.resumeWithException
 
 class IosTextRecognizer : TextRecognizer {
 
+    @OptIn(ExperimentalForeignApi::class)
     override suspend fun recognizeText(imageBytes: ByteArray): List<String> =
         suspendCancellableCoroutine { continuation ->
             val nsData = imageBytes.usePinned { pinned ->
@@ -34,7 +39,7 @@ class IosTextRecognizer : TextRecognizer {
                 val lines = request?.results
                     ?.filterIsInstance<VNRecognizedTextObservation>()
                     ?.mapNotNull { observation ->
-                        observation.topCandidates(1u).firstOrNull()?.string
+                        (observation.topCandidates(1u).firstOrNull() as? VNRecognizedText)?.string
                     }
                     ?: emptyList()
                 continuation.resume(lines)

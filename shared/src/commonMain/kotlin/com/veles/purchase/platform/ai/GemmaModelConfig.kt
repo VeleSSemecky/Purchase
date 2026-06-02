@@ -1,25 +1,33 @@
 package com.veles.purchase.platform.ai
 
+import com.veles.purchase.config.EnvironmentConfig
+
 /**
- * Configuration for the on-device Gemma 3 1B model.
+ * Configuration for the on-device Gemma 3n E4B vision model.
  *
- * Model: google/gemma-3 TfLite gemma3-1b-it-int4 (~1.05 GB)
- * Source: https://www.kaggle.com/models/google/gemma-3/TfLite/gemma3-1b-it-int4
+ * Model: google/gemma-3n tfLite gemma-3n-e4b-it-int4 (~3.5 GB)
+ * Source: https://www.kaggle.com/models/google/gemma-3n/tfLite/gemma-3n-e4b-it-int4
+ * Vision-capable — accepts images directly, no OCR pre-processing needed.
  * Requires Kaggle account + accepting Gemma licence on the model page.
- * Auth token: KAGGLE_API_TOKEN (KGAT_...)
+ *
+ * Set KAGGLE_API_KEY=<your_token> in local.properties to enable download.
  */
 object GemmaModelConfig {
-    const val MODEL_FILENAME = "gemma3-1b-it-int4.task"
-    const val MODEL_SIZE_BYTES = 1_104_632_971L // ~1.05 GB (Kaggle uncompressed)
+    const val MODEL_FILENAME = "gemma-3n-e4b-it-int4.task"
+    const val MODEL_SIZE_BYTES = 3_500_000_000L // ~3.5 GB
 
     const val KAGGLE_DOWNLOAD_URL =
-        "https://www.kaggle.com/api/v1/models/google/gemma-3/TfLite/gemma3-1b-it-int4/1/download"
+        "https://www.kaggle.com/api/v1/models/google/gemma-3n/tfLite/gemma-3n-e4b-it-int4/1/download"
 
-    // Kaggle API token — personal app, token pre-bundled for convenience
-    const val KAGGLE_TOKEN = "KGAT_99e3d1f65f87279bf0c81b7c2fece8fb"
+    /** Kaggle credentials from local.properties — never hardcoded in source. */
+    val kaggleUsername: String get() = EnvironmentConfig.KAGGLE_USERNAME
+    val kaggleApiKey: String get() = EnvironmentConfig.KAGGLE_API_KEY
 
-    const val TEMPERATURE = 0.2f
-    const val MAX_TOKENS = 512
+    const val TEMPERATURE = 0.4f
+    const val TOP_K = 40
+    // Vision model output is JSON ~300 tokens; allow headroom for longer receipts
+    const val MAX_TOKENS = 1024
+    const val MAX_IMAGES = 1
 }
 
 sealed class GemmaDownloadState {

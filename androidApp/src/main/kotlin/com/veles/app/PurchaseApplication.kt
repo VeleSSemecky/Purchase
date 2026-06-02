@@ -30,7 +30,10 @@ class PurchaseApplication : Application() {
             serverClientId = BuildConfig.SERVER_CLIENT_ID,
             cloudinaryCloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
             cloudinaryApiKey = BuildConfig.CLOUDINARY_API_KEY,
-            cloudinaryApiSecret = BuildConfig.CLOUDINARY_API_SECRET
+            cloudinaryApiSecret = BuildConfig.CLOUDINARY_API_SECRET,
+            groqApiKey = BuildConfig.GROQ_API_KEY,
+            kaggleUsername = BuildConfig.KAGGLE_USERNAME,
+            kaggleApiKey = BuildConfig.KAGGLE_API_KEY
         )
 
         FirebaseInitializer().apply {

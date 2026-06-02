@@ -8,5 +8,6 @@ data class PurchaseSetting(
     val bottomEnd: Float = 0f,
     val bottomStart: Float = 0f,
     val isImage: Boolean = true,
-    val isSymmetry: Boolean = true
+    val isSymmetry: Boolean = true,
+    val aiEngineStrategy: AiEngineStrategy = AiEngineStrategy.AUTO
 )

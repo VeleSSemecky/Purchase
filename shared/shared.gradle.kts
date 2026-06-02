@@ -152,8 +152,9 @@ kotlin {
                 implementation(libs.mlkit.entity.extraction)
                 // ML Kit Gemini Nano Prompt API (on-device AI for receipt parsing)
                 implementation(libs.mlkit.genai.prompt)
-                // MediaPipe LLM Inference API (Gemma 3 on-device via LiteRT)
+                // MediaPipe LLM Inference API (Gemma 3n vision model via LiteRT)
                 implementation(libs.mediapipe.tasks.genai)
+                implementation(libs.mediapipe.tasks.vision)
             }
         }
 

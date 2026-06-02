@@ -15,10 +15,7 @@ import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditParams
 import com.veles.purchase.presentation.mvvm.sku.list.SkuListViewModel
 import com.veles.purchase.presentation.mvvm.sku.statistics.OutlayGraphViewModel
 import com.veles.purchase.presentation.mvvm.sku.scanner.ReceiptScannerViewModel
-import com.veles.purchase.presentation.mvvm.sku.scanner.GemmaSetupViewModel
 import com.veles.purchase.domain.usecase.scanner.ParseReceiptUseCase
-import com.veles.purchase.platform.ai.ReceiptAiParser
-import com.veles.purchase.platform.ai.GemmaModelRepository
 import com.veles.purchase.presentation.mvvm.scanner.PriceScannerViewModel
 import com.veles.purchase.presentation.viewmodel.login.LoginViewModel
 import com.veles.purchase.presentation.viewmodel.main.MainViewModel
@@ -180,15 +177,8 @@ val viewModelModule = module {
     // ReceiptScannerViewModel
     viewModel {
         ReceiptScannerViewModel(
-            textRecognizer = get(),
-            parseReceiptUseCase = get(),
-            receiptAiParser = get()
+            settingRepository = get()
         )
-    }
-
-    // GemmaSetupViewModel — manages Gemma 3 model download
-    viewModel {
-        GemmaSetupViewModel(modelRepo = get())
     }
 
     // ParseReceiptUseCase

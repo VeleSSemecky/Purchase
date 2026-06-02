@@ -17,18 +17,31 @@ object EnvironmentConfig {
     var CLOUDINARY_API_KEY: String = ""
     var CLOUDINARY_API_SECRET: String = ""
 
+    // Groq Cloud API Key
+    var GROQ_API_KEY: String = ""
+
+    // Kaggle credentials for downloading on-device models (e.g. Gemma 3n E4B)
+    var KAGGLE_USERNAME: String = ""
+    var KAGGLE_API_KEY: String = ""
+
     fun initialize(
         dbKey: String,
         serverClientId: String,
         cloudinaryCloudName: String = "",
         cloudinaryApiKey: String = "",
-        cloudinaryApiSecret: String = ""
+        cloudinaryApiSecret: String = "",
+        groqApiKey: String = "",
+        kaggleUsername: String = "",
+        kaggleApiKey: String = ""
     ) {
         DB_KEY = dbKey
         SERVER_CLIENT_ID = serverClientId
         CLOUDINARY_CLOUD_NAME = cloudinaryCloudName
         CLOUDINARY_API_KEY = cloudinaryApiKey
         CLOUDINARY_API_SECRET = cloudinaryApiSecret
+        GROQ_API_KEY = groqApiKey
+        KAGGLE_USERNAME = kaggleUsername
+        KAGGLE_API_KEY = kaggleApiKey
     }
 
     // Firebase Collections

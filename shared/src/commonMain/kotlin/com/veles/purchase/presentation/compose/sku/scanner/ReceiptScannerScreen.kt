@@ -1,6 +1,7 @@
 package com.veles.purchase.presentation.compose.sku.scanner
 
 import com.veles.purchase.domain.utill.formatAmount
+import com.veles.purchase.domain.model.setting.AiEngineStrategy
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -50,6 +51,8 @@ fun ReceiptScannerScreen(
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
+    val currentOnConfirmTotal by rememberUpdatedState(onConfirmTotal)
+    val currentOnConfirmItems by rememberUpdatedState(onConfirmItems)
 
     val launchCamera = rememberCameraLauncher { bytes -> viewModel.onImageCaptured(bytes) }
     val launchGallery = rememberMediaPickerLauncher { bytes -> viewModel.onImageCaptured(bytes) }
@@ -73,7 +76,6 @@ fun ReceiptScannerScreen(
                 .padding(paddingValues)
                 .statusBarsPadding()
         ) {
-            // Top bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -96,7 +98,12 @@ fun ReceiptScannerScreen(
                 )
             }
 
-            AnimatedContent(targetState = state, label = "receipt_scanner_state") { currentState ->
+            // Key on state type only — selection changes won't re-trigger the animation
+            AnimatedContent(
+                targetState = state,
+                contentKey = { it::class },
+                label = "receipt_scanner_phase"
+            ) { currentState ->
                 when (currentState) {
                     is ReceiptScannerState.Idle -> {
                         IdleContent(
@@ -116,25 +123,44 @@ fun ReceiptScannerScreen(
                             }
                         }
                     }
+                    is ReceiptScannerState.AiUnavailable -> {
+                        EngineSelectionContent(
+                            onSelectEngine = viewModel::onSelectEngine,
+                            onDownloadLocal = viewModel::startLocalModelDownload
+                        )
+                    }
+                    is ReceiptScannerState.EngineSelectionRequired -> {
+                        EngineSelectionContent(
+                            onSelectEngine = viewModel::onSelectEngine,
+                            onDownloadLocal = viewModel::startLocalModelDownload
+                        )
+                    }
+                    is ReceiptScannerState.ModelDownloading -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator(progress = { currentState.progress }, color = Colors.gr)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text("Downloading local model...", color = Color.White)
+                            }
+                        }
+                    }
                     is ReceiptScannerState.Result -> {
+                        // Read selection separately — changes here do NOT affect AnimatedContent
+                        val selectedIndices by viewModel.selectedIndices.collectAsState()
                         ResultContent(
                             resultState = currentState,
+                            selectedIndices = selectedIndices,
                             onToggleItem = viewModel::onToggleItem,
                             onEditPrice = viewModel::onEditItemPrice,
                             onConfirmTotal = {
                                 val total = currentState.data.totalAmount
                                 if (total != null) {
-                                    onConfirmTotal(
-                                        total.formatAmount(),
-                                        currentState.data.currency
-                                    )
+                                    currentOnConfirmTotal(total.formatAmount(), currentState.data.currency)
                                 }
                             },
                             onConfirmSelected = {
-                                val selected = currentState.selectedItemIndices
-                                    .sorted()
-                                    .map { currentState.data.items[it] }
-                                onConfirmItems(selected, currentState.data.currency)
+                                val items = selectedIndices.sorted().map { currentState.data.items[it] }
+                                currentOnConfirmItems(items, currentState.data.currency)
                             },
                             onRetry = viewModel::onRetry
                         )
@@ -226,8 +252,53 @@ private fun IdleContent(
 }
 
 @Composable
+private fun EngineSelectionContent(
+    onSelectEngine: (AiEngineStrategy) -> Unit,
+    onDownloadLocal: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(32.dp)
+        ) {
+            Text(text = "🤖", fontSize = 56.sp)
+            Text(
+                text = "Choose AI Engine",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "On-device AI (Gemini Nano) is not available on this device. Choose a fallback:",
+                color = Color.Gray,
+                textAlign = TextAlign.Center
+            )
+            Button(
+                onClick = { onSelectEngine(AiEngineStrategy.GROQ_CLOUD) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Colors.gr)
+            ) {
+                Text("🌐  Groq Cloud (Fast, requires Internet)", color = Color.Black)
+            }
+            OutlinedButton(
+                onClick = onDownloadLocal,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Colors.gr)
+            ) {
+                Text("💾  Download offline model (~1 GB)")
+            }
+        }
+    }
+}
+
+@Composable
 private fun ResultContent(
     resultState: ReceiptScannerState.Result,
+    selectedIndices: Set<Int>,
     onToggleItem: (Int) -> Unit,
     onEditPrice: (Int, Double) -> Unit,
     onConfirmTotal: () -> Unit,
@@ -238,7 +309,6 @@ private fun ResultContent(
     var imageExpanded by remember { mutableStateOf(true) }
     var editingIndex by remember { mutableStateOf<Int?>(null) }
 
-    // Edit price dialog
     editingIndex?.let { index ->
         val item = data.items[index]
         EditPriceDialog(
@@ -257,9 +327,8 @@ private fun ResultContent(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
-        // Receipt image preview
         if (resultState.imageBytes.isNotEmpty()) {
-            item {
+            item(key = "receipt_image") {
                 ReceiptImagePreview(
                     imageBytes = resultState.imageBytes,
                     expanded = imageExpanded,
@@ -268,9 +337,8 @@ private fun ResultContent(
             }
         }
 
-        // Total row
         if (data.totalAmount != null) {
-            item {
+            item(key = "total_row") {
                 TotalRow(
                     total = data.totalAmount,
                     currency = data.currency,
@@ -280,7 +348,7 @@ private fun ResultContent(
         }
 
         if (data.items.isNotEmpty()) {
-            item {
+            item(key = "items_header") {
                 Text(
                     text = "Items found: ${data.items.size}",
                     color = Color.Gray,
@@ -288,18 +356,24 @@ private fun ResultContent(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
-            itemsIndexed(data.items) { index, item ->
+            itemsIndexed(
+                items = data.items,
+                key = { index, item -> "${index}_${item.name}" }
+            ) { index, item ->
+                val isSelected = index in selectedIndices
+                val onToggle = remember(index) { { onToggleItem(index) } }
+                val onEdit = remember(index) { { editingIndex = index } }
                 ReceiptItemRow(
                     item = item,
                     currency = data.currency,
-                    isSelected = index in resultState.selectedItemIndices,
-                    onToggle = { onToggleItem(index) },
-                    onEditPrice = { editingIndex = index }
+                    isSelected = isSelected,
+                    onToggle = onToggle,
+                    onEditPrice = onEdit
                 )
             }
-            item {
+            item(key = "confirm_button") {
                 Spacer(modifier = Modifier.height(8.dp))
-                val selectedCount = resultState.selectedItemIndices.size
+                val selectedCount = selectedIndices.size
                 Button(
                     onClick = onConfirmSelected,
                     modifier = Modifier
@@ -315,7 +389,7 @@ private fun ResultContent(
                 }
             }
         } else if (data.totalAmount == null) {
-            item {
+            item(key = "empty_state") {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -335,7 +409,7 @@ private fun ResultContent(
             }
         }
 
-        item {
+        item(key = "scan_again") {
             TextButton(
                 onClick = onRetry,
                 modifier = Modifier.padding(horizontal = 16.dp)
