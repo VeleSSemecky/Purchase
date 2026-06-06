@@ -54,8 +54,10 @@ fun ReceiptScannerScreen(
     val currentOnConfirmTotal by rememberUpdatedState(onConfirmTotal)
     val currentOnConfirmItems by rememberUpdatedState(onConfirmItems)
 
-    val launchCamera = rememberCameraLauncher { bytes -> viewModel.onImageCaptured(bytes) }
-    val launchGallery = rememberMediaPickerLauncher { bytes -> viewModel.onImageCaptured(bytes) }
+    var showEngineSelection by remember { mutableStateOf(false) }
+
+    val launchCamera = rememberCameraLauncher { bytes -> viewModel.onImageSelected(bytes) }
+    val launchGallery = rememberMediaPickerLauncher { bytes -> viewModel.onImageSelected(bytes) }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -63,6 +65,21 @@ fun ReceiptScannerScreen(
                 is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
                 is UiEvent.NavigateBack -> currentOnNavigateBack()
             }
+        }
+    }
+
+    if (showEngineSelection) {
+        ModalBottomSheet(onDismissRequest = { showEngineSelection = false }) {
+            EngineSelectionContent(
+                onSelectEngine = {
+                    viewModel.onSelectEngine(it)
+                    showEngineSelection = false
+                },
+                onDownloadLocal = {
+                    viewModel.startLocalModelDownload()
+                    showEngineSelection = false
+                }
+            )
         }
     }
 
@@ -96,6 +113,13 @@ fun ReceiptScannerScreen(
                     color = Color.White,
                     modifier = Modifier.weight(1f)
                 )
+                IconButton(onClick = { showEngineSelection = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Change Engine",
+                        tint = Color.White
+                    )
+                }
             }
 
             // Key on state type only — selection changes won't re-trigger the animation
@@ -273,7 +297,7 @@ private fun EngineSelectionContent(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "On-device AI (Gemini Nano) is not available on this device. Choose a fallback:",
+                text = "Choose how to parse the selected receipt image:",
                 color = Color.Gray,
                 textAlign = TextAlign.Center
             )
@@ -283,6 +307,13 @@ private fun EngineSelectionContent(
                 colors = ButtonDefaults.buttonColors(containerColor = Colors.gr)
             ) {
                 Text("🌐  Groq Cloud (Fast, requires Internet)", color = Color.Black)
+            }
+            Button(
+                onClick = { onSelectEngine(AiEngineStrategy.OCR_TEXT_LLM) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Colors.gr)
+            ) {
+                Text("📄  OCR + Text LLM (Offline)", color = Color.Black)
             }
             OutlinedButton(
                 onClick = onDownloadLocal,

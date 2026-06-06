@@ -249,7 +249,6 @@ work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServices" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServices" }
 mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version = "16.0.1" }
-mlkit-text-recognition-cyrillic = { group = "com.google.mlkit", name = "text-recognition-cyrillic", version = "16.0.1" }
 mlkit-entity-extraction = { group = "com.google.mlkit", name = "entity-extraction", version = "16.0.0-beta5" }
 mlkit-genai-prompt = { group = "com.google.mlkit", name = "genai-prompt", version = "1.0.0-beta1" }
 mediapipe-tasks-genai = { group = "com.google.mediapipe", name = "tasks-genai", version = "0.10.27" }

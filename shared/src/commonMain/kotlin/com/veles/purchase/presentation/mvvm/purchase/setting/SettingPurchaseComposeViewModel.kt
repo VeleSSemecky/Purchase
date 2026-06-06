@@ -2,6 +2,7 @@ package com.veles.purchase.presentation.mvvm.purchase.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.veles.purchase.domain.model.setting.AiEngineStrategy
 import com.veles.purchase.domain.model.setting.PurchaseSetting
 import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
@@ -79,6 +80,10 @@ class SettingPurchaseComposeViewModel(private val getSettingUseCase: GetSettingU
 
     fun onShapeTypeChanged(shapeType: ShapeType) = updateSettings { settings ->
         settings.copy(shapeType = shapeType)
+    }
+
+    fun onAiEngineStrategyChanged(strategy: AiEngineStrategy) = updateSettings { settings ->
+        settings.copy(aiEngineStrategy = strategy)
     }
 
     private fun updateSettings(

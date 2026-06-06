@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.purchase.PurchaseModel
+import com.veles.purchase.domain.model.setting.AiEngineStrategy
 import com.veles.purchase.domain.model.setting.PurchaseSetting
 import com.veles.purchase.domain.model.setting.ShapeType
 import com.veles.purchase.domain.model.setting.SizeType
@@ -125,6 +126,21 @@ fun SettingsPurchaseScreen(
 
                 // Show Image Checkbox
                 ShowImageCheckbox(settings, viewModel)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // AI Engine Strategy
+                Text(
+                    text = "AI Engine Strategy",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+                AiEngineStrategy.entries.forEach { strategy ->
+                    AiEngineStrategyRow(strategy, settings, viewModel)
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
             }
@@ -425,6 +441,38 @@ private fun SymmetryCheckbox(
         )
         Text(
             text = "Symmetry",
+            fontSize = 18.sp,
+            style = textStyle1()
+        )
+    }
+}
+
+@Composable
+private fun AiEngineStrategyRow(
+    strategy: AiEngineStrategy,
+    settings: PurchaseSetting,
+    viewModel: SettingPurchaseComposeViewModel
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .selectable(
+                selected = strategy == settings.aiEngineStrategy,
+                onClick = { viewModel.onAiEngineStrategyChanged(strategy) }
+            )
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = strategy == settings.aiEngineStrategy,
+            onClick = { viewModel.onAiEngineStrategyChanged(strategy) },
+            colors = RadioButtonDefaults.colors().copy(
+                selectedColor = Colors.gr,
+                unselectedColor = Colors.gr
+            )
+        )
+        Text(
+            text = strategy.name.replace("_", " "),
             fontSize = 18.sp,
             style = textStyle1()
         )

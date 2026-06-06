@@ -17,5 +17,8 @@ enum class AiEngineStrategy {
     GROQ_CLOUD,
 
     /** Always use Local Gemma (offline, OCR + text model, requires ~1 GB download). */
-    LOCAL_DOWNLOAD
+    LOCAL_DOWNLOAD,
+
+    /** Use Classic OCR + Y-sorting + Text LLM. Fast, low resource, offline. */
+    OCR_TEXT_LLM
 }

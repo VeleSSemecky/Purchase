@@ -37,6 +37,7 @@ class ReceiptScannerViewModel(
     private val geminiNanoParser: ReceiptAiParser by inject(qualifier = named("nano"))
     private val groqCloudParser: ReceiptAiParser by inject(qualifier = named("groq"))
     private val localSlmParser: ReceiptAiParser by inject(qualifier = named("local"))
+    private val ocrTextParser: ReceiptAiParser by inject(qualifier = named("ocr_text"))
     private val localModelDownloader: LocalModelDownloader by inject()
 
     private val _state = MutableStateFlow<ReceiptScannerState>(ReceiptScannerState.Idle)
@@ -50,6 +51,12 @@ class ReceiptScannerViewModel(
 
     private var lastCapturedImage: ByteArray? = null
 
+    fun onImageSelected(bytes: ByteArray) {
+        lastCapturedImage = bytes
+        _selectedIndices.value = emptySet()
+        _state.value = ReceiptScannerState.EngineSelectionRequired
+    }
+
     fun onImageCaptured(bytes: ByteArray) {
         lastCapturedImage = bytes
         viewModelScope.launch {
@@ -62,9 +69,11 @@ class ReceiptScannerViewModel(
                     if (localSlmParser.isAvailable()) runParser(localSlmParser, bytes)
                     else _state.value = ReceiptScannerState.EngineSelectionRequired
                 }
+                AiEngineStrategy.OCR_TEXT_LLM -> runOcrTextParserOrRequestDownload(bytes)
                 AiEngineStrategy.AUTO -> {
                     when {
                         geminiNanoParser.isAvailable() -> runParser(geminiNanoParser, bytes)
+                        ocrTextParser.isAvailable() -> runParser(ocrTextParser, bytes)
                         else -> _state.value = ReceiptScannerState.EngineSelectionRequired
                     }
                 }
@@ -87,6 +96,7 @@ class ReceiptScannerViewModel(
                     if (localSlmParser.isAvailable()) runParser(localSlmParser, image)
                     else startLocalModelDownload()
                 }
+                AiEngineStrategy.OCR_TEXT_LLM -> runOcrTextParserOrRequestDownload(image)
                 AiEngineStrategy.AUTO -> onImageCaptured(image)
             }
         }
@@ -104,14 +114,32 @@ class ReceiptScannerViewModel(
                             _state.value = ReceiptScannerState.ModelDownloading(downloadState.progressPercent / 100f)
                         is GemmaDownloadState.Downloaded -> {
                             val image = lastCapturedImage
-                            if (image != null) runParser(localSlmParser, image)
-                            else _state.value = ReceiptScannerState.Idle
+                            if (image != null) {
+                                // If we are in AUTO or OCR mode, try OCR parser after download
+                                val settings = settingRepository.getFlowSettingsPurchase().first()
+                                val parserToUse = if (settings.aiEngineStrategy == AiEngineStrategy.OCR_TEXT_LLM || settings.aiEngineStrategy == AiEngineStrategy.AUTO) {
+                                    ocrTextParser
+                                } else {
+                                    localSlmParser
+                                }
+                                runParser(parserToUse, image)
+                            } else {
+                                _state.value = ReceiptScannerState.Idle
+                            }
                         }
                         is GemmaDownloadState.Failed ->
                             _state.value = ReceiptScannerState.Error("Download failed: ${downloadState.error}")
                         is GemmaDownloadState.NotDownloaded -> Unit
                     }
                 }
+        }
+    }
+
+    private suspend fun runOcrTextParserOrRequestDownload(bytes: ByteArray) {
+        if (ocrTextParser.isAvailable()) {
+            runParser(ocrTextParser, bytes)
+        } else {
+            _state.value = ReceiptScannerState.EngineSelectionRequired
         }
     }
 

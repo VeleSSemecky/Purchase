@@ -39,4 +39,12 @@ actual val platformModule: Module = module {
             override suspend fun parse(imageBytes: ByteArray) = null
         }
     }
+
+    single<ReceiptAiParser>(qualifier = named("ocr_text")) {
+        object : ReceiptAiParser {
+            override val engineType = ReceiptAiParser.EngineType.OCR_TEXT_MODEL
+            override suspend fun isAvailable() = false
+            override suspend fun parse(imageBytes: ByteArray) = null
+        }
+    }
 }

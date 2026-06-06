@@ -1,6 +1,7 @@
 package com.veles.purchase.platform.ai
 
 import com.veles.purchase.domain.model.scanner.ReceiptData
+import com.veles.purchase.domain.model.scanner.ReceiptItem
 
 /**
  * Platform-specific on-device AI receipt parser.
@@ -27,13 +28,15 @@ interface ReceiptAiParser {
     enum class EngineType {
         GEMINI_NANO,
         GROQ_CLOUD,
-        LOCAL_SLM
+        LOCAL_SLM,
+        OCR_TEXT_MODEL
     }
 }
 
 // ── Shared prompt engineering ─────────────────────────────────────────────────
 
 internal object ReceiptPromptBuilder {
+    private const val OCR_TEXT_MAX_CHARS = 3_500
 
     /** Prompt for vision models (Gemini Nano / Groq) — image is supplied separately. */
     fun buildPrompt(): String = """
@@ -54,127 +57,79 @@ internal object ReceiptPromptBuilder {
     """.trimIndent()
 
     /**
-     * Prompt for text-only models (Gemma 1B). Pre-processes OCR lines into a
-     * structured format before sending so the small model doesn't need to
-     * interpret raw tabular receipt noise.
+     * Builds a prompt using the pipe-separated column matrix from [YCoordinateTextRecognizer].
+     *
+     * Each row shows visual columns in left-to-right order, e.g.:
+     *   "CocaCola 0.2 | €3.00 | 1 | €3.00"
+     *   "New York Sour | €8.00 | 2 | €16.00"
+     *   "Parcial | €140.50"
+     *
+     * The model decides semantics (name / qty / price / total) — no language assumptions here.
+     *
+     * Rows are produced by YCoordinateTextRecognizer in androidMain.
      */
-    fun buildStructuredPrompt(lines: List<String>): String {
-        val structuredText = buildStructuredText(lines)
+    fun buildOcrTextPrompt(lines: List<String>): String {
+        val alignedText = lines.toOcrPromptText()
+        if (alignedText.isBlank()) return ""
+
         return """
-            Receipt text (one item per line in "name: price" format, last line is TOTAL):
-            $structuredText
-            
-            Extract into JSON: {"total": number, "currency": "EUR", "items": [{"name": "...", "price": number}]}
-            Use REAL values from the text. Return ONLY the JSON object, no markdown.
+            Below is OCR output from a receipt. Columns within each row are separated by " | " in left-to-right order.
+
+            How to read columns:
+            - Product rows typically have: NAME | [unit_price] | [qty] | LINE_TOTAL
+              The LAST column of a product row is the line total (qty × unit price). Use that as the item price.
+            - Summary rows typically have: [label] | AMOUNT
+              Look for the row whose amount equals (or is close to) the sum of all product line totals — that is the grand total.
+            - Single-column rows are usually headers, addresses, or footers — skip them.
+            - Detect currency from symbols anywhere in the text: €→EUR  $→USD  £→GBP  ₴→UAH
+
+            RECEIPT:
+            $alignedText
+
+            Return ONLY raw JSON (no markdown, no explanation):
+            {"total":number|null,"currency":"","items":[{"name":"string","price":number}]}
         """.trimIndent()
     }
 
-    private val skipLinePattern = Regex(
-        "(subtotal|sub-total|importe|iva|tax|tip|change|propina|vat|mwst|tva|" +
-        "discount|descuento|rabatt|paid|pagado|bezahlt|cash|efectivo|" +
-        "card|tarjeta|karte|receipt|recibo|bon|ticket|thank|gracias|danke|" +
-        "tel|www|http|unselect|select all|" +
-        // receipt table column headers
-        "^producto\$|^precio\$|^cant\\.?\$|^qty\$|^article\$|^menge\$|" +
-        // phone UI chrome — gallery picker buttons, status bar fragments
-        "^done\$|^cancel\$|^share\$|" +
-        "\\.{3,}|---|\\s*:?\\s*\$)",
-        RegexOption.IGNORE_CASE
-    )
-    // Line-level noise: too few real letters → status bar icons, battery %, signal text
-    private val tooFewLettersRegex = Regex("^[^a-zA-ZÀ-öø-ÿ]{0,2}\$")
-    // Status-bar time pattern e.g. "19:26"
-    private val timePatternRegex = Regex("""^\d{1,2}:\d{2}\s*$""")
-    private val currencyPriceRegex = Regex(
-        """([€${'$'}£¥₴₽])\s*([0-9]+[.,][0-9]{1,2})|([0-9]+[.,][0-9]{1,2})\s*([€${'$'}£¥₴₽])|([0-9]+[.,][0-9]{1,2})\s*(EUR|PLN|USD|GBP|UAH|CZK|HUF|CHF)\b""",
-        RegexOption.IGNORE_CASE
-    )
-    private val totalKeywords = setOf("total", "suma", "suma total", "importe total", "amount due", "gesamtbetrag", "montant")
-
-    private fun buildStructuredText(lines: List<String>): String {
-        val sb = StringBuilder()
-        var currency = "EUR"
-        // Saved candidate name from the previous line that had no price (split-column rows)
-        var prevNameLine = ""
-
-        for (line in lines) {
-            val trimmed = line.trim()
-            if (trimmed.isBlank()) continue
-
-            // Drop lines that are purely symbols / have < 3 real letters (status-bar noise)
-            val letterCount = trimmed.count { it.isLetter() }
-            if (letterCount < 3) continue
-            if (timePatternRegex.matches(trimmed)) continue
-            if (skipLinePattern.containsMatchIn(trimmed)) continue
-
-            val allPrices = currencyPriceRegex.findAll(trimmed).toList()
-
-            if (allPrices.isEmpty()) {
-                // No price on this line → save as candidate name for the next (price-only) line
-                prevNameLine = trimmed
-                continue
-            }
-
-            // Update detected currency from any price match on this line
-            for (m in allPrices) {
-                val sym = m.groupValues[1].ifEmpty { m.groupValues[4].ifEmpty { null } }
-                if (sym != null) currency = when (sym) {
-                    "€" -> "EUR"; "$" -> "USD"; "£" -> "GBP"; "¥" -> "JPY"
-                    "₴" -> "UAH"; "₽" -> "RUB"; else -> currency
-                }
-                val explicit = m.groupValues[6].ifEmpty { null }
-                if (explicit != null) currency = explicit.uppercase()
-            }
-
-            // For multi-column receipts (name | unit-price | qty | total):
-            // • use the LAST price on the line → it's the row total (rightmost column)
-            // • name = everything BEFORE the first price on the line
-            val lastPrice = allPrices.last()
-            val priceVal = (lastPrice.groupValues[2].ifEmpty { null }
-                ?: lastPrice.groupValues[3].ifEmpty { null }
-                ?: lastPrice.groupValues[5].ifEmpty { null }) ?: continue
-
-            // Text before the first price = item name (handles inline names)
-            val inlineNameRaw = trimmed.substring(0, allPrices.first().range.first).trim()
-            val inlineName = inlineNameRaw.takeIf { it.count { c -> c.isLetter() } >= 3 }
-
-            val name = (inlineName ?: prevNameLine.takeIf { it.isNotBlank() })?.trim()
-            prevNameLine = "" // consume it regardless
-
-            if (name.isNullOrBlank() || skipLinePattern.containsMatchIn(name)) continue
-
-            val isTotal = totalKeywords.any { name.lowercase().contains(it) }
-            val priceFormatted = priceVal.replace(',', '.')
-            if (isTotal) {
-                sb.append("TOTAL($currency): $priceFormatted\n")
-            } else {
-                sb.append("$name: $priceFormatted\n")
-            }
-        }
-
-        return sb.toString().trim()
+    fun isOcrTextTruncated(lines: List<String>): Boolean {
+        val fullText = lines
+            .asSequence()
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .joinToString("\n")
+        return fullText.length > OCR_TEXT_MAX_CHARS
     }
+
+    private fun List<String>.toOcrPromptText(): String = asSequence()
+        .map { it.trim() }
+        .filter { it.isNotBlank() }
+        .joinToString("\n")
+        .take(OCR_TEXT_MAX_CHARS)
+        .trim()
 }
 
 internal object ReceiptResponseParser {
-    private val totalRegex = Regex(""""total"\s*:\s*"?([0-9]+(?:[.,][0-9]+)?)"?""")
-    private val currencyRegex = Regex(""""currency"\s*:\s*"([A-Z]{2,5})"""")
-    // Handles both numeric ("price":9.50) and string ("price":"9.50") and comma decimals
-    private val itemRegex = Regex(""""name"\s*:\s*"([^"]+)"\s*,\s*"price"\s*:\s*"?([0-9]+(?:[.,][0-9]+)?)"?""")
+    private val totalRegex = Regex(""""total"\s*:\s*(?:"?([0-9]+(?:[.,][0-9]+)?)"?|null)""")
+    private val currencyRegex = Regex(""""currency"\s*:\s*"([^"]*)""")
+    // Handles both {"name":"x","price":9.50} and {"price":9.50,"name":"x"}; price may be quoted and use comma decimals.
+    private val itemObjectRegex = Regex("""\{[^{}]*"name"\s*:\s*"[^"]+"[^{}]*"price"\s*:\s*"?[0-9]+(?:[.,][0-9]+)?"?[^{}]*}|\{[^{}]*"price"\s*:\s*"?[0-9]+(?:[.,][0-9]+)?"?[^{}]*"name"\s*:\s*"[^"]+"[^{}]*}""")
+    private val nameRegex = Regex(""""name"\s*:\s*"([^"]+)""")
+    private val priceRegex = Regex(""""price"\s*:\s*"?([0-9]+(?:[.,][0-9]+)?)"?""")
 
-    fun parse(json: String, fallbackCurrency: String = ""): com.veles.purchase.domain.model.scanner.ReceiptData? {
+    fun parse(json: String, fallbackCurrency: String = ""): ReceiptData? {
         return try {
-            val total = totalRegex.find(json)?.groupValues?.get(1)?.replace(',', '.')?.toDoubleOrNull()
-            val currency = currencyRegex.find(json)?.groupValues?.get(1) ?: fallbackCurrency
-            val items = itemRegex.findAll(json).map { m ->
-                com.veles.purchase.domain.model.scanner.ReceiptItem(
-                    name = m.groupValues[1],
-                    price = m.groupValues[2].replace(',', '.').toDoubleOrNull() ?: 0.0
-                )
-            }.filter { it.price > 0 }.toList()
+            val total = totalRegex.find(json)?.groupValues?.getOrNull(1)?.replace(',', '.')?.toDoubleOrNull()
+            val currency = currencyRegex.find(json)?.groupValues?.getOrNull(1) ?: fallbackCurrency
+            val items = itemObjectRegex.findAll(json).mapNotNull { objectMatch ->
+                val objectJson = objectMatch.value
+                val name = nameRegex.find(objectJson)?.groupValues?.getOrNull(1)?.trim().orEmpty()
+                val price = priceRegex.find(objectJson)?.groupValues?.getOrNull(1)?.replace(',', '.')?.toDoubleOrNull()
+                if (name.isBlank() || price == null || price <= 0.0) null
+                else ReceiptItem(name = name, price = price)
+            }.toList()
 
             if (items.isEmpty() && total == null) null
-            else com.veles.purchase.domain.model.scanner.ReceiptData(
+            else ReceiptData(
                 totalAmount = total,
                 currency = currency,
                 items = items
