@@ -114,7 +114,8 @@ class AndroidOcrTextParser(
             }
             Log.d(TAG, "Step 1 complete: alignedRows=${lines.size}\n${lines.joinToString("\n")}")
 
-            // ── Step 2a: direct structured parse (no LLM) ────────────────────
+            // ── Step 2a: direct structured parse (DISABLED for LLM testing) ──
+            /*
             Log.d(TAG, "Step 2a: attempt direct structured parse from tab-separated rows")
             val directResult = StructuredRowParser.parse(lines)
             if (directResult != null) {
@@ -126,6 +127,8 @@ class AndroidOcrTextParser(
                 Log.d(TAG, "Step 2a SUCCESS (no LLM needed): items=${directResult.items.size}, total=${directResult.total}, currency='${directResult.currency}'")
                 return receiptData
             }
+            */
+            Log.d(TAG, "Step 2a skipped: testing LLM as corrector")
             Log.w(TAG, "Step 2a: direct parse found no items — falling back to LLM")
 
             // ── Step 2b: build LLM prompt ─────────────────────────────────────

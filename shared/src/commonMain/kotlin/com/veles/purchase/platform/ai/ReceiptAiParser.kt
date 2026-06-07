@@ -2,6 +2,8 @@ package com.veles.purchase.platform.ai
 
 import com.veles.purchase.domain.model.scanner.ReceiptData
 import com.veles.purchase.domain.model.scanner.ReceiptItem
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 /**
  * Platform-specific on-device AI receipt parser.
@@ -73,21 +75,34 @@ internal object ReceiptPromptBuilder {
         if (alignedText.isBlank()) return ""
 
         return """
-            Below is OCR output from a receipt. Columns within each row are separated by " | " in left-to-right order.
+            You are a professional receipt parser. Below is OCR output from a receipt. 
+            Columns within each row are separated by " | " in left-to-right order.
 
             How to read columns:
-            - Product rows typically have: NAME | [unit_price] | [qty] | LINE_TOTAL
-              The LAST column of a product row is the line total (qty × unit price). Use that as the item price.
-            - Summary rows typically have: [label] | AMOUNT
-              Look for the row whose amount equals (or is close to) the sum of all product line totals — that is the grand total.
-            - Single-column rows are usually headers, addresses, or footers — skip them.
-            - Detect currency from symbols anywhere in the text: €→EUR  $→USD  £→GBP  ₴→UAH
+            - Product rows: NAME | [unit_price] | [qty] | LINE_TOTAL. The LAST column is the total price for that line.
+            - Summary rows: [label] | AMOUNT. Look for the grand total near "Total", "Parcial", "Importe", or "Sum".
+            - Ignore headers, addresses, and tax details (IVA, VAT, TAX).
+            - Detect currency from symbols (€→EUR, $→USD, £→GBP, ₴→UAH).
 
-            RECEIPT:
+            Rules for JSON:
+            1. Copy product names EXACTLY as printed. Correct obvious OCR typos (e.g., 'Tonlc' -> 'Tonic', 'Cala' -> 'Cola', 'Red Labe' -> 'Red Label', 'CocaCala' -> 'CocaCola').
+            2. For item prices, use the LINE_TOTAL (last column). If a number is split (e.g., '7, | 00'), merge it into '7.00'.
+            3. Use a DOT (.) as the decimal separator for numbers (e.g., 140.50).
+            4. If currency is unknown, use an empty string.
+            5. Ensure ALL purchased items are included. Do NOT skip any product lines.
+
+            Example:
+            Input:
+            CocaCola 0.2 | 3.00 | 1 | 3.00
+            New York Sour | 8.00 | 2 | 16.00
+            Total | 19.00
+            Output: {"total":19.00,"currency":"EUR","items":[{"name":"CocaCola 0.2","price":3.00},{"name":"New York Sour","price":16.00}]}
+
+            RECEIPT OCR DATA:
             $alignedText
 
-            Return ONLY raw JSON (no markdown, no explanation):
-            {"total":number|null,"currency":"","items":[{"name":"string","price":number}]}
+            Return ONLY raw JSON:
+            {"total":number|null,"currency":"ISO_CODE","items":[{"name":"string","price":number}]}
         """.trimIndent()
     }
 
@@ -109,32 +124,49 @@ internal object ReceiptPromptBuilder {
 }
 
 internal object ReceiptResponseParser {
-    private val totalRegex = Regex(""""total"\s*:\s*(?:"?([0-9]+(?:[.,][0-9]+)?)"?|null)""")
-    private val currencyRegex = Regex(""""currency"\s*:\s*"([^"]*)""")
-    // Handles both {"name":"x","price":9.50} and {"price":9.50,"name":"x"}; price may be quoted and use comma decimals.
-    private val itemObjectRegex = Regex("""\{[^{}]*"name"\s*:\s*"[^"]+"[^{}]*"price"\s*:\s*"?[0-9]+(?:[.,][0-9]+)?"?[^{}]*}|\{[^{}]*"price"\s*:\s*"?[0-9]+(?:[.,][0-9]+)?"?[^{}]*"name"\s*:\s*"[^"]+"[^{}]*}""")
-    private val nameRegex = Regex(""""name"\s*:\s*"([^"]+)""")
-    private val priceRegex = Regex(""""price"\s*:\s*"?([0-9]+(?:[.,][0-9]+)?)"?""")
+    @Serializable
+    private data class AiReceiptResponse(
+        val total: Double? = null,
+        val currency: String? = null,
+        val items: List<AiReceiptItem> = emptyList()
+    )
+
+    @Serializable
+    private data class AiReceiptItem(
+        val name: String,
+        val price: Double
+    )
+
+    private val jsonConfig = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        coerceInputValues = true
+    }
 
     fun parse(json: String, fallbackCurrency: String = ""): ReceiptData? {
         return try {
-            val total = totalRegex.find(json)?.groupValues?.getOrNull(1)?.replace(',', '.')?.toDoubleOrNull()
-            val currency = currencyRegex.find(json)?.groupValues?.getOrNull(1) ?: fallbackCurrency
-            val items = itemObjectRegex.findAll(json).mapNotNull { objectMatch ->
-                val objectJson = objectMatch.value
-                val name = nameRegex.find(objectJson)?.groupValues?.getOrNull(1)?.trim().orEmpty()
-                val price = priceRegex.find(objectJson)?.groupValues?.getOrNull(1)?.replace(',', '.')?.toDoubleOrNull()
-                if (name.isBlank() || price == null || price <= 0.0) null
-                else ReceiptItem(name = name, price = price)
-            }.toList()
+            // Find the first '{' and the last '}' to extract a clean JSON object
+            val start = json.indexOf('{')
+            val end = json.lastIndexOf('}')
+            if (start == -1 || end == -1 || end <= start) return null
+            
+            val cleanJson = json.substring(start, end + 1)
+            val response = jsonConfig.decodeFromString<AiReceiptResponse>(cleanJson)
 
-            if (items.isEmpty() && total == null) null
-            else ReceiptData(
-                totalAmount = total,
-                currency = currency,
+            val items = response.items.mapNotNull {
+                if (it.name.isBlank() || it.price <= 0.0) null
+                else ReceiptItem(name = it.name, price = it.price)
+            }
+
+            if (items.isEmpty() && response.total == null) return null
+
+            ReceiptData(
+                totalAmount = response.total,
+                currency = response.currency?.takeIf { it.isNotBlank() } ?: fallbackCurrency,
                 items = items
             )
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            // Use a simple println for commonMain logging or rely on caller's logging
             null
         }
     }

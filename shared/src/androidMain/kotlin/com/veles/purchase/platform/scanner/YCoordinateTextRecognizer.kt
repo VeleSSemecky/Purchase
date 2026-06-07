@@ -57,14 +57,23 @@ class YCoordinateTextRecognizer : TextRecognizer {
             recognizer.process(image)
                 .addOnSuccessListener { visionText ->
                     if (!continuation.isActive) return@addOnSuccessListener
-                    val allLines = visionText.textBlocks.flatMap { it.lines }
+                    
+                    // Use elements (words) instead of lines for more granular spatial grouping.
+                    // This helps when ML Kit merges columns into lines incorrectly.
+                    val allElements = visionText.textBlocks.flatMap { block -> 
+                        block.lines.flatMap { line -> 
+                            line.elements.map { element ->
+                                PositionedLine(text = element.text, box = element.boundingBox ?: Rect())
+                            }
+                        }
+                    }.filter { it.text.isNotBlank() }
+
                     Log.d(
                         TAG,
-                        "Step 2 complete: blocks=${visionText.textBlocks.size}, rawLines=${allLines.size}"
+                        "Step 2 complete: blocks=${visionText.textBlocks.size}, elements=${allElements.size}"
                     )
-                    logRawLines(allLines)
 
-                    val rows = buildRows(allLines)
+                    val rows = buildRows(allElements)
                     val output = formatRows(rows)
                     Log.d(TAG, "Step 3 complete: rows=${output.size}\n${output.joinToString("\n")}")
                     continuation.resume(output)
@@ -78,66 +87,92 @@ class YCoordinateTextRecognizer : TextRecognizer {
 
     // ── Row grouping ──────────────────────────────────────────────────────────
 
-    private fun buildRows(lines: List<Text.Line>): List<List<PositionedLine>> {
-        val positionedLines = lines.mapNotNull { line ->
-            val box = line.boundingBox ?: return@mapNotNull null
-            val text = line.text.trim()
-            if (text.isBlank()) return@mapNotNull null
-            PositionedLine(text = text, box = box)
-        }
-        if (positionedLines.isEmpty()) return emptyList()
+    private fun buildRows(elements: List<PositionedLine>): List<List<PositionedLine>> {
+        if (elements.isEmpty()) return emptyList()
 
-        val averageHeight = positionedLines.map { it.box.height() }.average().toInt().coerceAtLeast(1)
-        val yThreshold = max(8, averageHeight / 2)
+        // Detect if the dominant text flow is horizontal or vertical.
+        val avgWidth = elements.map { it.box.width() }.average()
+        val avgHeight = elements.map { it.box.height() }.average()
+        val isSideways = avgHeight > avgWidth * 1.5
+
+        val sortedElements = if (isSideways) {
+            // For sideways (rotated 90 deg clockwise), top of receipt is at the RIGHT (max X).
+            // So we group by X (descending).
+            elements.sortedByDescending { it.box.centerX() }
+        } else {
+            elements.sortedBy { it.centerY }
+        }
+
+        val yThreshold = (if (isSideways) avgWidth else avgHeight).toInt().coerceAtLeast(8) / 2
         val rows = mutableListOf<MutableList<PositionedLine>>()
 
-        positionedLines
-            .sortedWith(compareBy<PositionedLine> { it.centerY }.thenBy { it.box.left })
-            .forEach { line ->
-                val match = rows.minByOrNull { row -> abs(row.averageCenterY() - line.centerY) }
-                    ?.takeIf { row -> abs(row.averageCenterY() - line.centerY) <= yThreshold }
+        sortedElements.forEach { element ->
+            val coord = if (isSideways) element.box.centerX() else element.centerY
 
-                if (match != null) match.add(line) else rows.add(mutableListOf(line))
+            val match = rows.minByOrNull { row ->
+                val rowCoord = if (isSideways) row.averageCenterX() else row.averageCenterY()
+                abs(rowCoord - coord)
+            }?.takeIf { row ->
+                val rowCoord = if (isSideways) row.averageCenterX() else row.averageCenterY()
+                abs(rowCoord - coord) <= yThreshold
             }
 
-        return rows.sortedBy { it.averageCenterY() }
+            if (match != null) match.add(element) else rows.add(mutableListOf(element))
+        }
+
+        val groupedRows = rows.sortedBy { row ->
+            if (isSideways) row.averageCenterX() else row.averageCenterY()
+        }
+
+        // Inside each row, ensure horizontal sorting (X for normal, Y for sideways)
+        return groupedRows.map { row ->
+            if (isSideways) row.sortedByDescending { it.box.centerY() }
+            else row.sortedBy { it.box.left }
+        }
     }
+
+    private fun List<PositionedLine>.averageCenterX(): Int = sumOf { it.box.centerX() } / size
 
     // ── Output formatting ─────────────────────────────────────────────────────
 
-    /**
-     * Converts grouped rows into pipe-separated column strings.
-     *
-     * Each [PositionedLine] in a row corresponds to one visual column (a [Text.Line]
-     * from ML Kit). Columns are ordered left-to-right by bounding-box X position.
-     *
-     * Example output rows:
-     *   "CocaCola 0.2 | €3.00 | 1 | €3.00"
-     *   "New York Sour | €8.00 | 2 | €16.00"
-     *   "GREENTOUCH UA SL"
-     *   "Parcial | €140.50"
-     */
-    private fun formatRows(rows: List<List<PositionedLine>>): List<String> =
-        rows.mapIndexed { index, row ->
-            val cols = row.sortedBy { it.box.left }
-            val out = cols.joinToString(COLUMN_SEPARATOR) { it.text }
-            Log.d(TAG, "Step 3 row[$index]: y=${row.averageCenterY()}, cols=${cols.size}, out='$out'")
+    private fun formatRows(rows: List<List<PositionedLine>>): List<String> {
+        if (rows.isEmpty()) return emptyList()
+        val allElements = rows.flatten()
+        val avgWidth = allElements.map { it.box.width() }.average()
+        val avgHeight = allElements.map { it.box.height() }.average()
+        val isSideways = avgHeight > avgWidth * 1.5
+
+        return rows.mapIndexed { index, row ->
+            val sb = StringBuilder()
+            if (row.isNotEmpty()) {
+                sb.append(row[0].text)
+                for (i in 1 until row.size) {
+                    val prev = row[i - 1]
+                    val curr = row[i]
+                    val gap = if (isSideways) abs(curr.box.top - prev.box.bottom) else abs(curr.box.left - prev.box.right)
+                    val spaceThreshold = (if (isSideways) prev.box.height() else prev.box.width()) * 0.8
+                    
+                    if (gap > spaceThreshold) {
+                        sb.append(COLUMN_SEPARATOR)
+                    } else {
+                        sb.append(" ")
+                    }
+                    sb.append(curr.text)
+                }
+            }
+            val out = sb.toString()
+            Log.d(TAG, "Step 3 row[$index]: out='$out'")
             out
         }
+    }
 
     // ── Utilities ─────────────────────────────────────────────────────────────
-
-    private fun logRawLines(lines: List<Text.Line>) {
-        lines.forEachIndexed { i, line ->
-            Log.d(TAG, "Step 2 rawLine[$i]: box=${line.boundingBox}, text='${line.text}'")
-        }
-    }
 
     private data class PositionedLine(val text: String, val box: Rect) {
         val centerY: Int = box.centerY()
     }
 
-    private fun List<PositionedLine>.averageCenterY(): Int = sumOf { it.centerY } / size
+    private fun List<PositionedLine>.averageCenterY(): Int = if (isEmpty()) 0 else sumOf { it.centerY } / size
 }
 
 // ── Structural receipt parser (no language knowledge required) ────────────────
