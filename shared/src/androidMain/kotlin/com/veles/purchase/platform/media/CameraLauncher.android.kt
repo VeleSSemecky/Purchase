@@ -1,17 +1,20 @@
 package com.veles.purchase.platform.media
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.RESULT_FORMAT_JPEG
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.SCANNER_MODE_FULL
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -40,34 +43,39 @@ internal fun compressImageBytes(bytes: ByteArray): ByteArray {
 @Composable
 actual fun rememberCameraLauncher(onResult: (ByteArray) -> Unit): () -> Unit {
     val context = LocalContext.current
-    var photoFile by remember { mutableStateOf<File?>(null) }
 
-    val takePicture = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success) {
-            photoFile?.readBytes()?.let { onResult(compressImageBytes(it)) }
+    val scannerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val scanResult = com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+            val pages = scanResult?.pages
+            if (!pages.isNullOrEmpty()) {
+                val uri = pages[0].imageUri
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    onResult(compressImageBytes(input.readBytes()))
+                }
+            }
         }
-        photoFile?.delete()
-        photoFile = null
     }
 
-    val requestPermission = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            val file = File(context.cacheDir, "camera_photo_${System.nanoTime()}.jpg")
-            photoFile = file
-            val uri: Uri = FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.fileprovider",
-                file
-            )
-            takePicture.launch(uri)
-        }
+    val scanner = remember {
+        val options = GmsDocumentScannerOptions.Builder()
+            .setGalleryImportAllowed(true)
+            .setPageLimit(1)
+            .setResultFormats(RESULT_FORMAT_JPEG)
+            .setScannerMode(SCANNER_MODE_FULL)
+            .build()
+        GmsDocumentScanning.getClient(options)
     }
 
     return {
-        requestPermission.launch(android.Manifest.permission.CAMERA)
+        scanner.getStartScanIntent(context as ComponentActivity)
+            .addOnSuccessListener { intentSender ->
+                scannerLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+            }
+            .addOnFailureListener { e ->
+                android.util.Log.e("CameraLauncher", "Failed to start document scanner", e)
+            }
     }
 }

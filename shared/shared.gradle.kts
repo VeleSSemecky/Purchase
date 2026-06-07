@@ -149,6 +149,7 @@ kotlin {
 
                 // ML Kit Text Recognition (OCR for price tag scanner)
                 implementation(libs.mlkit.text.recognition)
+                implementation(libs.play.services.document.scanner)
                 implementation(libs.mlkit.entity.extraction)
                 // ML Kit Gemini Nano Prompt API (on-device AI for receipt parsing)
                 implementation(libs.mlkit.genai.prompt)
