@@ -18,8 +18,8 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-private const val MAX_DIMENSION = 1200
-private const val JPEG_QUALITY = 75
+private const val MAX_DIMENSION = 1920
+private const val JPEG_QUALITY = 85
 
 internal fun compressImageBytes(bytes: ByteArray): ByteArray {
     val original = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return bytes

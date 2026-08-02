@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.veles.purchase.data.room.table.SkuEntity
+import com.veles.purchase.data.room.table.SkuItemEntity
 import com.veles.purchase.data.room.table.SkuPhotoEntity
 import com.veles.purchase.data.room.table.SkuSumMonthRelations
 import com.veles.purchase.domain.utill.zeroInt
@@ -81,6 +82,7 @@ interface SkuDAO {
     suspend fun delete(skuId: String) {
         deleteSkuEntity(skuId)
         deleteSkuPhotoEntityWithSkuId(skuId)
+        deleteSkuItemEntityWithSkuId(skuId)
     }
 
     @Transaction
@@ -110,6 +112,38 @@ interface SkuDAO {
         insert(skuEntity)
         if (skuPhotoEntity.isNotEmpty()) {
             insert(skuPhotoEntity)
+        }
+    }
+
+    // ── Sku line items (products) ─────────────────────────────────────────────
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSkuItems(items: List<SkuItemEntity>)
+
+    @Query("SELECT * FROM SkuItemEntity WHERE SkuId=:skuId")
+    suspend fun getSkuItems(skuId: String): List<SkuItemEntity>
+
+    @Query("DELETE FROM SkuItemEntity WHERE SkuId=:skuId")
+    suspend fun deleteSkuItemEntityWithSkuId(skuId: String)
+
+    /**
+     * Saves a purchase together with its photos and line-item products in a
+     * single transaction. Existing items for the same purchase are replaced.
+     */
+    @Transaction
+    suspend fun insert(
+        skuEntity: SkuEntity,
+        skuPhotoEntity: List<SkuPhotoEntity>,
+        skuItemEntity: List<SkuItemEntity>
+    ) {
+        insert(skuEntity)
+        if (skuPhotoEntity.isNotEmpty()) {
+            insert(skuPhotoEntity)
+        }
+        // Replace the full item set so edits/removals are reflected
+        deleteSkuItemEntityWithSkuId(skuEntity.skuId)
+        if (skuItemEntity.isNotEmpty()) {
+            insertSkuItems(skuItemEntity)
         }
     }
 }

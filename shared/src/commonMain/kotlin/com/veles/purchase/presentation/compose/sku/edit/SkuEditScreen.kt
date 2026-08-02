@@ -12,8 +12,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +31,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.veles.purchase.domain.model.ExpenseCategory
+import com.veles.purchase.domain.model.SkuItemModel
 import com.veles.purchase.presentation.compose.Colors
+import coil3.compose.AsyncImage
 import com.veles.purchase.presentation.model.UiEvent
 import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditParams
 import com.veles.purchase.presentation.mvvm.sku.edit.SkuEditViewModel
@@ -186,6 +193,12 @@ fun SkuEditScreen(
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // Receipt photo (shown when expense was created from scanner)
+                val receiptImg = uiState.receiptImageBytes
+                if (receiptImg != null) {
+                    ReceiptPhotoCard(imageBytes = receiptImg)
+                }
+
                 // Name
                 EditField(
                     value = uiState.skuName,
@@ -283,6 +296,45 @@ fun SkuEditScreen(
                     maxLines = 4
                 )
 
+                // Products (line items)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Products (${uiState.items.size})",
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                    Row {
+                        if (uiState.items.isNotEmpty()) {
+                            TextButton(onClick = viewModel::calculateTotalFromItems) {
+                                Icon(Icons.Default.Calculate, null, tint = Colors.gr, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text("Calculate total", color = Colors.gr, fontSize = 13.sp)
+                            }
+                        }
+                        TextButton(onClick = viewModel::onAddItem) {
+                            Icon(Icons.Default.Add, null, tint = Colors.gr, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("Add product", color = Colors.gr, fontSize = 13.sp)
+                        }
+                    }
+                }
+
+                uiState.items.forEach { item ->
+                    ProductItemEditor(
+                        item = item,
+                        currency = uiState.skuCurrencyCode,
+                        onNameChange = { viewModel.onItemNameChanged(item.skuItemId, it) },
+                        onQuantityChange = { viewModel.onItemQuantityChanged(item.skuItemId, it) },
+                        onPriceChange = { viewModel.onItemPriceChanged(item.skuItemId, it) },
+                        onTaxChange = { viewModel.onItemTaxChanged(item.skuItemId, it) },
+                        onRemove = { viewModel.onRemoveItem(item.skuItemId) }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
@@ -324,3 +376,99 @@ private fun EditField(
 @Composable
 private fun rememberUpdatedState(value: () -> Unit): State<() -> Unit> =
     rememberUpdatedState(newValue = value)
+
+@Composable
+private fun ReceiptPhotoCard(imageBytes: ByteArray) {
+    var expanded by remember { mutableStateOf(false) }
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Colors.colorPrimary),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded }
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Receipt photo", color = Color.White, fontSize = 14.sp)
+                Icon(
+                    imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = null,
+                    tint = Color.Gray
+                )
+            }
+            if (expanded) {
+                AsyncImage(
+                    model = imageBytes,
+                    contentDescription = "Scanned receipt",
+                    contentScale = androidx.compose.ui.layout.ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 400.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProductItemEditor(
+    item: SkuItemModel,
+    currency: String,
+    onNameChange: (String) -> Unit,
+    onQuantityChange: (String) -> Unit,
+    onPriceChange: (String) -> Unit,
+    onTaxChange: (String) -> Unit,
+    onRemove: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
+            .padding(10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            EditField(
+                value = item.name,
+                onValueChange = onNameChange,
+                label = "Product",
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = onRemove, modifier = Modifier.size(40.dp)) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Remove product",
+                    tint = Color.Red.copy(alpha = 0.7f),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            EditField(
+                value = item.quantity,
+                onValueChange = onQuantityChange,
+                label = "Qty",
+                modifier = Modifier.weight(1f)
+            )
+            EditField(
+                value = item.price,
+                onValueChange = onPriceChange,
+                label = "Price ($currency)",
+                keyboardType = KeyboardType.Decimal,
+                modifier = Modifier.weight(1.2f)
+            )
+            EditField(
+                value = item.taxRate,
+                onValueChange = onTaxChange,
+                label = "Tax",
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+

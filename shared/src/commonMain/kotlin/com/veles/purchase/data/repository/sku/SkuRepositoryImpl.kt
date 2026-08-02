@@ -2,6 +2,8 @@ package com.veles.purchase.data.repository.sku
 
 import com.veles.purchase.data.room.dao.SkuDAO
 import com.veles.purchase.data.room.table.toSkuEntity
+import com.veles.purchase.data.room.table.toSkuItemEntity
+import com.veles.purchase.data.room.table.toSkuItemModel
 import com.veles.purchase.data.room.table.toSkuModel
 import com.veles.purchase.data.room.table.toSkuPhotoEntity
 import com.veles.purchase.data.room.table.toSkuSumMonthModel
@@ -15,7 +17,9 @@ import kotlinx.coroutines.flow.map
 class SkuRepositoryImpl(private val skuDAO: SkuDAO) : SkuRepository {
 
     override suspend fun getSkuModel(skuId: String): SkuModel? =
-        skuDAO.getSkuEntity(skuId)?.toSkuModel()
+        skuDAO.getSkuEntity(skuId)?.toSkuModel()?.copy(
+            items = skuDAO.getSkuItems(skuId).map { it.toSkuItemModel() }
+        )
 
     override suspend fun getSkuEntityList(): List<SkuModel> =
         skuDAO.getSkuEntityList().map { it.toSkuModel() }
@@ -26,7 +30,8 @@ class SkuRepositoryImpl(private val skuDAO: SkuDAO) : SkuRepository {
     override suspend fun insert(skuModel: SkuModel, skuPhotoModelList: List<SkuPhotoModel>) {
         val skuEntity = skuModel.toSkuEntity()
         val skuPhotoEntityList = skuPhotoModelList.map { it.toSkuPhotoEntity() }
-        skuDAO.insert(skuEntity, skuPhotoEntityList)
+        val skuItemEntityList = skuModel.items.map { it.toSkuItemEntity(skuModel.skuId) }
+        skuDAO.insert(skuEntity, skuPhotoEntityList, skuItemEntityList)
     }
 
     override suspend fun delete(id: String) = skuDAO.delete(id)

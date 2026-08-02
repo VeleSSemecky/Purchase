@@ -16,5 +16,6 @@ data class SkuModel(
     val skuComment: String = emptyString(),
     val skuPrice: String = emptyString(),
     val skuCurrencyCode: String = getDefaultCurrencyCode(), // Platform-specific currency detection
-    val category: ExpenseCategory = ExpenseCategory.OTHER
+    val category: ExpenseCategory = ExpenseCategory.OTHER,
+    val items: List<SkuItemModel> = emptyList()
 )

@@ -10,16 +10,18 @@ import com.veles.purchase.data.room.dao.SkuDAO
 import com.veles.purchase.data.room.dao.SkuPhotoDAO
 import com.veles.purchase.data.room.table.PurchaseTable
 import com.veles.purchase.data.room.table.SkuEntity
+import com.veles.purchase.data.room.table.SkuItemEntity
 import com.veles.purchase.data.room.table.SkuPhotoEntity
 import com.veles.purchase.data.room.util.HistoryTypeConverter
 import com.veles.purchase.data.room.util.LocalDateTimeConverter
 
-const val LAST_VERSION = 4
+const val LAST_VERSION = 5
 
 @Database(
     entities = [
         PurchaseTable::class,
         SkuEntity::class,
+        SkuItemEntity::class,
         SkuPhotoEntity::class
     ],
     version = LAST_VERSION,

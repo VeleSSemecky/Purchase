@@ -1,6 +1,7 @@
 package com.veles.purchase.di
 
 import com.veles.purchase.domain.model.scanner.PendingPhotoStore
+import com.veles.purchase.domain.model.scanner.PendingReceiptStore
 import com.veles.purchase.presentation.mvvm.purchase.category.CategoryViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionMembersViewModel
 import com.veles.purchase.presentation.mvvm.purchase.collection.CollectionPurchaseComposeViewModel
@@ -30,6 +31,9 @@ val viewModelModule = module {
 
     // Shared store for scanner → edit photo handoff
     single { PendingPhotoStore() }
+
+    // Shared store for receipt scanner → edit handoff (total + products)
+    single { PendingReceiptStore() }
 
     // Login ViewModel
     viewModel {
@@ -152,6 +156,7 @@ val viewModelModule = module {
             skuId = p.skuId,
             getSkuUseCase = get(),
             setSkuUseCase = get(),
+            pendingReceiptStore = get(),
             prefillName = p.prefillName,
             prefillPrice = p.prefillPrice,
             prefillCategory = p.prefillCategory
@@ -177,7 +182,8 @@ val viewModelModule = module {
     // ReceiptScannerViewModel
     viewModel {
         ReceiptScannerViewModel(
-            settingRepository = get()
+            settingRepository = get(),
+            pendingReceiptStore = get()
         )
     }
 

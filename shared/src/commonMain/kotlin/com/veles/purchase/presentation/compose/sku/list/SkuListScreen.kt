@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.veles.purchase.domain.model.ExpenseCategory
 import com.veles.purchase.domain.model.SkuModel
 import com.veles.purchase.presentation.compose.Colors
 import com.veles.purchase.presentation.model.UiEvent
@@ -212,6 +211,8 @@ private fun ExpensesGroupedList(
     onDeleteSku: (String) -> Unit,
     onFabCollapse: () -> Unit
 ) {
+    val expandedItems = remember { mutableStateMapOf<String, Boolean>() }
+
     LazyColumn(
         contentPadding = PaddingValues(
             top = paddingValues.calculateTopPadding() + 4.dp,
@@ -226,6 +227,8 @@ private fun ExpensesGroupedList(
             items(items = group.items, key = { it.skuId }) { sku ->
                 ExpenseItem(
                     sku = sku,
+                    expanded = expandedItems[sku.skuId] ?: false,
+                    onToggleExpanded = { expandedItems[sku.skuId] = !(expandedItems[sku.skuId] ?: false) },
                     onClick = { onSkuClick(sku) },
                     onDelete = { onDeleteSku(sku.skuId) }
                 )
@@ -263,6 +266,8 @@ private fun MonthHeader(group: MonthGroup) {
 @Composable
 private fun ExpenseItem(
     sku: SkuModel,
+    expanded: Boolean,
+    onToggleExpanded: () -> Unit,
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -270,65 +275,111 @@ private fun ExpenseItem(
     val d = sku.skuLocalData
     val dateStr = "${d.day} ${monthNames[d.month.ordinal]}"
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Category icon circle
-        Box(
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
             modifier = Modifier
-                .size(40.dp)
-                .background(Colors.gr.copy(alpha = 0.15f), CircleShape),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = sku.category.emoji, fontSize = 18.sp)
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        // Name + date
-        Column(modifier = Modifier.weight(1f)) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(Colors.gr.copy(alpha = 0.15f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = sku.category.emoji, fontSize = 18.sp)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = sku.skuName,
+                        fontSize = 15.sp,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    if (sku.items.isNotEmpty()) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = Colors.gr.copy(alpha = 0.2f),
+                            modifier = Modifier.clickable { onToggleExpanded() }
+                        ) {
+                            Text(
+                                text = "${sku.items.size} item${if (sku.items.size != 1) "s" else ""}",
+                                fontSize = 10.sp,
+                                color = Colors.gr,
+                                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                            )
+                        }
+                    }
+                }
+                Text(
+                    text = "$dateStr · ${sku.category.displayName}",
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+            }
             Text(
-                text = sku.skuName,
+                text = "${(sku.skuPrice.toDoubleOrNull() ?: 0.0).formatAmount()} ${sku.skuCurrencyCode}",
                 fontSize = 15.sp,
-                color = Color.White,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                fontWeight = FontWeight.Medium,
+                color = Colors.gr
             )
-            Text(
-                text = "$dateStr · ${sku.category.displayName}",
-                fontSize = 12.sp,
-                color = Color.Gray
-            )
+            Spacer(modifier = Modifier.width(4.dp))
+            IconButton(onClick = onDelete, modifier = Modifier.size(36.dp)) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = Color.Red.copy(alpha = 0.6f),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
         }
 
-        // Amount
-        Text(
-            text = "${(sku.skuPrice.toDoubleOrNull() ?: 0.0).formatAmount()} ${sku.skuCurrencyCode}",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Medium,
-            color = Colors.gr
-        )
-
-        Spacer(modifier = Modifier.width(4.dp))
-
-        // Delete
-        IconButton(
-            onClick = onDelete,
-            modifier = Modifier.size(36.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Delete",
-                tint = Color.Red.copy(alpha = 0.6f),
-                modifier = Modifier.size(18.dp)
-            )
+        if (expanded && sku.items.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 68.dp, end = 16.dp, bottom = 8.dp)
+            ) {
+                sku.items.forEach { item ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = item.name,
+                                fontSize = 13.sp,
+                                color = Color.White.copy(alpha = 0.8f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            val meta = buildList {
+                                if (item.quantity.isNotBlank()) add(item.quantity)
+                                if (item.taxRate.isNotBlank()) add("tax ${item.taxRate}")
+                            }.joinToString("  ·  ")
+                            if (meta.isNotEmpty()) {
+                                Text(text = meta, fontSize = 11.sp, color = Color.Gray)
+                            }
+                        }
+                        Text(
+                            text = (item.price.toDoubleOrNull() ?: 0.0).formatAmount(),
+                            fontSize = 13.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
         }
+
+        HorizontalDivider(color = Color.White.copy(alpha = 0.05f), modifier = Modifier.padding(start = 68.dp))
     }
-    HorizontalDivider(color = Color.White.copy(alpha = 0.05f), modifier = Modifier.padding(start = 68.dp))
 }
 
 @Composable

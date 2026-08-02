@@ -1,5 +1,6 @@
 package com.veles.purchase.platform.scanner
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.util.Log
@@ -7,6 +8,8 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.google.android.gms.tasks.Tasks
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -52,38 +55,158 @@ class YCoordinateTextRecognizer : TextRecognizer {
             }
             Log.d(TAG, "Step 1 complete: bitmap=${bitmap.width}x${bitmap.height}")
 
-            val image = InputImage.fromBitmap(bitmap, 0)
-            Log.d(TAG, "Step 2: start ML Kit text recognition")
-            recognizer.process(image)
-                .addOnSuccessListener { visionText ->
-                    if (!continuation.isActive) return@addOnSuccessListener
-                    
-                    // Use elements (words) instead of lines for more granular spatial grouping.
-                    // This helps when ML Kit merges columns into lines incorrectly.
-                    val allElements = visionText.textBlocks.flatMap { block -> 
-                        block.lines.flatMap { line -> 
-                            line.elements.map { element ->
-                                PositionedLine(text = element.text, box = element.boundingBox ?: Rect())
+            // OCR Tiling Strategy: split long receipts into 3 vertical segments with overlap
+            val tiles = createTiles(bitmap)
+            Log.d(TAG, "Step 2: created ${tiles.size} tiles for processing")
+
+            val allElements = mutableListOf<PositionedLine>()
+            var tilesProcessed = 0
+
+            tiles.forEachIndexed { index, tile ->
+                val image = InputImage.fromBitmap(tile.bitmap, 0)
+                recognizer.process(image)
+                    .addOnSuccessListener { visionText ->
+                        if (!continuation.isActive) return@addOnSuccessListener
+
+                        val tileElements = visionText.textBlocks.flatMap { block ->
+                            block.lines.flatMap { line ->
+                                line.elements.map { element ->
+                                    val originalBox = element.boundingBox ?: Rect()
+                                    // Map tile coordinates back to original bitmap coordinates
+                                    val mappedBox = Rect(
+                                        originalBox.left + tile.offsetX,
+                                        originalBox.top + tile.offsetY,
+                                        originalBox.right + tile.offsetX,
+                                        originalBox.bottom + tile.offsetY
+                                    )
+                                    PositionedLine(text = element.text, box = mappedBox)
+                                }
                             }
                         }
-                    }.filter { it.text.isNotBlank() }
+                        
+                        synchronized(allElements) {
+                            allElements.addAll(tileElements)
+                            tilesProcessed++
+                        }
 
-                    Log.d(
-                        TAG,
-                        "Step 2 complete: blocks=${visionText.textBlocks.size}, elements=${allElements.size}"
-                    )
+                        Log.d(TAG, "Tile $index complete: elements=${tileElements.size}")
+                        tile.bitmap.recycle()
 
-                    val rows = buildRows(allElements)
-                    val output = formatRows(rows)
-                    Log.d(TAG, "Step 3 complete: rows=${output.size}\n${output.joinToString("\n")}")
-                    continuation.resume(output)
-                }
-                .addOnFailureListener { e ->
-                    if (!continuation.isActive) return@addOnFailureListener
-                    Log.e(TAG, "Step 2 failed: ML Kit text recognition error", e)
-                    continuation.resumeWithException(e)
-                }
+                        if (tilesProcessed == tiles.size) {
+                            val finalElements = deduplicateElements(allElements)
+                            Log.d(TAG, "Step 2 complete: total unique elements=${finalElements.size}")
+                            val rows = buildRows(finalElements)
+                            val stitchedRows = stitchRows(rows)
+                            val output = formatRows(stitchedRows)
+                            Log.d(TAG, "Step 3 complete: rows=${output.size}\n${output.joinToString("\n")}")
+                            continuation.resume(output)
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        if (!continuation.isActive) return@addOnFailureListener
+                        Log.e(TAG, "Step 2 failed on tile $index", e)
+                        tile.bitmap.recycle()
+                        // If one tile fails, we still try to proceed if we have any data
+                        synchronized(allElements) {
+                            tilesProcessed++
+                            if (tilesProcessed == tiles.size) {
+                                if (allElements.isEmpty()) continuation.resumeWithException(e)
+                                else {
+                                    val finalElements = deduplicateElements(allElements)
+                                    val rows = buildRows(finalElements)
+                                    val stitchedRows = stitchRows(rows)
+                                    continuation.resume(formatRows(stitchedRows))
+                                }
+                            }
+                        }
+                    }
+            }
+            
+            bitmap.recycle()
         }
+
+    private fun stitchRows(rows: List<List<PositionedLine>>): List<List<PositionedLine>> {
+        if (rows.size < 2) return rows
+        val result = mutableListOf<MutableList<PositionedLine>>()
+        
+        for (row in rows) {
+            if (row.isEmpty()) continue
+            
+            val lastRow = result.lastOrNull()
+            val isCurrentLineTechnical = isTechnicalLine(row)
+            
+            if (lastRow != null && isCurrentLineTechnical && !isTechnicalLine(lastRow)) {
+                // If last row was a name and current is technical (price/weight), merge them
+                lastRow.addAll(row)
+            } else {
+                result.add(row.toMutableList())
+            }
+        }
+        return result
+    }
+
+    private fun isTechnicalLine(row: List<PositionedLine>): Boolean {
+        val text = row.joinToString(" ") { it.text }
+        // Heuristic: technical lines often contain "x", digits, KG, SZT, or currency symbols
+        val hasQuantity = text.contains(Regex("""\d\s?[sS][zZ][tT]""")) || text.contains(" x ", ignoreCase = true)
+        val hasWeight = text.contains(Regex("""\d[.,]\d+\s?[kK][gG]"""))
+        val hasPrice = text.contains(Regex("""\d+[.,]\d{2}"""))
+        
+        // If it starts with a number or technical keyword, it's likely a sub-line of a product
+        val startsWithTechnical = text.take(3).any { it.isDigit() } || text.startsWith("OPUST", ignoreCase = true)
+        
+        return hasQuantity || hasWeight || hasPrice || startsWithTechnical
+    }
+
+    private data class Tile(val bitmap: Bitmap, val offsetX: Int, val offsetY: Int)
+
+    private fun createTiles(original: Bitmap): List<Tile> {
+        val w = original.width
+        val h = original.height
+        val tiles = mutableListOf<Tile>()
+
+        // For long receipts, we slice vertically
+        if (h > w * 1.5) {
+            val sliceH = h / 3
+            val overlap = sliceH / 4 // 25% overlap
+            
+            // Top tile
+            tiles.add(Tile(Bitmap.createBitmap(original, 0, 0, w, (sliceH + overlap).coerceAtMost(h)), 0, 0))
+            // Middle tile
+            val midY = sliceH - overlap/2
+            tiles.add(Tile(Bitmap.createBitmap(original, 0, midY, w, (sliceH + overlap).coerceAtMost(h - midY)), 0, midY))
+            // Bottom tile
+            val botY = (2 * sliceH - overlap).coerceAtLeast(0)
+            tiles.add(Tile(Bitmap.createBitmap(original, 0, botY, w, h - botY), 0, botY))
+        } else {
+            // Regular aspect ratio - single tile
+            tiles.add(Tile(original.copy(original.config ?: Bitmap.Config.ARGB_8888, true), 0, 0))
+        }
+        return tiles
+    }
+
+    private fun deduplicateElements(elements: List<PositionedLine>): List<PositionedLine> {
+        if (elements.isEmpty()) return emptyList()
+        // Sort to process in a consistent order
+        val sorted = elements.sortedBy { it.box.top }
+        val result = mutableListOf<PositionedLine>()
+
+        for (item in sorted) {
+            val isDuplicate = result.any { existing ->
+                if (existing.text == item.text) {
+                    val overlapArea = Rect()
+                    if (overlapArea.setIntersect(existing.box, item.box)) {
+                        val areaItem = item.box.width() * item.box.height()
+                        val areaOverlap = overlapArea.width() * overlapArea.height()
+                        // If 70% of the box is already covered by an identical text at a very similar position
+                        areaOverlap > (areaItem * 0.7)
+                    } else false
+                } else false
+            }
+            if (!isDuplicate) result.add(item)
+        }
+        return result
+    }
 
     // ── Row grouping ──────────────────────────────────────────────────────────
 

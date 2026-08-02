@@ -2,6 +2,7 @@ package com.veles.purchase.presentation.mvvm.sku.scanner
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.veles.purchase.domain.model.scanner.PendingReceiptStore
 import com.veles.purchase.domain.model.scanner.ReceiptData
 import com.veles.purchase.domain.model.setting.AiEngineStrategy
 import com.veles.purchase.domain.repository.setting.SettingRepository
@@ -31,13 +32,15 @@ sealed class ReceiptScannerState {
 }
 
 class ReceiptScannerViewModel(
-    private val settingRepository: SettingRepository
+    private val settingRepository: SettingRepository,
+    private val pendingReceiptStore: PendingReceiptStore
 ) : ViewModel(), KoinComponent {
 
     private val geminiNanoParser: ReceiptAiParser by inject(qualifier = named("nano"))
     private val groqCloudParser: ReceiptAiParser by inject(qualifier = named("groq"))
     private val localSlmParser: ReceiptAiParser by inject(qualifier = named("local"))
     private val ocrTextParser: ReceiptAiParser by inject(qualifier = named("ocr_text"))
+    private val ocrGroqParser: ReceiptAiParser by inject(qualifier = named("ocr_groq"))
     private val localModelDownloader: LocalModelDownloader by inject()
 
     private val _state = MutableStateFlow<ReceiptScannerState>(ReceiptScannerState.Idle)
@@ -70,6 +73,7 @@ class ReceiptScannerViewModel(
                     else _state.value = ReceiptScannerState.EngineSelectionRequired
                 }
                 AiEngineStrategy.OCR_TEXT_LLM -> runOcrTextParserOrRequestDownload(bytes)
+                AiEngineStrategy.OCR_GROQ -> runParser(ocrGroqParser, bytes)
                 AiEngineStrategy.AUTO -> {
                     when {
                         geminiNanoParser.isAvailable() -> runParser(geminiNanoParser, bytes)
@@ -97,6 +101,7 @@ class ReceiptScannerViewModel(
                     else startLocalModelDownload()
                 }
                 AiEngineStrategy.OCR_TEXT_LLM -> runOcrTextParserOrRequestDownload(image)
+                AiEngineStrategy.OCR_GROQ -> runParser(ocrGroqParser, image)
                 AiEngineStrategy.AUTO -> onImageCaptured(image)
             }
         }
@@ -179,4 +184,21 @@ class ReceiptScannerViewModel(
 
     fun currentResult(): ReceiptScannerState.Result? =
         _state.value as? ReceiptScannerState.Result
+
+    /**
+     * Stores the full receipt (total + ALL selected items) plus the receipt
+     * photo bytes for hand-off to the edit screen.
+     */
+    fun prepareHandoff() {
+        val result = currentResult() ?: return
+        val selectedIdx = _selectedIndices.value
+        val items = if (selectedIdx.isEmpty()) {
+            result.data.items
+        } else {
+            selectedIdx.sorted().mapNotNull { result.data.items.getOrNull(it) }
+        }
+        pendingReceiptStore.pendingReceipt = result.data.copy(items = items)
+        pendingReceiptStore.pendingImageBytes =
+            result.imageBytes.takeIf { it.isNotEmpty() }
+    }
 }

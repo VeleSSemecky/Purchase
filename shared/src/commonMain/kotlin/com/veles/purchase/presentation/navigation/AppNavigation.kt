@@ -18,7 +18,6 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.veles.purchase.domain.utill.formatAmount
 import com.veles.purchase.presentation.compose.login.LoginScreen
 import com.veles.purchase.presentation.compose.main.MainScreen
 import com.veles.purchase.presentation.compose.purchase.category.CategoryScreen
@@ -352,21 +351,7 @@ private fun EntryProviderScope<NavKey>.skuDestinations(navigator: Navigator) {
     entry<Route.Sku.Scanner> {
         ReceiptScannerScreen(
             onNavigateBack = { navigator.goBack() },
-            onConfirmTotal = { amount, currency ->
-                navigator.replace(
-                    Route.Sku.Edit(prefillPrice = amount, prefillCategory = null)
-                )
-            },
-            onConfirmItems = { items, currency ->
-                val first = items.firstOrNull()
-                navigator.replace(
-                    Route.Sku.Edit(
-                        prefillName = first?.name,
-                        prefillPrice = first?.price?.let { it.formatAmount() },
-                        prefillCategory = null
-                    )
-                )
-            }
+            onConfirm = { navigator.replace(Route.Sku.Edit()) }
         )
     }
 }

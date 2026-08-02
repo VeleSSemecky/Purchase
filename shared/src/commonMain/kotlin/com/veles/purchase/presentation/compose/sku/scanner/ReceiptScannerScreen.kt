@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -44,15 +45,13 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ReceiptScannerScreen(
     onNavigateBack: () -> Unit = {},
-    onConfirmTotal: (amount: String, currency: String) -> Unit = { _, _ -> },
-    onConfirmItems: (items: List<ReceiptItem>, currency: String) -> Unit = { _, _ -> },
+    onConfirm: () -> Unit = {},
     viewModel: ReceiptScannerViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
-    val currentOnConfirmTotal by rememberUpdatedState(onConfirmTotal)
-    val currentOnConfirmItems by rememberUpdatedState(onConfirmItems)
+    val currentOnConfirm by rememberUpdatedState(onConfirm)
 
     var showEngineSelection by remember { mutableStateOf(false) }
 
@@ -176,15 +175,9 @@ fun ReceiptScannerScreen(
                             selectedIndices = selectedIndices,
                             onToggleItem = viewModel::onToggleItem,
                             onEditPrice = viewModel::onEditItemPrice,
-                            onConfirmTotal = {
-                                val total = currentState.data.totalAmount
-                                if (total != null) {
-                                    currentOnConfirmTotal(total.formatAmount(), currentState.data.currency)
-                                }
-                            },
-                            onConfirmSelected = {
-                                val items = selectedIndices.sorted().map { currentState.data.items[it] }
-                                currentOnConfirmItems(items, currentState.data.currency)
+                            onConfirm = {
+                                viewModel.prepareHandoff()
+                                currentOnConfirm()
                             },
                             onRetry = viewModel::onRetry
                         )
@@ -306,7 +299,14 @@ private fun EngineSelectionContent(
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Colors.gr)
             ) {
-                Text("🌐  Groq Cloud (Fast, requires Internet)", color = Color.Black)
+                Text("🌐  Groq Vision (Fast, requires Internet)", color = Color.Black)
+            }
+            Button(
+                onClick = { onSelectEngine(AiEngineStrategy.OCR_GROQ) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Colors.gr)
+            ) {
+                Text("🔍  OCR + Groq 70B (Best quality, requires Internet)", color = Color.Black)
             }
             Button(
                 onClick = { onSelectEngine(AiEngineStrategy.OCR_TEXT_LLM) },
@@ -332,8 +332,7 @@ private fun ResultContent(
     selectedIndices: Set<Int>,
     onToggleItem: (Int) -> Unit,
     onEditPrice: (Int, Double) -> Unit,
-    onConfirmTotal: () -> Unit,
-    onConfirmSelected: () -> Unit,
+    onConfirm: () -> Unit,
     onRetry: () -> Unit
 ) {
     val data = resultState.data
@@ -356,7 +355,7 @@ private fun ResultContent(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 80.dp)
+        contentPadding = PaddingValues(bottom = 100.dp)
     ) {
         if (resultState.imageBytes.isNotEmpty()) {
             item(key = "receipt_image") {
@@ -368,63 +367,57 @@ private fun ResultContent(
             }
         }
 
-        if (data.totalAmount != null) {
-            item(key = "total_row") {
-                TotalRow(
+        // Total summary card
+        if (data.totalAmount != null || data.items.isNotEmpty()) {
+            item(key = "summary_row") {
+                SummaryRow(
                     total = data.totalAmount,
-                    currency = data.currency,
-                    onConfirmTotal = onConfirmTotal
+                    itemCount = data.items.size,
+                    selectedCount = selectedIndices.size,
+                    currency = data.currency
                 )
             }
         }
 
         if (data.items.isNotEmpty()) {
             item(key = "items_header") {
-                Text(
-                    text = "Items found: ${data.items.size}",
-                    color = Color.Gray,
-                    fontSize = 13.sp,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Items (${data.items.size})",
+                        color = Color.Gray,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = "Tap to select",
+                        color = Color.Gray.copy(alpha = 0.6f),
+                        fontSize = 11.sp
+                    )
+                }
             }
             itemsIndexed(
                 items = data.items,
                 key = { index, item -> "${index}_${item.name}" }
             ) { index, item ->
                 val isSelected = index in selectedIndices
-                val onToggle = remember(index) { { onToggleItem(index) } }
-                val onEdit = remember(index) { { editingIndex = index } }
                 ReceiptItemRow(
                     item = item,
                     currency = data.currency,
                     isSelected = isSelected,
-                    onToggle = onToggle,
-                    onEditPrice = onEdit
+                    onToggle = remember(index) { { onToggleItem(index) } },
+                    onEditPrice = remember(index) { { editingIndex = index } }
                 )
-            }
-            item(key = "confirm_button") {
-                Spacer(modifier = Modifier.height(8.dp))
-                val selectedCount = selectedIndices.size
-                Button(
-                    onClick = onConfirmSelected,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    enabled = selectedCount > 0,
-                    colors = ButtonDefaults.buttonColors(containerColor = Colors.gr)
-                ) {
-                    Text(
-                        text = if (selectedCount > 0) "Add $selectedCount item(s)" else "Select items to add",
-                        color = Color.Black
-                    )
-                }
             }
         } else if (data.totalAmount == null) {
             item(key = "empty_state") {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
+                    modifier = Modifier.fillMaxWidth().padding(32.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -440,7 +433,26 @@ private fun ResultContent(
             }
         }
 
-        item(key = "scan_again") {
+        // Single primary action button
+        item(key = "save_button") {
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = onConfirm,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Colors.gr)
+            ) {
+                Icon(Icons.Default.Done, contentDescription = null, tint = Color.Black)
+                Spacer(modifier = Modifier.width(8.dp))
+                val label = when {
+                    selectedIndices.isNotEmpty() -> "Save expense (${selectedIndices.size} items)"
+                    data.items.isNotEmpty() -> "Save expense (${data.items.size} items)"
+                    data.totalAmount != null -> "Save expense"
+                    else -> "Save expense"
+                }
+                Text(label, color = Color.Black, fontWeight = FontWeight.SemiBold)
+            }
             TextButton(
                 onClick = onRetry,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -569,11 +581,16 @@ private fun EditPriceDialog(
 }
 
 @Composable
-private fun TotalRow(total: Double, currency: String, onConfirmTotal: () -> Unit) {
+private fun SummaryRow(
+    total: Double?,
+    itemCount: Int,
+    selectedCount: Int,
+    currency: String
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Colors.gr.copy(alpha = 0.15f)),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -585,19 +602,26 @@ private fun TotalRow(total: Double, currency: String, onConfirmTotal: () -> Unit
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("Total", color = Color.Gray, fontSize = 13.sp)
-                Text(
-                    text = "${total.formatAmount()} $currency",
-                    color = Colors.gr,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Button(
-                onClick = onConfirmTotal,
-                colors = ButtonDefaults.buttonColors(containerColor = Colors.gr)
-            ) {
-                Text("Add total", color = Color.Black)
+                if (total != null) {
+                    Text("Total", color = Color.Gray, fontSize = 12.sp)
+                    Text(
+                        text = "${total.formatAmount()} $currency",
+                        color = Colors.gr,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                if (itemCount > 0) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = if (selectedCount > 0 && selectedCount < itemCount)
+                            "$selectedCount / $itemCount items selected"
+                        else
+                            "$itemCount items recognized",
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                }
             }
         }
     }
@@ -628,12 +652,20 @@ private fun ReceiptItemRow(
             )
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = item.name,
-            color = Color.White,
-            modifier = Modifier.weight(1f),
-            maxLines = 2
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = item.name,
+                color = Color.White,
+                maxLines = 2
+            )
+            val meta = buildList {
+                if (item.quantity.isNotBlank()) add("× ${item.quantity}")
+                if (item.taxRate.isNotBlank()) add("tax ${item.taxRate}")
+            }.joinToString("  ·  ")
+            if (meta.isNotEmpty()) {
+                Text(text = meta, color = Color.Gray, fontSize = 12.sp)
+            }
+        }
         Text(
             text = "${item.price.formatAmount()} $currency",
             color = Colors.gr,

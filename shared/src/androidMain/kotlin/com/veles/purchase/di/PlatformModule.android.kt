@@ -52,4 +52,12 @@ actual val platformModule: Module = module {
             modelFile = get<LocalModelManager>().modelFile
         )
     }
+
+    // Engine 5: OCR (ML Kit) + Groq text LLM — best accuracy, no model download
+    single<ReceiptAiParser>(qualifier = named("ocr_groq")) {
+        OcrGroqParser(
+            httpClient = get(),
+            textRecognizer = get(named("y_sorted"))
+        )
+    }
 }

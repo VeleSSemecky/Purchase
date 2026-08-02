@@ -63,7 +63,7 @@ class AndroidGeminiNanoParser(
                 TextPart(ReceiptPromptBuilder.buildPrompt())
             ).apply {
                 temperature = 0.1f
-                maxOutputTokens = 256
+                maxOutputTokens = 1024  // was 256 — receipts with 10+ items need ~400–600 tokens
             }.build()
 
             val response = generativeModel.generateContent(request)

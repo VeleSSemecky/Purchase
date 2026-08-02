@@ -20,5 +20,13 @@ enum class AiEngineStrategy {
     LOCAL_DOWNLOAD,
 
     /** Use Classic OCR + Y-sorting + Text LLM. Fast, low resource, offline. */
-    OCR_TEXT_LLM
+    OCR_TEXT_LLM,
+
+    /**
+     * Two-pass: ML Kit OCR extracts text locally, then sends plain text to
+     * Groq llama-3.3-70b-versatile for structured parsing.
+     * Much better accuracy than vision-only Groq on dense receipts.
+     * Requires internet. No model download needed.
+     */
+    OCR_GROQ
 }
